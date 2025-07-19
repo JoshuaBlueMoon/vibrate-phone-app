@@ -1,0 +1,13 @@
+{
+  "name": "vibrate-phone-app",
+  "version": "1.0.0",
+  "description": "A web app to vibrate a friend's phone",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^8.8.0"
+  }
+}
