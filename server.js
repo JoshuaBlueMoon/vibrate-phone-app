@@ -10,10 +10,10 @@ app.get('/', (req, res) => {
     <!DOCTYPE html>
     <html>
     <body style="text-align: center; font-family: Arial;">
-      <h1>Vibrate My Friend's Phone</h1>
+      <h1>Vibrate!!!</h1>
       <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px;">
       <br>
-      <button id="vibrateButton" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Vibrate Friend's Phone</button>
+      <button id="vibrateButton" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Hold</button>
       <p>Enter the same room code on both phones. Hold the button to vibrate, release to stop.</p>
       <script>
         const ws = new WebSocket('wss://' + window.location.host);
