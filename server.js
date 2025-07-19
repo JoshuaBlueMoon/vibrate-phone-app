@@ -14,13 +14,13 @@ app.get('/', (req, res) => {
     </head>
     <body style="background-color: #1e3a8a; color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
       <h1 style="font-size: 24px;">Vibrate My Friend's Phone</h1>
-      <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white; width: 80%;" onfocus="this.blur();">
+      <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white; width: 80%;">
       <br>
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 80%; margin: 10px; accent-color: #60a5fa;">
       <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
       <br>
       <div style="width: 100px; height: 100px; background-color: #4b5e97; position: relative; margin-top: 10px;"></div>
-      <button id="vibrateButton" style="font-size: 72px; padding: 20px; background-color: #3b82f6; color: white; border: none; border-radius: 50%; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.2s; position: relative; overflow: hidden; margin-top: -110px; touch-action: manipulation;" onfocus="this.blur();">💙</button>
+      <button id="vibrateButton" style="font-size: 72px; padding: 20px; background-color: #3b82f6; color: white; border: none; border-radius: 50%; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.2s; position: relative; overflow: hidden; margin-top: -110px;" onmousedown="this.blur();">💙</button>
       <p style="font-size: 14px;">Enter the same room code on both phones. Hold or drag to vibrate, release to stop. Adjust intensity or drag speed.</p>
       <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
       <style>
@@ -121,6 +121,7 @@ app.get('/', (req, res) => {
         };
 
         vibrateButton.onmousedown = (e) => {
+          e.preventDefault(); // Prevent default focus behavior
           const room = document.getElementById('room').value;
           const intensity = intensitySlider.value;
           if (room) {
@@ -147,6 +148,7 @@ app.get('/', (req, res) => {
 
         // Drag-based vibration
         vibrateButton.addEventListener('mousemove', (e) => {
+          e.preventDefault(); // Prevent default focus behavior
           if (lastX !== null && lastTime !== null) {
             const currentX = e.clientX;
             const currentTime = performance.now();
@@ -182,7 +184,7 @@ app.get('/', (req, res) => {
 
         // For touch devices (phones)
         vibrateButton.ontouchstart = (e) => {
-          e.preventDefault();
+          e.preventDefault(); // Prevent default focus behavior
           const room = document.getElementById('room').value;
           const intensity = intensitySlider.value;
           if (room) {
@@ -208,6 +210,7 @@ app.get('/', (req, res) => {
           lastTime = null;
         };
         vibrateButton.addEventListener('touchmove', (e) => {
+          e.preventDefault();
           if (lastX !== null && lastTime !== null) {
             const currentX = e.touches[0].clientX;
             const currentTime = performance.now();
@@ -245,7 +248,6 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
-
 // WebSocket connection
 let clients = [];
 wss.on('connection', (ws) => {
