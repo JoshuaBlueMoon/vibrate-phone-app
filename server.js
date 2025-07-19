@@ -23,15 +23,12 @@ app.get('/', (req, res) => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           if (data.room === document.getElementById('room').value) {
-            if (data.command === 'startVibrate' && navigator.vibrate) {
-              navigator.vibrate(0); // Stop any existing vibration
+            if (data.command === 'startVibrate' && navigator.vibrate && !isVibrating) {
               navigator.vibrate(Infinity); // Start continuous vibration
               isVibrating = true;
-              alert('Vibration started!');
             } else if (data.command === 'stopVibrate' && isVibrating) {
               navigator.vibrate(0); // Stop vibration
               isVibrating = false;
-              alert('Vibration stopped!');
             }
           }
         };
