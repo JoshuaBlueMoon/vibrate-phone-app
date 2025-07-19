@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
     <!DOCTYPE html>
     <html>
     <body style="background-color: #1e3a8a; color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <h1>Vibrate My Friend's Phone</h1>
+      <h1>Pulse!! <3</h1>
       <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white;">
       <br>
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 200px; margin: 10px; accent-color: #60a5fa;">
