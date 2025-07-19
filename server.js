@@ -13,11 +13,11 @@ app.get('/', (req, res) => {
       <h1>Vibrate My Friend's Phone</h1>
       <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px;">
       <br>
-      <input type="range" id="intensity" min="1" max="10" value="5" style="width: 200px; margin: 10px;">
-      <label for="intensity">Intensity: <span id="intensityValue">5</span></label>
+      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 200px; margin: 10px;">
+      <label for="intensity">Intensity: <span id="intensityValue">3</span></label>
       <br>
       <button id="vibrateButton" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Vibrate Friend's Phone</button>
-      <p>Enter the same room code on both phones. Hold the button to vibrate, release to stop. Adjust intensity with the slider.</p>
+      <p>Enter the same room code on both phones. Hold the button to vibrate, release to stop. Adjust intensity with the slider (1-5).</p>
       <script>
         const ws = new WebSocket('wss://' + window.location.host);
         let isVibrating = false;
@@ -33,8 +33,16 @@ app.get('/', (req, res) => {
           const data = JSON.parse(event.data);
           if (data.room === document.getElementById('room').value) {
             if (data.command === 'startVibrate' && navigator.vibrate && !isVibrating) {
-              const intensity = data.intensity || 5;
-              const pattern = Array(intensity).fill(50).concat([50]); // e.g., [50, 50] for intensity 2, [50, 50, 50, 50, 50] for intensity 5
+              const intensity = data.intensity || 3;
+              let pattern;
+              switch (intensity) {
+                case 1: pattern = [50, 200]; break; // 50ms on, 200ms off (slow, small bursts)
+                case 2: pattern = [50, 100]; break; // 50ms on, 100ms off (moderate bursts)
+                case 3: pattern = [50, 50]; break;  // 50ms on, 50ms off (medium frequency)
+                case 4: pattern = [100, 50]; break; // 100ms on, 50ms off (faster bursts)
+                case 5: pattern = [200]; break;     // 200ms on, no off (continuous as fast as possible)
+                default: pattern = [50, 50];
+              }
               navigator.vibrate(pattern); // Start vibration with pattern
               isVibrating = true;
             } else if (data.command === 'stopVibrate' && isVibrating) {
