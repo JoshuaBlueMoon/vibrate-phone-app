@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
       <h1>Vibrate Phone</h1>
       <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px;">
       <br>
-      <button onclick="sendVibrate()" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Vibrate Friend's Phone</button>
+      <button onclick="sendVibrate()" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Vibrate Phone</button>
       <p>Enter the same room code on both phones. Click the button to vibrate the other phone.</p>
       <script>
         const ws = new WebSocket('wss://' + window.location.host);
