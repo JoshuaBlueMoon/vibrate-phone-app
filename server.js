@@ -7,7 +7,7 @@ const wss = new WebSocket.Server({ server });
 // Serve the web page
 app.get('/', (req, res) => {
   res.send(`
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -31,6 +31,11 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
+    @keyframes barPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
     @keyframes flash {
       0% { background-color: #4b5e97; }
       20% { background-color: #ff0000; }
@@ -43,6 +48,9 @@ app.get('/', (req, res) => {
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
+    .bar-pulsing {
+      animation: barPulse 0.4s ease-in-out infinite;
+    }
     .flashing {
       animation: flash 0.3s ease-out;
     }
@@ -51,7 +59,7 @@ app.get('/', (req, res) => {
       font-size: 20px;
       color: purple;
       pointer-events: none;
-      animation: particle 1s ease-out forwards;
+      animation: particle 1.5s ease-out forwards;
     }
     @media (orientation: landscape) {
       body {
@@ -92,7 +100,7 @@ app.get('/', (req, res) => {
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
-    let lastCollision = null; // Track last collision side to prevent spamming particles
+    let lastCollision = null;
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -122,27 +130,30 @@ app.get('/', (req, res) => {
     };
 
     function createParticle(x, y, side) {
-      if (lastCollision === side) return; // Prevent spamming particles on same side
+      if (lastCollision === side) return;
       lastCollision = side;
-      const particleCount = 5; // Number of particles to spawn
+      const particleCount = 5;
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      // Convert sliderTrack coordinates to body coordinates
+      const bodyX = x + trackRect.left - bodyRect.left;
+      const bodyY = y + trackRect.top - bodyRect.top;
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.textContent = '💜';
-        particle.style.left = x + 'px';
-        particle.style.top = y + 'px';
-        // Random trajectory
+        particle.style.left = bodyX + 'px';
+        particle.style.top = bodyY + 'px';
+        // Random trajectory for screen-wide movement
         const angle = Math.random() * 2 * Math.PI;
-        const distance = 20 + Math.random() * 30; // Random distance between 20-50px
+        const distance = 50 + Math.random() * 100; // Larger range: 50-150px
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
         particle.style.setProperty('--tx', tx + 'px');
         particle.style.setProperty('--ty', ty + 'px');
-        sliderTrack.appendChild(particle);
-        // Remove particle after animation
-        setTimeout(() => particle.remove(), 1000);
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 1500); // Match animation duration
       }
-      // Reset lastCollision after a short delay to allow new particles on next hit
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
@@ -183,18 +194,17 @@ app.get('/', (req, res) => {
           if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            createParticle(10, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
           } else if (currentPosition >= maxPosition) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            createParticle(trackRect.width - 10, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            lastCollision = null; // Reset collision when not touching either side
+            sliderTrack.classList.remove('bar-pulsing', 'flashing');
+            lastCollision = null;
           }
         }
         lastPosition = currentPosition;
@@ -208,6 +218,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
@@ -251,18 +262,17 @@ app.get('/', (req, res) => {
           if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            createParticle(10, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
           } else if (currentPosition >= maxPosition) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            createParticle(trackRect.width - 10, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            lastCollision = null; // Reset collision when not touching either side
+            sliderTrack.classList.remove('bar-pulsing', 'flashing');
+            lastCollision = null;
           }
         }
         lastPosition = currentPosition;
@@ -276,6 +286,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
