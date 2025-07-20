@@ -17,9 +17,9 @@ app.get('/', (req, res) => {
   <div id="topContainer" style="position: absolute; top: 10px; right: 10px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
-  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 15px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
+  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
-    <div id="vibrateButton" style="font-size: 40px; padding: 8px; background-color: transparent; color: #3b82f6; border: none; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 0; left: 24px; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
+    <div id="vibrateButton" style="font-size: 36px; padding: 8px; background-color: transparent; color: #3b82f6; border: none; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 0; left: 26px; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
     <div class="pulse-symbol top" style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     <div class="pulse-symbol bottom" style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -61,10 +61,12 @@ app.get('/', (req, res) => {
       50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
-    @keyframes squeeze {
-      0% { border-radius: 50px; }
-      50% { border-radius: 60px 60px 60px 60px; }
-      100% { border-radius: 50px; }
+    @keyframes gelatin {
+      0% { transform: scale(1, 1); }
+      25% { transform: scale(0.9, 1.1); }
+      50% { transform: scale(1.1, 0.9); }
+      75% { transform: scale(0.95, 1.05); }
+      100% { transform: scale(1, 1); }
     }
     @keyframes redPulse {
       0% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
@@ -83,8 +85,8 @@ app.get('/', (req, res) => {
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
-    .squeezing {
-      animation: squeeze 0.4s ease-in-out infinite;
+    .gelatin {
+      animation: gelatin 0.5s ease-in-out infinite;
     }
     .red-pulsing {
       animation: redPulse 2s ease-in-out infinite;
@@ -176,7 +178,6 @@ app.get('/', (req, res) => {
         height: 50%;
         max-height: 300px;
         margin: 5px auto 15px auto;
-        padding: 10px 0;
       }
       #bottomControls {
         margin-top: 25px;
@@ -293,7 +294,7 @@ app.get('/', (req, res) => {
       if (score >= 60) {
         sliderTrack.classList.add('red-pulsing');
       }
-      const particleCount = 3; // Reduced from 5 to 3
+      const particleCount = 3;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const bodyX = x + trackRect.left - bodyRect.left;
@@ -316,23 +317,6 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function updateSqueezeEffect() {
-      if (isDragging) {
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const buttonRect = vibrateButton.getBoundingClientRect();
-        const heartCenterY = buttonRect.top + buttonRect.height / 2 - trackRect.top;
-        const trackHeight = trackRect.height;
-        const relativeY = heartCenterY / trackHeight; // 0 (top) to 1 (bottom)
-        
-        // Dynamic border-radius based on heart position
-        const maxRadius = 60;
-        const minRadius = 50;
-        const topRadius = maxRadius * (1 - relativeY); // More squish at top when heart is lower
-        const bottomRadius = maxRadius * relativeY;   // More squish at bottom when heart is higher
-        sliderTrack.style.borderRadius = `${topRadius}px ${topRadius}px ${bottomRadius}px ${bottomRadius}px`;
-      }
-    }
-
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
@@ -342,14 +326,13 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('squeezing');
+        sliderTrack.classList.add('gelatin');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
       lastPosition = vibrateButton.offsetTop;
-      updateSqueezeEffect();
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -359,7 +342,7 @@ app.get('/', (req, res) => {
         let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '24px';
+        vibrateButton.style.left = '26px';
         vibrateButton.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
@@ -378,7 +361,6 @@ app.get('/', (req, res) => {
           }
         }
         lastPosition = currentPosition;
-        updateSqueezeEffect();
       }
     });
 
@@ -389,9 +371,8 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('squeezing');
+          sliderTrack.classList.remove('gelatin');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
-          sliderTrack.style.borderRadius = '50px'; // Reset border-radius
         }
         isDragging = false;
         lastCollision = null;
@@ -407,14 +388,13 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('squeezing');
+        sliderTrack.classList.add('gelatin');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
       lastPosition = vibrateButton.offsetTop;
-      updateSqueezeEffect();
     });
 
     document.addEventListener('touchmove', (e) => {
@@ -424,7 +404,7 @@ app.get('/', (req, res) => {
         let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '24px';
+        vibrateButton.style.left = '26px';
         vibrateButton.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
@@ -443,7 +423,6 @@ app.get('/', (req, res) => {
           }
         }
         lastPosition = currentPosition;
-        updateSqueezeEffect();
       }
     });
 
@@ -454,9 +433,8 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('squeezing');
+          sliderTrack.classList.remove('gelatin');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
-          sliderTrack.style.borderRadius = '50px'; // Reset border-radius
         }
         isDragging = false;
         lastCollision = null;
