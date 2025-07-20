@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
     <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
   </div>
-  <p style="font-size: 14px;">Drag the heart to the right red dot, then back to the left red dot to vibrate. Release to stop. Adjust intensity.</p>
+  <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
   <style>
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -108,7 +108,6 @@ app.get('/', (req, res) => {
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let hasTouchedRight = false;
 
     connectButton.addEventListener('click', () => {
       if (roomInput.value === '1') {
@@ -150,7 +149,6 @@ app.get('/', (req, res) => {
     function createParticle(x, y, side) {
       if (lastCollision === side) return;
       lastCollision = side;
-      console.log(`Creating particles at ${side} dot, x: ${x}, y: ${y}`);
       const particleCount = 5;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -182,7 +180,6 @@ app.get('/', (req, res) => {
       if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
-        console.log('Mouse down, sending startVibrate with intensity:', intensity);
         ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
@@ -204,20 +201,18 @@ app.get('/', (req, res) => {
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
-        console.log(`Mouse move: currentPosition=${currentPosition}, maxPosition=${maxPosition}, hasTouchedRight=${hasTouchedRight}`);
         if (room) {
-          if (currentPosition >= maxPosition - 5) { // Relaxed threshold
-            hasTouchedRight = true;
-            console.log('Touched right dot');
-          } else if (currentPosition <= 5 && hasTouchedRight) { // Relaxed threshold
+          if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
-            console.log('Touched left dot after right, sending startVibrate');
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            hasTouchedRight = false;
+          } else if (currentPosition >= maxPosition) {
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
           } else {
-            console.log('Stopping vibration, in middle or no right touch');
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
             lastCollision = null;
@@ -231,15 +226,12 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomInput.value;
         if (room) {
-          console.log('Mouse up, sending stopVibrate');
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
-        hasTouchedRight = false;
-        console.log('Reset hasTouchedRight on mouse up');
       }
     });
 
@@ -251,7 +243,6 @@ app.get('/', (req, res) => {
       if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
-        console.log('Touch start, sending startVibrate with intensity:', intensity);
         ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
@@ -273,20 +264,18 @@ app.get('/', (req, res) => {
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
-        console.log(`Touch move: currentPosition=${currentPosition}, maxPosition=${maxPosition}, hasTouchedRight=${hasTouchedRight}`);
         if (room) {
-          if (currentPosition >= maxPosition - 5) { // Relaxed threshold
-            hasTouchedRight = true;
-            console.log('Touched right dot');
-          } else if (currentPosition <= 5 && hasTouchedRight) { // Relaxed threshold
+          if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
-            console.log('Touched left dot after right, sending startVibrate');
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            hasTouchedRight = false;
+          } else if (currentPosition >= maxPosition) {
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
           } else {
-            console.log('Stopping vibration, in middle or no right touch');
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
             lastCollision = null;
@@ -300,15 +289,12 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomInput.value;
         if (room) {
-          console.log('Touch end, sending stopVibrate');
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
-        hasTouchedRight = false;
-        console.log('Reset hasTouchedRight on touch end');
       }
     });
   </script>
