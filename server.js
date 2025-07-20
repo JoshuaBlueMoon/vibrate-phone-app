@@ -15,18 +15,18 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0; padding: 10px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 14px; height: 14px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+<body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
+  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
+    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
   </div>
-  <div id="topContainer" style="position: absolute; top: 10px; right: 10px;">
+  <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
-  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
+  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: url('/images/custom-bar.png') no-repeat center center; background-size: cover; border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
-    <div id="vibrateButton" style="padding: 8px; background-color: transparent; border: none; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 0; left: 26px; cursor: pointer; touch-action: none; z-index: 3;">
-      <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 36px; height: 36px;">
+    <div id="vibrateButton" style="padding: 8px; background-color: transparent; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 0; left: calc(50% - 28px); cursor: pointer; touch-action: none; z-index: 3;">
+      <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
     <div class="pulse-symbol top" style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -34,13 +34,13 @@ app.get('/', (req, res) => {
     <div class="glint top" style="position: absolute; top: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(-10deg); z-index: 2;"></div>
     <div class="glint bottom" style="position: absolute; bottom: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(10deg); z-index: 2;"></div>
   </div>
-  <div id="bottomControls" style="display: flex; flex-direction: column; align-items: center; margin-top: 30px;">
-    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 10px; margin: 5px;">
-      <div id="pulseToggle" class="toggle-button toggled" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
-        <img src="/images/pulse-icon.png" alt="Pulse Icon" style="width: 20px; height: 20px;">
+  <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
+      <div id="pulseToggle" class="toggle-button toggled" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
+        <img src="/images/pulse-icon.png" alt="Pulse Icon" style="width: 24px; height: 24px;">
       </div>
-      <div id="waveToggle" class="toggle-button" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
-        <img src="/images/wave-icon.png" alt="Wave Icon" style="width: 20px; height: 20px;">
+      <div id="waveToggle" class="toggle-button" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
+        <img src="/images/wave-icon.png" alt="Wave Icon" style="width: 24px; height: 24px;">
       </div>
     </div>
     <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
@@ -60,9 +60,9 @@ app.get('/', (req, res) => {
       100% { transform: scale(1); }
     }
     @keyframes flash {
-      0% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
-      20% { background: linear-gradient(to bottom, #ff6666, #ff3333, #ff6666); }
-      100% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
+      0% { background-color: rgba(0, 0, 0, 0); }
+      20% { background-color: rgba(255, 51, 51, 0.3); }
+      100% { background-color: rgba(0, 0, 0, 0); }
     }
     @keyframes particle {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
@@ -81,9 +81,9 @@ app.get('/', (req, res) => {
       100% { transform: scale(1, 1); }
     }
     @keyframes redPulse {
-      0% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
-      50% { background: linear-gradient(to bottom, rgba(255, 102, 102, 0.5), rgba(255, 51, 51, 0.5), rgba(255, 102, 102, 0.5)); }
-      100% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
+      0% { background-color: rgba(0, 0, 0, 0); }
+      50% { background-color: rgba(255, 51, 51, 0.3); }
+      100% { background-color: rgba(0, 0, 0, 0); }
     }
     @keyframes waveBurst {
       0% { transform: scale(1); opacity: 0.5; }
@@ -95,7 +95,14 @@ app.get('/', (req, res) => {
     .bar-pulsing {
       animation: barPulse 0.4s ease-in-out infinite;
     }
-    .flashing {
+    .flashing::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
       animation: flash 0.3s ease-out;
     }
     .pinching {
@@ -104,7 +111,14 @@ app.get('/', (req, res) => {
     .gelatin {
       animation: gelatin 0.5s ease-in-out;
     }
-    .red-pulsing {
+    .red-pulsing::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
       animation: redPulse 2s ease-in-out infinite;
     }
     .particle {
@@ -187,15 +201,18 @@ app.get('/', (req, res) => {
         justify-content: center;
         align-items: center;
         padding: 5px;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 414px;
       }
       #scoreDisplay {
         font-size: 10px;
         top: 5px;
-        left: 5px;
+        left: 10px;
       }
       #topContainer {
         top: 5px;
-        right: 5px;
+        right: 10px;
       }
       #room {
         width: 36px;
@@ -214,7 +231,7 @@ app.get('/', (req, res) => {
       #toggleContainer {
         flex-direction: row;
         gap: 8px;
-        margin: 5px;
+        margin: 5px auto;
       }
       #intensityContainer {
         width: 80%;
@@ -333,9 +350,9 @@ app.get('/', (req, res) => {
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        particle.innerHTML = '<img src="/images/custom-particle.png" alt="Particle" style="width: 16px; height: 16px;">';
-        particle.style.left = bodyX + 'px';
-        particle.style.top = bodyY + 'px';
+        particle.innerHTML = '<img src="/images/custom-particle.png" alt="Particle" style="width: 20px; height: 20px;">';
+        particle.style.left = (bodyX - 2) + 'px';
+        particle.style.top = (bodyY - 2) + 'px';
         const angle = Math.random() * 2 * Math.PI;
         const distance = 30 + Math.random() * 70;
         const tx = Math.cos(angle) * distance;
@@ -387,7 +404,7 @@ app.get('/', (req, res) => {
         let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '26px';
+        vibrateButton.style.left = 'calc(50% - 28px)';
         vibrateButton.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
@@ -447,7 +464,7 @@ app.get('/', (req, res) => {
         let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '26px';
+        vibrateButton.style.left = 'calc(50% - 28px)';
         vibrateButton.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
