@@ -110,8 +110,13 @@ app.get('/', (req, res) => {
     let lastCollision = null;
 
     connectButton.addEventListener('click', () => {
-      roomInput.value = '1';
-      connectButton.style.backgroundColor = 'white';
+      if (roomInput.value === '1') {
+        roomInput.value = '';
+        connectButton.style.backgroundColor = '#2b4d9e';
+      } else {
+        roomInput.value = '1';
+        connectButton.style.backgroundColor = '#ffffff';
+      }
     });
 
     intensitySlider.oninput = () => {
