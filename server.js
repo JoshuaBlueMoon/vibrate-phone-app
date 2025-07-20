@@ -70,7 +70,7 @@ app.get('/', (req, res) => {
     }
     @keyframes redPulse {
       0% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
-      50% { background: linear-gradient(to bottom, #ff6666, #ff3333, #ff6666); }
+      50% { background: linear-gradient(to bottom, rgba(255, 102, 102, 0.5), rgba(255, 51, 51, 0.5), rgba(255, 102, 102, 0.5)); }
       100% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
     }
     .pulsing {
@@ -86,7 +86,7 @@ app.get('/', (req, res) => {
       animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
-      animation: gelatin 0.5s ease-in-out infinite;
+      animation: gelatin 0.5s ease-in-out;
     }
     .red-pulsing {
       animation: redPulse 2s ease-in-out infinite;
@@ -292,7 +292,7 @@ app.get('/', (req, res) => {
       score += 1;
       scoreElement.textContent = score;
       if (score >= 60) {
-        sliderTrack.classList.add('red-pulsing');
+        sliderTrack.classList.add('red-pulsing', 'gelatin');
       }
       const particleCount = 3;
       const trackRect = sliderTrack.getBoundingClientRect();
@@ -314,6 +314,8 @@ app.get('/', (req, res) => {
         document.body.appendChild(particle);
         setTimeout(() => { particle.remove(); }, 1500);
       }
+      sliderTrack.classList.add('gelatin');
+      setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
@@ -326,7 +328,6 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('gelatin');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -371,7 +372,6 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('gelatin');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
@@ -388,7 +388,6 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('gelatin');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -433,7 +432,6 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('gelatin');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
