@@ -108,7 +108,7 @@ app.get('/', (req, res) => {
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let hasTouchedRight = false; // Track if right dot was touched
+    let hasTouchedRight = false;
 
     connectButton.addEventListener('click', () => {
       if (roomInput.value === '1') {
@@ -150,6 +150,7 @@ app.get('/', (req, res) => {
     function createParticle(x, y, side) {
       if (lastCollision === side) return;
       lastCollision = side;
+      console.log(`Creating particles at ${side} dot, x: ${x}, y: ${y}`);
       const particleCount = 5;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -181,6 +182,7 @@ app.get('/', (req, res) => {
       if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
+        console.log('Mouse down, sending startVibrate with intensity:', intensity);
         ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
@@ -202,16 +204,20 @@ app.get('/', (req, res) => {
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
+        console.log(`Mouse move: currentPosition=${currentPosition}, maxPosition=${maxPosition}, hasTouchedRight=${hasTouchedRight}`);
         if (room) {
-          if (currentPosition >= maxPosition) {
-            hasTouchedRight = true; // Mark right dot as touched
-          } else if (currentPosition <= 0 && hasTouchedRight) {
+          if (currentPosition >= maxPosition - 5) { // Relaxed threshold
+            hasTouchedRight = true;
+            console.log('Touched right dot');
+          } else if (currentPosition <= 5 && hasTouchedRight) { // Relaxed threshold
             const intensity = intensitySlider.value;
+            console.log('Touched left dot after right, sending startVibrate');
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            hasTouchedRight = false; // Reset after triggering
+            hasTouchedRight = false;
           } else {
+            console.log('Stopping vibration, in middle or no right touch');
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
             lastCollision = null;
@@ -225,13 +231,15 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomInput.value;
         if (room) {
+          console.log('Mouse up, sending stopVibrate');
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
-        hasTouchedRight = false; // Reset on release
+        hasTouchedRight = false;
+        console.log('Reset hasTouchedRight on mouse up');
       }
     });
 
@@ -243,6 +251,7 @@ app.get('/', (req, res) => {
       if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
+        console.log('Touch start, sending startVibrate with intensity:', intensity);
         ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
@@ -264,16 +273,20 @@ app.get('/', (req, res) => {
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
+        console.log(`Touch move: currentPosition=${currentPosition}, maxPosition=${maxPosition}, hasTouchedRight=${hasTouchedRight}`);
         if (room) {
-          if (currentPosition >= maxPosition) {
-            hasTouchedRight = true; // Mark right dot as touched
-          } else if (currentPosition <= 0 && hasTouchedRight) {
+          if (currentPosition >= maxPosition - 5) { // Relaxed threshold
+            hasTouchedRight = true;
+            console.log('Touched right dot');
+          } else if (currentPosition <= 5 && hasTouchedRight) { // Relaxed threshold
             const intensity = intensitySlider.value;
+            console.log('Touched left dot after right, sending startVibrate');
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            hasTouchedRight = false; // Reset after triggering
+            hasTouchedRight = false;
           } else {
+            console.log('Stopping vibration, in middle or no right touch');
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
             lastCollision = null;
@@ -287,13 +300,15 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomInput.value;
         if (room) {
+          console.log('Touch end, sending stopVibrate');
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
         isDragging = false;
         lastCollision = null;
-        hasTouchedRight = false; // Reset on release
+        hasTouchedRight = false;
+        console.log('Reset hasTouchedRight on touch end');
       }
     });
   </script>
