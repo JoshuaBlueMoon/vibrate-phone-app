@@ -31,8 +31,6 @@ app.get('/', (req, res) => {
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
     <div class="pulse-symbol top" style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     <div class="pulse-symbol bottom" style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
-    <div class="glint top" style="position: absolute; top: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(-10deg); z-index: 2;"></div>
-    <div class="glint bottom" style="position: absolute; bottom: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(10deg); z-index: 2;"></div>
   </div>
   <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
     <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
@@ -149,22 +147,6 @@ app.get('/', (req, res) => {
     #vibrateButton img:hover {
       transform: scale(1.1);
     }
-    #sliderTrack::before, #sliderTrack::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 24px;
-      z-index: 2;
-    }
-    #sliderTrack::before {
-      top: 0;
-      background: linear-gradient(to bottom, rgba(255, 51, 51, 0.5), transparent);
-    }
-    #sliderTrack::after {
-      bottom: 0;
-      background: linear-gradient(to top, rgba(255, 51, 51, 0.5), transparent);
-    }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -249,16 +231,6 @@ app.get('/', (req, res) => {
         bottom: -18px;
         font-size: 14px;
       }
-      .glint.top {
-        top: 6px;
-        width: 50px;
-        height: 12px;
-      }
-      .glint.bottom {
-        bottom: 6px;
-        width: 50px;
-        height: 12px;
-      }
     }
   </style>
   <script>
@@ -279,6 +251,8 @@ app.get('/', (req, res) => {
     let lastCollision = null;
     let lastGelatinTime = 0;
     let lastWaveBurstTime = 0;
+    let lastHeartGelatinTime = 0;
+    let lastTrackGelatinTime = 0;
 
     // Score reduction: 2 points per second
     setInterval(() => {
@@ -389,12 +363,53 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
+        const currentTime = Date.now();
+        if (currentTime - lastHeartGelatinTime >= 500) {
+          vibrateButton.classList.add('gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          lastHeartGelatinTime = currentTime;
+        }
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
       lastPosition = vibrateButton.offsetTop;
+    });
+
+    vibrateButton.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      isDragging = true;
+      const trackRect = sliderTrack.getBoundingClientRect();
+      startY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
+      const room = document.getElementById('room').value;
+      if (room) {
+        vibrateButton.style.backgroundColor = '#1e40af';
+        vibrateButton.classList.add('pulsing');
+        const currentTime = Date.now();
+        if (currentTime - lastHeartGelatinTime >= 500) {
+          vibrateButton.classList.add('gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          lastHeartGelatinTime = currentTime;
+        }
+        const intensity = parseInt(intensitySlider.value);
+        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+        sliderTrack.classList.add('pulsing', 'flashing');
+        setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+      }
+      lastPosition = vibrateButton.offsetTop;
+    });
+
+    sliderTrack.addEventListener('click', (e) => {
+      // Only trigger wobble if not clicking on vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+        const currentTime = Date.now();
+        if (currentTime - lastTrackGelatinTime >= 500) {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          lastTrackGelatinTime = currentTime;
+        }
+      }
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -438,23 +453,6 @@ app.get('/', (req, res) => {
         isDragging = false;
         lastCollision = null;
       }
-    });
-
-    vibrateButton.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      isDragging = true;
-      const trackRect = sliderTrack.getBoundingClientRect();
-      startY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
-      const room = document.getElementById('room').value;
-      if (room) {
-        vibrateButton.style.backgroundColor = '#1e40af';
-        vibrateButton.classList.add('pulsing');
-        const intensity = parseInt(intensitySlider.value);
-        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-        sliderTrack.classList.add('pulsing', 'flashing');
-        setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
-      }
-      lastPosition = vibrateButton.offsetTop;
     });
 
     document.addEventListener('touchmove', (e) => {
