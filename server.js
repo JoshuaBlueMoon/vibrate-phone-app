@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
+  <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
     <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
@@ -83,12 +84,12 @@ app.get('/', (req, res) => {
       75% { transform: scale(0.95, 1.05); }
       100% { transform: scale(1, 1); }
     }
-    @keyframes local-gelatin {
-      0% { transform: scale(1, 1); }
-      25% { transform: scale(0.9, 1.1); }
-      50% { transform: scale(1.1, 0.9); }
-      75% { transform: scale(0.95, 1.05); }
-      100% { transform: scale(1, 1); }
+    @keyframes bottom-gelatin {
+      0% { transform: scaleY(1); }
+      25% { transform: scaleY(1.1); }
+      50% { transform: scaleY(0.95); }
+      75% { transform: scaleY(1.05); }
+      100% { transform: scaleY(1); }
     }
     @keyframes redPulse {
       0% { background-color: rgba(0, 0, 0, 0); }
@@ -98,6 +99,15 @@ app.get('/', (req, res) => {
     @keyframes waveBurst {
       0% { transform: scale(1); opacity: 0.5; }
       100% { transform: scale(2); opacity: 0; }
+    }
+    @keyframes top-asset-move {
+      0% { top: 0; opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+    @keyframes glowPulse {
+      0% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.2); }
+      100% { opacity: 0.3; transform: scale(1); }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -124,19 +134,9 @@ app.get('/', (req, res) => {
     .gelatin {
       animation: gelatin 0.5s ease-in-out;
     }
-    .local-gelatin::before {
-      content: '';
-      position: absolute;
-      width: 100px;
-      height: 60px;
-      background: url('/images/custom-bar.png') no-repeat center center;
-      background-size: cover;
-      top: -20px; /* Center on heart */
-      left: 0;
-      z-index: 2;
-      clip-path: inset(0 0 0 0); /* Adjust to show only a section */
-      animation: local-gelatin 0.5s ease-in-out;
-      transform-origin: center;
+    .bottom-gelatin {
+      animation: bottom-gelatin 0.5s ease-in-out;
+      transform-origin: bottom;
     }
     .red-pulsing::before {
       content: '';
@@ -162,6 +162,25 @@ app.get('/', (req, res) => {
       pointer-events: none;
       animation: waveBurst 1s ease-out forwards;
       z-index: 1;
+    }
+    .top-asset {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      animation: top-asset-move 5s linear forwards;
+    }
+    .glow-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: url('/images/glow-dot.png') no-repeat center center;
+      background-size: cover;
+      opacity: 0.3;
+      animation: glowPulse 3s ease-in-out infinite;
+      pointer-events: none;
     }
     .toggle-button {
       background-color: #2b4d9e;
@@ -260,6 +279,10 @@ app.get('/', (req, res) => {
         bottom: -18px;
         font-size: 14px;
       }
+      .glow-dot {
+        width: 5px;
+        height: 5px;
+      }
     }
   </style>
   <script>
@@ -274,6 +297,7 @@ app.get('/', (req, res) => {
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
     const scoreElement = document.getElementById('score');
+    const glowDotsContainer = document.getElementById('glowDotsContainer');
     let isDragging = false;
     let startY = 0;
     let lastPosition = 0;
@@ -282,15 +306,48 @@ app.get('/', (req, res) => {
     let lastWaveBurstTime = 0;
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
-    let lastLocalGelatinTime = 0;
+    let lastBottomGelatinTime = 0;
+    let topAssetInterval = null;
 
-    // Score reduction: 2 points per second
+    // Create glowing dots
+    function createGlowDots() {
+      const dotCount = 20; // Number of dots
+      for (let i = 0; i < dotCount; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'glow-dot';
+        const size = Math.random() * 3 + 3; // Random size between 3-6px
+        dot.style.width = size + 'px';
+        dot.style.height = size + 'px';
+        dot.style.left = Math.random() * 100 + '%';
+        dot.style.top = Math.random() * 100 + '%';
+        dot.style.animationDelay = Math.random() * 3 + 's';
+        glowDotsContainer.appendChild(dot);
+      }
+    }
+    createGlowDots();
+
+    // Create top asset
+    function createTopAsset() {
+      const asset = document.createElement('div');
+      asset.className = 'top-asset';
+      asset.innerHTML = '<img src="/images/top-asset.png" alt="Top Asset" style="width: 20px; height: 20px;">';
+      const randomX = Math.random() * (100 - 20); // Random position within 100px width, accounting for asset width
+      asset.style.left = randomX + 'px';
+      sliderTrack.appendChild(asset);
+      setTimeout(() => { asset.remove(); }, 5000); // Remove after animation
+    }
+
+    // Score reduction and asset spawning
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
         scoreElement.textContent = score;
         if (score < 60 && sliderTrack.classList.contains('red-pulsing')) {
           sliderTrack.classList.remove('red-pulsing', 'gelatin');
+          if (topAssetInterval) {
+            clearInterval(topAssetInterval);
+            topAssetInterval = null;
+          }
         }
       }
     }, 1000);
@@ -354,6 +411,12 @@ app.get('/', (req, res) => {
       scoreElement.textContent = score;
       if (score >= 60) {
         sliderTrack.classList.add('red-pulsing', 'gelatin');
+        if (!topAssetInterval) {
+          createTopAsset(); // Initial asset spawn
+          topAssetInterval = setInterval(() => {
+            if (score >= 60) createTopAsset();
+          }, 10000); // Spawn every 10 seconds
+        }
       }
       const particleCount = 3;
       const trackRect = sliderTrack.getBoundingClientRect();
@@ -466,12 +529,12 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastLocalGelatinTime >= 500) {
-          vibrateButton.classList.add('local-gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('local-gelatin'); }, 500);
-          lastLocalGelatinTime = currentTime;
+        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
+          sliderTrack.classList.add('bottom-gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+          lastBottomGelatinTime = currentTime;
         } else if (currentPosition < bottomThreshold) {
-          vibrateButton.classList.remove('local-gelatin');
+          sliderTrack.classList.remove('bottom-gelatin');
         }
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
@@ -495,8 +558,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
-          vibrateButton.classList.remove('pulsing', 'local-gelatin');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+          vibrateButton.classList.remove('pulsing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
         }
         isDragging = false;
         lastCollision = null;
@@ -518,12 +581,12 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastLocalGelatinTime >= 500) {
-          vibrateButton.classList.add('local-gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('local-gelatin'); }, 500);
-          lastLocalGelatinTime = currentTime;
+        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
+          sliderTrack.classList.add('bottom-gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+          lastBottomGelatinTime = currentTime;
         } else if (currentPosition < bottomThreshold) {
-          vibrateButton.classList.remove('local-gelatin');
+          sliderTrack.classList.remove('bottom-gelatin');
         }
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
@@ -547,8 +610,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
-          vibrateButton.classList.remove('pulsing', 'local-gelatin');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+          vibrateButton.classList.remove('pulsing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
         }
         isDragging = false;
         lastCollision = null;
