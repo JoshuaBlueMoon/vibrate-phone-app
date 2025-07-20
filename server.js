@@ -20,18 +20,14 @@ app.get('/', (req, res) => {
       <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
       <br>
       <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-        <div style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
+        <div class="red-circle" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
         <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
-        <div style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
+        <div class="red-circle" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
       </div>
+      <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
       <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
       <style>
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.2); }
-          100% { transform: scale(1); }
-        }
-        @keyframes senderPulse {
+        @keyframes intensePulse {
           0% { transform: scale(1); }
           50% { transform: scale(1.3); }
           100% { transform: scale(1); }
@@ -41,13 +37,8 @@ app.get('/', (req, res) => {
           20% { background-color: #ff0000; }
           100% { background-color: #4b5e97; }
         }
----
-
-System: .pulsing {
-          animation: pulse 0.5s ease-in-out;
-        }
-        .senderPulsing {
-          animation: senderPulse 0.4s ease-in-out infinite;
+        .intense-pulsing {
+          animation: intensePulse 0.3s ease-in-out infinite;
         }
         .flashing {
           animation: flash 0.3s ease-out;
@@ -88,10 +79,54 @@ System: .pulsing {
         const intensitySlider = document.getElementById('intensity');
         const sliderTrack = document.getElementById('sliderTrack');
         const vibrateButton = document.getElementById('vibrateButton');
+        const redCircles = document.getElementsByClassName('red-circle');
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
         let isDragging = false;
         let startX = 0;
         let lastPosition = 0;
-        let pulseInterval = null;
+        let particles = [];
+
+        // Set up canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Particle class for purple hearts
+        class Particle {
+          constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = 20;
+            this.vx = (Math.random() - 0.5) * 4;
+            this.vy = (Math.random() - 0.5) * 4;
+            this.life = 1;
+            this.decay = 0.02;
+          }
+
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+          }
+
+          draw() {
+            ctx.font = \`\${this.size}px Arial\`;
+            ctx.fillStyle = \`rgba(128, 0, 128, \${this.life})\`;
+            ctx.fillText('💜', this.x, this.y);
+          }
+        }
+
+        // Animation loop for particles
+        function animateParticles() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles = particles.filter(p => p.life > 0);
+          particles.forEach(p => {
+            p.update();
+            p.draw();
+          });
+          requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
 
         intensitySlider.oninput = () => {
           intensityDisplay.textContent = intensitySlider.value;
@@ -114,53 +149,45 @@ System: .pulsing {
               }
               navigator.vibrate(pattern);
               console.log('Vibrate started with intensity:', intensity);
-              sliderTrack.classList.add('pulsing', 'flashing');
-              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
-            } else if (data.command === 'stopVibrate') {
-              navigator.vibrate(0);
-              sliderTrack.classList.remove('pulsing', 'flashing');
+              sliderTrack.classList.add('intense-pulsing', 'flashing');
+              setTimeout(() => sliderTrack.classList.remove('intense-pulsing', 'flashing'), 500);
             }
           }
         };
+
+        function checkRedCircleCollision() {
+          const trackRect = sliderTrack.getBoundingClientRect();
+          const buttonRect = vibrateButton.getBoundingClientRect();
+          let collision = false;
+          Array.from(redCircles).forEach(circle => {
+            const circleRect = circle.getBoundingClientRect();
+            const distanceX = (buttonRect.left + buttonRect.width / 2) - (circleRect.left + circleRect.width / 2);
+            if (Math.abs(distanceX) < (buttonRect.width / 2 + circleRect.width / 2)) {
+              collision = true;
+              // Add particles at circle position
+              for (let i = 0; i < 3; i++) {
+                particles.push(new Particle(circleRect.left + circleRect.width / 2, circleRect.top + circleRect.height / 2));
+              }
+            }
+          });
+          return collision;
+        }
 
         // Drag handling
-        const startVibration = () => {
-          const room = document.getElementById('room').value;
-          if (room) {
-            vibrateButton.style.backgroundColor = '#1e40af';
-            vibrateButton.classList.add('pulsing');
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('senderPulsing', 'flashing');
-            // Continuous pulsing for sender while at edge
-            if (!pulseInterval) {
-              pulseInterval = setInterval(() => {
-                sliderTrack.classList.add('flashing');
-                setTimeout(() => sliderTrack.classList.remove('flashing'), 300);
-              }, 400);
-            }
-          }
-        };
-
-        const stopVibration = () => {
-          const room = document.getElementById('room').value;
-          if (room) {
-            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            vibrateButton.style.backgroundColor = '#3b82f6';
-            vibrateButton.classList.remove('pulsing');
-            sliderTrack.classList.remove('senderPulsing', 'flashing');
-            if (pulseInterval) {
-              clearInterval(pulseInterval);
-              pulseInterval = null;
-            }
-          }
-        };
-
         vibrateButton.addEventListener('mousedown', (e) => {
           e.preventDefault();
           isDragging = true;
           startX = e.clientX - vibrateButton.offsetLeft;
-          startVibration();
+          const room = document.getElementById('room').value;
+          if (room) {
+            vibrateButton.style.backgroundColor = '#1e40af';
+            vibrateButton.classList.add('intense-pulsing');
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            if (checkRedCircleCollision()) {
+              sliderTrack.classList.add('intense-pulsing', 'flashing');
+            }
+          }
           lastPosition = vibrateButton.offsetLeft;
         });
 
@@ -181,10 +208,13 @@ System: .pulsing {
             const currentPosition = vibrateButton.offsetLeft;
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
-              if (currentPosition <= 0 || currentPosition >= maxPosition) {
-                if (!pulseInterval) startVibration();
+              if (checkRedCircleCollision()) {
+                const intensity = intensitySlider.value;
+                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                sliderTrack.classList.add('intense-pulsing', 'flashing');
               } else {
-                stopVibration();
+                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                sliderTrack.classList.remove('intense-pulsing', 'flashing');
               }
             }
             lastPosition = currentPosition;
@@ -193,17 +223,32 @@ System: .pulsing {
 
         document.addEventListener('mouseup', () => {
           if (isDragging) {
-            stopVibration();
+            const room = document.getElementById('room').value;
+            if (room) {
+  ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+              vibrateButton.style.backgroundColor = '#3b82f6';
+              vibrateButton.classList.remove('intense-pulsing');
+              sliderTrack.classList.remove('intense-pulsing', 'flashing');
+            }
             isDragging = false;
           }
         });
 
-        // For touch devices
+        // For touch devices (phones)
         vibrateButton.addEventListener('touchstart', (e) => {
           e.preventDefault();
           isDragging = true;
           startX = e.touches[0].clientX - vibrateButton.offsetLeft;
-          startVibration();
+          const room = document.getElementById('room').value;
+          if (room) {
+            vibrateButton.style.backgroundColor = '#1e40af';
+            vibrateButton.classList.add('intense-pulsing');
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            if (checkRedCircleCollision()) {
+              sliderTrack.classList.add('intense-pulsing', 'flashing');
+            }
+          }
           lastPosition = vibrateButton.offsetLeft;
         });
 
@@ -221,13 +266,17 @@ System: .pulsing {
             vibrateButton.style.top = newY + 'px';
 
             const room = document.getElementById('room').value;
-            const currentPosition = vibrateButton.offsetLeft;
-            const maxPosition = trackRect.width - vibrateButton.offsetWidth;
+            const currentPosition = vibrateButton.offsetLeft отвеч
+
+System: const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
-              if (currentPosition <= 0 || currentPosition >= maxPosition) {
-                if (!pulseInterval) startVibration();
+              if (checkRedCircleCollision()) {
+                const intensity = intensitySlider.value;
+                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                sliderTrack.classList.add('intense-pulsing', 'flashing');
               } else {
-                stopVibration();
+                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                sliderTrack.classList.remove('intense-pulsing', 'flashing');
               }
             }
             lastPosition = currentPosition;
@@ -236,7 +285,13 @@ System: .pulsing {
 
         document.addEventListener('touchend', () => {
           if (isDragging) {
-            stopVibration();
+            const room = document.getElementById('room').value;
+            if (room) {
+              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+              vibrateButton.style.backgroundColor = '#3b82f6';
+              vibrateButton.classList.remove('intense-pulsing');
+              sliderTrack.classList.remove('intense-pulsing', 'flashing');
+            }
             isDragging = false;
           }
         });
