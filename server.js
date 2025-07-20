@@ -13,21 +13,22 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <input id="room" type="text" placeholder="Code" style="width: 80px; height: 40px; font-size: 16px; padding: 8px; margin: 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+  <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; margin: 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
   <br>
   <div id="intensityContainer" style="width: 80%; max-width: 250px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
-    <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #60a5fa;">
+    <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
   </div>
   <label for="intensity"><span id="intensityValue" style="color: #60a5fa;">3</span></label>
   <br>
-  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+  <div id="scoreDisplay" style="font-size: 16px; color: #60a5fa; margin: 10px;">Score: 0</div>
+  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 10px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
-    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 2;">💙</div>
+    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 2;">💙</div>
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
     <div class="pulse-symbol left" style="position: absolute; top: -30px; left: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
     <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
-    <div class="glint left" style="position: absolute; left: 5px; top: 10px; width: 20px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent); z-index: 1;"></div>
-    <div class="glint right" style="position: absolute; right: 5px; top: 10px; width: 20px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent); z-index: 1;"></div>
+    <div class="glint left" style="position: absolute; left: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(-10deg); z-index: 1;"></div>
+    <div class="glint right" style="position: absolute; right: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(10deg); z-index: 1;"></div>
   </div>
   <style>
     @keyframes pulse {
@@ -54,6 +55,26 @@ app.get('/', (req, res) => {
       50% { transform: scaleY(0.9); }
       100% { transform: scaleY(1); }
     }
+    @keyframes redPulse {
+      0% { background-color: #1e1b4b; }
+      50% { background-color: #ff3333; }
+      100% { background-color: #1e1b4b; }
+    }
+    @keyframes fastRedPulse {
+      0% { background-color: #1e1b4b; }
+      50% { background-color: #ff3333; }
+      100% { background-color: #1e1b4b; }
+    }
+    @keyframes wiggle {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes droplet {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(0, 100px) scale(0.5); }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -66,12 +87,28 @@ app.get('/', (req, res) => {
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
+    .red-pulsing {
+      animation: redPulse 2s ease-in-out infinite;
+    }
+    .fast-red-pulsing {
+      animation: fastRedPulse 1s ease-in-out infinite;
+    }
+    .wiggling {
+      animation: wiggle 0.5s ease-in-out infinite;
+    }
     .particle {
       position: absolute;
       font-size: 20px;
       color: purple;
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
+    }
+    .droplet {
+      position: absolute;
+      font-size: 14px;
+      color: #60a5fa;
+      pointer-events: none;
+      animation: droplet 1s ease-out forwards;
     }
     #sliderTrack::before, #sliderTrack::after {
       content: '';
@@ -94,26 +131,28 @@ app.get('/', (req, res) => {
       appearance: none;
       width: 18px;
       height: 18px;
-      background: #60a5fa;
+      background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
       margin-top: -5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
     input[type="range"]::-moz-range-thumb {
       width: 18px;
       height: 18px;
-      background: #60a5fa;
+      background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
       border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
     input[type="range"]::-webkit-slider-runnable-track {
-      background: transparent;
+      background: #1e3a8a;
       height: 6px;
       border-radius: 3px;
     }
     input[type="range"]::-moz-range-track {
-      background: transparent;
+      background: #1e3a8a;
       height: 6px;
       border-radius: 3px;
     }
@@ -129,8 +168,8 @@ app.get('/', (req, res) => {
         max-width: 150px;
       }
       #room {
-        width: 80px;
-        height: 40px;
+        width: 40px;
+        height: 20px;
       }
       label {
         margin-left: 10px;
@@ -161,10 +200,12 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
+    const scoreDisplay = document.getElementById('scoreDisplay');
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
+    let score = 0;
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -219,6 +260,39 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
+    function createDroplet(x, y) {
+      const droplet = document.createElement('div');
+      droplet.className = 'droplet';
+      droplet.textContent = '💧';
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      const bodyX = x + trackRect.left - bodyRect.left;
+      const bodyY = y + trackRect.top - bodyRect.top;
+      droplet.style.left = bodyX + 'px';
+      droplet.style.top = bodyY + 'px';
+      document.body.appendChild(droplet);
+      setTimeout(() => droplet.remove(), 1000);
+    }
+
+    function updateScoreEffects() {
+      sliderTrack.classList.remove('red-pulsing', 'fast-red-pulsing', 'wiggling');
+      if (score >= 90) {
+        sliderTrack.classList.add('fast-red-pulsing', 'wiggling');
+      } else if (score >= 60) {
+        sliderTrack.classList.add('fast-red-pulsing');
+      } else if (score >= 30) {
+        sliderTrack.classList.add('red-pulsing');
+      }
+    }
+
+    setInterval(() => {
+      if (score > 0) {
+        score = Math.max(0, score - 2);
+        scoreDisplay.textContent = `Score: ${score}`;
+        updateScoreEffects();
+      }
+    }, 1000);
+
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
@@ -227,7 +301,6 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('pinching');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -253,19 +326,31 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
+          if (currentPosition <= 0 && lastPosition > 0) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            updateScoreEffects();
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
+            if (score >= 90) {
+              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
+            }
+          } else if (currentPosition >= maxPosition && lastPosition < maxPosition) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            updateScoreEffects();
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            if (score >= 90) {
+              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'flashing');
+            sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
         }
@@ -295,7 +380,6 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        sliderTrack.classList.add('pinching');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -321,19 +405,31 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
+          if (currentPosition <= 0 && lastPosition > 0) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            updateScoreEffects();
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
+            if (score >= 90) {
+              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
+            }
+          } else if (currentPosition >= maxPosition && lastPosition < maxPosition) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            updateScoreEffects();
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
+            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            if (score >= 90) {
+              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'flashing');
+            sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
         }
