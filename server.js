@@ -12,14 +12,16 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; margin: 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
-  <br>
+<body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; max-width: 414px; margin: 0 auto;">
+  <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; margin: 20px 10px 40px 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+  <div id="toggleContainer" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
+    <div id="pulseToggle" class="toggle-button toggled" style="width: 40px; height: 40px; background-color: #2b4d9e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: 2px solid white;">💓</div>
+    <div id="waveToggle" class="toggle-button" style="width: 40px; height: 40px; background-color: #2b4d9e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: 2px solid transparent;">〰️</div>
+  </div>
   <div id="intensityContainer" style="width: 80%; max-width: 150px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
   </div>
   <label for="intensity"><span id="intensityValue" style="color: #60a5fa;">3</span></label>
-  <br>
   <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
     <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
@@ -82,6 +84,9 @@ app.get('/', (req, res) => {
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
     }
+    .toggled {
+      border: 2px solid white !important;
+    }
     #sliderTrack::before, #sliderTrack::after {
       content: '';
       position: absolute;
@@ -135,16 +140,20 @@ app.get('/', (req, res) => {
         align-items: center;
         padding: 10px;
       }
-      #room, #intensityContainer {
-        width: 40%;
-        max-width: 100px;
-      }
       #room {
         width: 40px;
         height: 20px;
+        margin: 0 10px;
       }
-      label {
-        margin-left: 10px;
+      #toggleContainer {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 0;
+        margin-right: 10px;
+      }
+      #intensityContainer {
+        width: 40%;
+        max-width: 100px;
       }
       #sliderTrack {
         width: 60%;
@@ -168,11 +177,14 @@ app.get('/', (req, res) => {
   <script>
     const ws = new WebSocket('wss://' + window.location.host);
     let isVibrating = false;
+    let vibrationMode = 'pulse'; // Default mode
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
     const distortionLayer = document.getElementById('distortionLayer');
+    const pulseToggle = document.getElementById('pulseToggle');
+    const waveToggle = document.getElementById('waveToggle');
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
@@ -182,25 +194,41 @@ app.get('/', (req, res) => {
       intensityDisplay.textContent = intensitySlider.value;
     };
 
+    pulseToggle.addEventListener('click', () => {
+      vibrationMode = 'pulse';
+      pulseToggle.classList.add('toggled');
+      waveToggle.classList.remove('toggled');
+    });
+
+    waveToggle.addEventListener('click', () => {
+      vibrationMode = 'wave';
+      waveToggle.classList.add('toggled');
+      pulseToggle.classList.remove('toggled');
+    });
+
     ws.onopen = () => console.log('Connected to server');
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.room === document.getElementById('room').value) {
         if (data.command === 'startVibrate' && navigator.vibrate) {
           const intensity = data.intensity || 3;
-          let pattern;
-          switch (intensity) {
-            case 1: pattern = [50, 200]; break;
-            case 2: pattern = [50, 100]; break;
-            case 3: pattern = [50, 50]; break;
-            case 4: pattern = [100, 50]; break;
-            case 5: pattern = [200]; break;
-            default: pattern = [50, 50];
+          let pattern = [1000]; // Default for wave mode
+          if (data.mode === 'pulse') {
+            switch (intensity) {
+              case 1: pattern = [50, 200]; break;
+              case 2: pattern = [50, 100]; break;
+              case 3: pattern = [50, 50]; break;
+              case 4: pattern = [100, 50]; break;
+              case 5: pattern = [200]; break;
+              default: pattern = [50, 50];
+            }
           }
           navigator.vibrate(pattern);
-          console.log('Vibrate started with intensity:', intensity);
+          console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
           sliderTrack.classList.add('pulsing', 'flashing');
           setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+        } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+          navigator.vibrate(0);
         }
       }
     };
@@ -240,8 +268,22 @@ app.get('/', (req, res) => {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
         distortionLayer.classList.add('squeezing');
-        const intensity = intensitySlider.value;
-        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+        const intensity = parseInt(intensitySlider.value);
+        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+        if (vibrationMode === 'wave' && navigator.vibrate) {
+          navigator.vibrate([1000]);
+        } else if (vibrationMode === 'pulse' && navigator.vibrate) {
+          let pattern;
+          switch (intensity) {
+            case 1: pattern = [50, 200]; break;
+            case 2: pattern = [50, 100]; break;
+            case 3: pattern = [50, 50]; break;
+            case 4: pattern = [100, 50]; break;
+            case 5: pattern = [200]; break;
+            default: pattern = [50, 50];
+          }
+          navigator.vibrate(pattern);
+        }
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
@@ -266,18 +308,28 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+          if (currentPosition <= 0 || currentPosition >= maxPosition) {
+            const intensity = parseInt(intensitySlider.value);
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, currentPosition <= 0 ? 'left' : 'right');
+            if (vibrationMode === 'wave' && navigator.vibrate) {
+              navigator.vibrate([1000]);
+            } else if (vibrationMode === 'pulse' && navigator.vibrate) {
+              let pattern;
+              switch (intensity) {
+                case 1: pattern = [50, 200]; break;
+                case 2: pattern = [50, 100]; break;
+                case 3: pattern = [50, 50]; break;
+                case 4: pattern = [100, 50]; break;
+                case 5: pattern = [200]; break;
+                default: pattern = [50, 50];
+              }
+              navigator.vibrate(pattern);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            if (navigator.vibrate) navigator.vibrate(0);
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
@@ -291,6 +343,7 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          if (navigator.vibrate) navigator.vibrate(0);
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           distortionLayer.classList.remove('squeezing');
@@ -310,8 +363,22 @@ app.get('/', (req, res) => {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
         distortionLayer.classList.add('squeezing');
-        const intensity = intensitySlider.value;
-        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+        const intensity = parseInt(intensitySlider.value);
+        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+        if (vibrationMode === 'wave' && navigator.vibrate) {
+          navigator.vibrate([1000]);
+        } else if (vibrationMode === 'pulse' && navigator.vibrate) {
+          let pattern;
+          switch (intensity) {
+            case 1: pattern = [50, 200]; break;
+            case 2: pattern = [50, 100]; break;
+            case 3: pattern = [50, 50]; break;
+            case 4: pattern = [100, 50]; break;
+            case 5: pattern = [200]; break;
+            default: pattern = [50, 50];
+          }
+          navigator.vibrate(pattern);
+        }
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
@@ -336,18 +403,28 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+          if (currentPosition <= 0 || currentPosition >= maxPosition) {
+            const intensity = parseInt(intensitySlider.value);
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, currentPosition <= 0 ? 'left' : 'right');
+            if (vibrationMode === 'wave' && navigator.vibrate) {
+              navigator.vibrate([1000]);
+            } else if (vibrationMode === 'pulse' && navigator.vibrate) {
+              let pattern;
+              switch (intensity) {
+                case 1: pattern = [50, 200]; break;
+                case 2: pattern = [50, 100]; break;
+                case 3: pattern = [50, 50]; break;
+                case 4: pattern = [100, 50]; break;
+                case 5: pattern = [200]; break;
+                default: pattern = [50, 50];
+              }
+              navigator.vibrate(pattern);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            if (navigator.vibrate) navigator.vibrate(0);
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
@@ -361,6 +438,7 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          if (navigator.vibrate) navigator.vibrate(0);
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           distortionLayer.classList.remove('squeezing');
