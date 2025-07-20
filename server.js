@@ -5,13 +5,6 @@ const server = require('http').createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // Serve the web page
-const express = require('express');
-const WebSocket = require('ws');
-const app = express();
-const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Serve the web page
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -238,29 +231,6 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
-
-// WebSocket connection
-let clients = [];
-wss.on('connection', (ws) => {
-  clients.push(ws);
-  ws.on('close', () => {
-    clients = clients.filter(client => client !== ws);
-  });
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      clients.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
-    } catch (e) {
-      console.error('Error parsing message:', e);
-    }
-  });
-});
-
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
 
 // WebSocket connection
 let clients = [];
