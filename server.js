@@ -25,7 +25,6 @@ app.get('/', (req, res) => {
     <div class="pulse-symbol bottom" style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     <div class="glint top" style="position: absolute; top: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(-10deg); z-index: 2;"></div>
     <div class="glint bottom" style="position: absolute; bottom: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(10deg); z-index: 2;"></div>
-    <div id="distortionLayer" style="position: absolute; left: 0; width: 100px; height: 52px; background-color: #1e40af; border-radius: 50px; z-index: 1; opacity: 0.3;"></div>
   </div>
   <div id="bottomControls" style="display: flex; flex-direction: column; align-items: center; margin-top: 30px;">
     <div id="toggleContainer" style="display: flex; justify-content: center; gap: 10px; margin: 5px;">
@@ -223,7 +222,6 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
-    const distortionLayer = document.getElementById('distortionLayer');
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
     const scoreElement = document.getElementById('score');
@@ -231,6 +229,17 @@ app.get('/', (req, res) => {
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
+
+    // Score reduction: 2 points per second
+    setInterval(() => {
+      if (score > 0) {
+        score = Math.max(0, score - 2);
+        scoreElement.textContent = score;
+        if (score < 60 && sliderTrack.classList.contains('red-pulsing')) {
+          sliderTrack.classList.remove('red-pulsing');
+        }
+      }
+    }, 1000);
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -283,7 +292,7 @@ app.get('/', (req, res) => {
       if (score >= 60) {
         sliderTrack.classList.add('red-pulsing');
       }
-      const particleCount = 5;
+      const particleCount = 3; // Reduced from 5 to 3
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const bodyX = x + trackRect.left - bodyRect.left;
@@ -315,7 +324,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        distortionLayer.classList.add('squeezing');
+        sliderTrack.classList.add('squeezing');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -333,7 +342,6 @@ app.get('/', (req, res) => {
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = '24px';
         vibrateButton.style.top = newY + 'px';
-        distortionLayer.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
@@ -361,7 +369,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          distortionLayer.classList.remove('squeezing');
+          sliderTrack.classList.remove('squeezing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
@@ -378,7 +386,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
-        distortionLayer.classList.add('squeezing');
+        sliderTrack.classList.add('squeezing');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -396,7 +404,6 @@ app.get('/', (req, res) => {
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = '24px';
         vibrateButton.style.top = newY + 'px';
-        distortionLayer.style.top = newY + 'px';
 
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
@@ -424,7 +431,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          distortionLayer.classList.remove('squeezing');
+          sliderTrack.classList.remove('squeezing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
