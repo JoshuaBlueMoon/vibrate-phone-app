@@ -157,7 +157,9 @@ app.get('/', (req, res) => {
               for (let i = 0; i < 5; i++) {
                 particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
               }
-              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+              setTimeout(() => {
+                sliderTrack.classList.remove('pulsing', 'flashing');
+              }, 500); // Match pulse duration
             }
           }
         };
@@ -177,7 +179,9 @@ app.get('/', (req, res) => {
             for (let i = 0; i < 5; i++) {
               particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
             }
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+            setTimeout(() => {
+              sliderTrack.classList.remove('pulsing', 'flashing');
+            }, 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -206,7 +210,9 @@ app.get('/', (req, res) => {
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
-                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+                setTimeout(() => {
+                  sliderTrack.classList.remove('pulsing', 'flashing');
+                }, 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -242,7 +248,9 @@ app.get('/', (req, res) => {
             for (let i = 0; i < 5; i++) {
               particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
             }
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+            setTimeout(() => {
+              sliderTrack.classList.remove('pulsing', 'flashing');
+            }, 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -271,7 +279,9 @@ app.get('/', (req, res) => {
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
-                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+                setTimeout(() => {
+                  sliderTrack.classList.remove('pulsing', 'flashing');
+                }, 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -296,29 +306,6 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
-
-// WebSocket connection
-let clients = [];
-wss.on('connection', (ws) => {
-  clients.push(ws);
-  ws.on('close', () => {
-    clients = clients.filter(client => client !== ws);
-  });
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      clients.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
-    } catch (e) {
-      console.error('Error parsing message:', e);
-    }
-  });
-});
-
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
 
 // WebSocket connection
 let clients = [];
