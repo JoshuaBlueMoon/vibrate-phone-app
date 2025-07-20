@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="background: radial-gradient(circle at 20% 30%, rgba(26, 42, 68, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(46, 26, 71, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(26, 42, 68, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(46, 26, 71, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #1a2a44, #2e1a47); color: white; font-family: Arial; margin: 0; padding: 10px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
+<body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0; padding: 10px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">Score: <span id="score">0</span></div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 10px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
@@ -238,7 +238,7 @@ app.get('/', (req, res) => {
         score = Math.max(0, score - 2);
         scoreElement.textContent = score;
         if (score < 60 && sliderTrack.classList.contains('red-pulsing')) {
-          sliderTrack.classList.remove('red-pulsing');
+          sliderTrack.classList.remove('red-pulsing', 'gelatin');
         }
       }
     }, 1000);
