@@ -86,39 +86,45 @@ app.get('/', (req, res) => {
           canvas.height = window.innerHeight;
         });
 
-        // Particle class with fading trail
+        // New Particle class for purple heart emojis
         class Particle {
-          constructor(x, y) {
-            this.x = x;
-            this.y = y;
-            this.size = Math.random() * 20 + 10; // Smaller size for trail
-            this.speedX = Math.random() * 2 - 1;
-            this.speedY = Math.random() * 2 - 1;
-            this.alpha = 1.0; // Initial opacity
-            this.color = `rgba(59, 130, 246, ${this.alpha})`; // Match heart color with fading
+          constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = canvas.height + 50; // Start just off-screen bottom
+            this.speedY = -Math.random() * 2 - 1; // Upward speed
+            this.speedX = Math.random() * 2 - 1; // Slight horizontal drift
+            this.size = 30; // Fixed size for emoji
+            this.life = 100; // Life counter for removal
           }
           update() {
-            this.x += this.speedX;
             this.y += this.speedY;
-            this.alpha -= 0.02; // Fade out over time
+            this.x += this.speedX;
+            this.life -= 1;
           }
           draw() {
-            if (this.alpha > 0) {
-              ctx.fillStyle = this.color.replace(/\d+\.\d+$/, this.alpha.toFixed(2));
-              ctx.beginPath();
-              ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
-              ctx.fill();
+            if (this.life > 0) {
+              ctx.fillStyle = '#a855f7'; // Purple color
+              ctx.font = `${this.size}px Arial`;
+              ctx.fillText('💜', this.x, this.y);
             }
+          }
+        }
+
+        // Spawn new particles periodically
+        function spawnParticle() {
+          if (Math.random() < 0.05) { // 5% chance per frame
+            particles.push(new Particle());
           }
         }
 
         // Animation loop
         function animateParticles() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+          spawnParticle();
           for (let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
             particles[i].draw();
-            if (particles[i].alpha <= 0) particles.splice(i, 1); // Remove when fully faded
+            if (particles[i].y + particles[i].size < 0 || particles[i].life <= 0) particles.splice(i, 1); // Remove when off-screen or life ends
           }
           requestAnimationFrame(animateParticles);
         }
@@ -149,7 +155,7 @@ app.get('/', (req, res) => {
           }
         };
 
-        // Drag handling with trail
+        // Drag handling
         vibrateButton.addEventListener('mousedown', (e) => {
           e.preventDefault();
           isDragging = true;
@@ -158,9 +164,6 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
-            for (let i = 0; i < 5; i++) {
-              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-            }
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -185,16 +188,11 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-                for (let i = 0; i < 5; i++) {
-                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-                }
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
             }
             lastPosition = currentPosition;
-            // Add trail particles continuously while dragging
-            particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
           }
         });
 
@@ -219,9 +217,6 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
-            for (let i = 0; i < 5; i++) {
-              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-            }
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -246,16 +241,11 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-                for (let i = 0; i < 5; i++) {
-                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-                }
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
             }
             lastPosition = currentPosition;
-            // Add trail particles continuously while dragging
-            particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
           }
         });
 
