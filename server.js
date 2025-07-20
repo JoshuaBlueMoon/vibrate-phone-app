@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
     <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
     <div class="glint left" style="position: absolute; left: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(-10deg); z-index: 1;"></div>
     <div class="glint right" style="position: absolute; right: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(10deg); z-index: 1;"></div>
+    <div id="distortionLayer" style="position: absolute; top: 0; width: 60px; height: 120px; background-color: #1e1b4b; border-radius: 60px; z-index: 1;"></div>
   </div>
   <style>
     @keyframes pulse {
@@ -54,6 +55,11 @@ app.get('/', (req, res) => {
       50% { transform: scaleY(0.9); }
       100% { transform: scaleY(1); }
     }
+    @keyframes localSqueeze {
+      0% { transform: scaleY(1); }
+      50% { transform: scaleY(0.85); }
+      100% { transform: scaleY(1); }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -65,6 +71,9 @@ app.get('/', (req, res) => {
     }
     .pinching {
       animation: pinch 0.3s ease-in-out;
+    }
+    .squeezing {
+      animation: localSqueeze 0.4s ease-in-out infinite;
     }
     .particle {
       position: absolute;
@@ -163,6 +172,7 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
+    const distortionLayer = document.getElementById('distortionLayer');
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
@@ -229,6 +239,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
+        distortionLayer.classList.add('squeezing');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -249,6 +260,7 @@ app.get('/', (req, res) => {
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
+        distortionLayer.style.left = newX + 'px';
 
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetLeft;
@@ -281,6 +293,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
+          distortionLayer.classList.remove('squeezing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
@@ -296,6 +309,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
+        distortionLayer.classList.add('squeezing');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -316,6 +330,7 @@ app.get('/', (req, res) => {
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
+        distortionLayer.style.left = newX + 'px';
 
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetLeft;
@@ -348,6 +363,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
+          distortionLayer.classList.remove('squeezing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
