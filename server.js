@@ -108,6 +108,8 @@ app.get('/', (req, res) => {
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
+    let currentX = 0; // Current heart position for lerp
+    let currentY = 30; // Initial top position
 
     connectButton.addEventListener('click', () => {
       if (roomInput.value === '1') {
@@ -172,6 +174,10 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
+    function lerp(start, end, factor) {
+      return start + (end - start) * factor;
+    }
+
     // Drag handling
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
@@ -189,14 +195,20 @@ app.get('/', (req, res) => {
       if (isDragging) {
         e.preventDefault();
         const trackRect = sliderTrack.getBoundingClientRect();
-        let newX = e.clientX - startX - trackRect.left;
-        let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
-        if (newX < 0) newX = 0;
-        if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY + 'px';
+        const intensity = parseInt(intensitySlider.value);
+        // Calculate drag factor: 0.4 (intensity 1) to 0.2 (intensity 5)
+        const dragFactor = 0.4 - (intensity - 1) * 0.05;
+        let targetX = e.clientX - startX - trackRect.left;
+        let targetY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
+        if (targetX < 0) targetX = 0;
+        if (targetX > trackRect.width - vibrateButton.offsetWidth) targetX = trackRect.width - vibrateButton.offsetWidth;
+        if (targetY < 0) targetY = 0;
+        if (targetY > trackRect.height - vibrateButton.offsetHeight) targetY = trackRect.height - vibrateButton.offsetHeight;
+        // Apply lerp for smooth drag effect
+        currentX = lerp(currentX, targetX, dragFactor);
+        currentY = lerp(currentY, targetY, dragFactor);
+        vibrateButton.style.left = currentX + 'px';
+        vibrateButton.style.top = currentY + 'px';
 
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
@@ -252,14 +264,20 @@ app.get('/', (req, res) => {
       if (isDragging) {
         e.preventDefault();
         const trackRect = sliderTrack.getBoundingClientRect();
-        let newX = e.touches[0].clientX - startX - trackRect.left;
-        let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
-        if (newX < 0) newX = 0;
-        if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY + 'px';
+        const intensity = parseInt(intensitySlider.value);
+        // Calculate drag factor: 0.4 (intensity 1) to 0.2 (intensity 5)
+        const dragFactor = 0.4 - (intensity - 1) * 0.05;
+        let targetX = e.touches[0].clientX - startX - trackRect.left;
+        let targetY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
+        if (targetX < 0) targetX = 0;
+        if (targetX > trackRect.width - vibrateButton.offsetWidth) targetX = trackRect.width - vibrateButton.offsetWidth;
+        if (targetY < 0) targetY = 0;
+        if (targetY > trackRect.height - vibrateButton.offsetHeight) targetY = trackRect.height - vibrateButton.offsetHeight;
+        // Apply lerp for smooth drag effect
+        currentX = lerp(currentX, targetX, dragFactor);
+        currentY = lerp(currentY, targetY, dragFactor);
+        vibrateButton.style.left = currentX + 'px';
+        vibrateButton.style.top = currentY + 'px';
 
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
