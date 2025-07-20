@@ -20,8 +20,7 @@ app.get('/', (req, res) => {
   </div>
   <label for="intensity"><span id="intensityValue" style="color: #60a5fa;">3</span></label>
   <br>
-  <div id="scoreDisplay" style="font-size: 16px; color: #60a5fa; margin: 10px;">Score: 0</div>
-  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 10px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
     <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 2;">💙</div>
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
@@ -55,26 +54,6 @@ app.get('/', (req, res) => {
       50% { transform: scaleY(0.9); }
       100% { transform: scaleY(1); }
     }
-    @keyframes redPulse {
-      0% { background-color: #1e1b4b; }
-      50% { background-color: #ff3333; }
-      100% { background-color: #1e1b4b; }
-    }
-    @keyframes fastRedPulse {
-      0% { background-color: #1e1b4b; }
-      50% { background-color: #ff3333; }
-      100% { background-color: #1e1b4b; }
-    }
-    @keyframes wiggle {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-      100% { transform: translateX(0); }
-    }
-    @keyframes droplet {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(0, 100px) scale(0.5); }
-    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -87,28 +66,12 @@ app.get('/', (req, res) => {
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
-    .red-pulsing {
-      animation: redPulse 2s ease-in-out infinite;
-    }
-    .fast-red-pulsing {
-      animation: fastRedPulse 1s ease-in-out infinite;
-    }
-    .wiggling {
-      animation: wiggle 0.5s ease-in-out infinite;
-    }
     .particle {
       position: absolute;
       font-size: 20px;
       color: purple;
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
-    }
-    .droplet {
-      position: absolute;
-      font-size: 14px;
-      color: #60a5fa;
-      pointer-events: none;
-      animation: droplet 1s ease-out forwards;
     }
     #sliderTrack::before, #sliderTrack::after {
       content: '';
@@ -200,12 +163,10 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
-    const scoreDisplay = document.getElementById('scoreDisplay');
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let score = 0;
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -260,39 +221,6 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function createDroplet(x, y) {
-      const droplet = document.createElement('div');
-      droplet.className = 'droplet';
-      droplet.textContent = '💧';
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const bodyX = x + trackRect.left - bodyRect.left;
-      const bodyY = y + trackRect.top - bodyRect.top;
-      droplet.style.left = bodyX + 'px';
-      droplet.style.top = bodyY + 'px';
-      document.body.appendChild(droplet);
-      setTimeout(() => droplet.remove(), 1000);
-    }
-
-    function updateScoreEffects() {
-      sliderTrack.classList.remove('red-pulsing', 'fast-red-pulsing', 'wiggling');
-      if (score >= 90) {
-        sliderTrack.classList.add('fast-red-pulsing', 'wiggling');
-      } else if (score >= 60) {
-        sliderTrack.classList.add('fast-red-pulsing');
-      } else if (score >= 30) {
-        sliderTrack.classList.add('red-pulsing');
-      }
-    }
-
-    setInterval(() => {
-      if (score > 0) {
-        score = Math.max(0, score - 2);
-        scoreDisplay.textContent = `Score: ${score}`;
-        updateScoreEffects();
-      }
-    }, 1000);
-
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
@@ -326,28 +254,16 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0 && lastPosition > 0) {
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
-            updateScoreEffects();
+          if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            if (score >= 90) {
-              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
-            }
-          } else if (currentPosition >= maxPosition && lastPosition < maxPosition) {
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
-            updateScoreEffects();
+          } else if (currentPosition >= maxPosition) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
-            if (score >= 90) {
-              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
-            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
@@ -405,28 +321,16 @@ app.get('/', (req, res) => {
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0 && lastPosition > 0) {
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
-            updateScoreEffects();
+          if (currentPosition <= 0) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-            if (score >= 90) {
-              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
-            }
-          } else if (currentPosition >= maxPosition && lastPosition < maxPosition) {
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
-            updateScoreEffects();
+          } else if (currentPosition >= maxPosition) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
-            if (score >= 90) {
-              createDroplet(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2);
-            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
