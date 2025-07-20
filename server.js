@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0; padding: 10px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">Score: <span id="score">0</span></div>
+  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);"><span style="font-size: 14px; margin-right: 4px;">🔥</span><span id="score">0</span></div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 10px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
@@ -73,6 +73,18 @@ app.get('/', (req, res) => {
       50% { background: linear-gradient(to bottom, rgba(255, 102, 102, 0.5), rgba(255, 51, 51, 0.5), rgba(255, 102, 102, 0.5)); }
       100% { background: linear-gradient(to bottom, #93c5fd, #1e40af, #93c5fd); }
     }
+    @keyframes waveBurst {
+      0% {
+        transform: scale(1);
+        opacity: 0.3;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0);
+      }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -90,6 +102,16 @@ app.get('/', (req, res) => {
     }
     .red-pulsing {
       animation: redPulse 2s ease-in-out infinite;
+    }
+    .wave-burst {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50px;
+      background: transparent;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      pointer-events: none;
+      animation: waveBurst 0.8s ease-out forwards;
     }
     .particle {
       position: absolute;
@@ -231,6 +253,8 @@ app.get('/', (req, res) => {
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
+    let lastGelatinTime = 0;
+    let lastWaveBurstTime = 0;
 
     // Score reduction: 2 points per second
     setInterval(() => {
@@ -291,6 +315,7 @@ app.get('/', (req, res) => {
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
+      const currentTime = Date.now();
       if (score >= 60) {
         sliderTrack.classList.add('red-pulsing', 'gelatin');
       }
@@ -314,8 +339,18 @@ app.get('/', (req, res) => {
         document.body.appendChild(particle);
         setTimeout(() => { particle.remove(); }, 1500);
       }
-      sliderTrack.classList.add('gelatin');
-      setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+      if (currentTime - lastGelatinTime >= 500) {
+        sliderTrack.classList.add('gelatin');
+        lastGelatinTime = currentTime;
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+      }
+      if (currentTime - lastWaveBurstTime >= 500) {
+        const waveBurst = document.createElement('div');
+        waveBurst.className = 'wave-burst';
+        sliderTrack.appendChild(waveBurst);
+        lastWaveBurstTime = currentTime;
+        setTimeout(() => { waveBurst.remove(); }, 800);
+      }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
@@ -451,7 +486,7 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     clients = clients.filter(client => client !== ws);
   });
-  ws.on('message', (message) => {
+  ws=on('message', (message) => {
     try {
       const data = JSON.parse(message);
       clients.forEach(client => {
