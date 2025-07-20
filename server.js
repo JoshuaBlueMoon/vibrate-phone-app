@@ -13,11 +13,11 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="background: radial-gradient(circle at 20% 30%, rgba(26, 42, 68, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(46, 26, 71, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(26, 42, 68, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(46, 26, 71, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #1a2a44, #2e1a47); color: white; font-family: Arial; margin: 0; padding: 10px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 10px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">Score: <span id="score">0</span></div>
-  <div id="topContainer" style="display: flex; justify-content: center; align-items: center; margin: 10px auto;">
+  <div id="topContainer" style="position: absolute; top: 10px; left: 10px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
-  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
+  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 60px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">Score: <span id="score">0</span></div>
+  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #60a5fa 10%, #1e40af 50%, #60a5fa 90%); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
     <div class="red-dot" style="width: 18px; height: 18px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
     <div id="vibrateButton" style="font-size: 40px; padding: 8px; background-color: transparent; color: #3b82f6; border: none; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 0; left: 24px; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
     <div class="red-dot" style="width: 18px; height: 18px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
       <div id="pulseToggle" class="toggle-button toggled" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">💓</div>
       <div id="waveToggle" class="toggle-button" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">〰️</div>
     </div>
-    <div id="intensityContainer" style="width: 80%; max-width: 200px; padding: 4px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
+    <div id="intensityContainer" style="width: 80%; max-width: 400px; padding: 6px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
     </div>
     <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
@@ -68,9 +68,9 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
     @keyframes redPulse {
-      0% { background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); }
-      50% { background: linear-gradient(to bottom, #ff6666, #ff3333, #ff6666); }
-      100% { background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); }
+      0% { background: linear-gradient(to bottom, #60a5fa 10%, #1e40af 50%, #60a5fa 90%); }
+      50% { background: linear-gradient(to bottom, #ff6666 10%, #ff3333 50%, #ff6666 90%); }
+      100% { background: linear-gradient(to bottom, #60a5fa 10%, #1e40af 50%, #60a5fa 90%); }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -124,17 +124,17 @@ app.get('/', (req, res) => {
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
-      margin-top: -5px;
+      margin-top: -6px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
@@ -143,13 +143,13 @@ app.get('/', (req, res) => {
     }
     input[type="range"]::-webkit-slider-runnable-track {
       background: #1e3a8a;
-      height: 8px;
-      border-radius: 4px;
+      height: 10px;
+      border-radius: 5px;
     }
     input[type="range"]::-moz-range-track {
       background: #1e3a8a;
-      height: 8px;
-      border-radius: 4px;
+      height: 10px;
+      border-radius: 5px;
     }
     @media (orientation: landscape) {
       body {
@@ -158,13 +158,14 @@ app.get('/', (req, res) => {
         align-items: center;
         padding: 5px;
       }
-      #scoreDisplay {
-        font-size: 10px;
+      #topContainer {
         top: 5px;
         left: 5px;
       }
-      #topContainer {
-        margin: 5px auto;
+      #scoreDisplay {
+        font-size: 10px;
+        top: 5px;
+        left: 50px;
       }
       #room {
         width: 36px;
@@ -187,7 +188,8 @@ app.get('/', (req, res) => {
       }
       #intensityContainer {
         width: 80%;
-        max-width: 180px;
+        max-width: 360px;
+        padding: 5px;
       }
       #intensityValue {
         font-size: 10px;
