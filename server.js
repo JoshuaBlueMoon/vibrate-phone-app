@@ -28,7 +28,12 @@ app.get('/', (req, res) => {
       <style>
         @keyframes pulse {
           0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
+          50% { transform: scale(1.2); }
+          100% { transform: scale(1); }
+        }
+        @keyframes senderPulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.3); }
           100% { transform: scale(1); }
         }
         @keyframes flash {
@@ -36,8 +41,13 @@ app.get('/', (req, res) => {
           20% { background-color: #ff0000; }
           100% { background-color: #4b5e97; }
         }
-        .pulsing {
+---
+
+System: .pulsing {
           animation: pulse 0.5s ease-in-out;
+        }
+        .senderPulsing {
+          animation: senderPulse 0.4s ease-in-out infinite;
         }
         .flashing {
           animation: flash 0.3s ease-out;
@@ -81,6 +91,7 @@ app.get('/', (req, res) => {
         let isDragging = false;
         let startX = 0;
         let lastPosition = 0;
+        let pulseInterval = null;
 
         intensitySlider.oninput = () => {
           intensityDisplay.textContent = intensitySlider.value;
@@ -94,35 +105,62 @@ app.get('/', (req, res) => {
               const intensity = data.intensity || 3;
               let pattern;
               switch (intensity) {
-                case 1: pattern = [50, 200]; break; // 50ms on, 200ms off
-                case 2: pattern = [50, 100]; break; // 50ms on, 100ms off
-                case 3: pattern = [50, 50]; break;  // 50ms on, 50ms off
-                case 4: pattern = [100, 50]; break; // 100ms on, 50ms off
-                case 5: pattern = [200]; break;     // 200ms on, no off
+                case 1: pattern = [50, 200]; break;
+                case 2: pattern = [50, 100]; break;
+                case 3: pattern = [50, 50]; break;
+                case 4: pattern = [100, 50]; break;
+                case 5: pattern = [200]; break;
                 default: pattern = [50, 50];
               }
               navigator.vibrate(pattern);
               console.log('Vibrate started with intensity:', intensity);
               sliderTrack.classList.add('pulsing', 'flashing');
-              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+            } else if (data.command === 'stopVibrate') {
+              navigator.vibrate(0);
+              sliderTrack.classList.remove('pulsing', 'flashing');
             }
           }
         };
 
         // Drag handling
-        vibrateButton.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          isDragging = true;
-          startX = e.clientX - vibrateButton.offsetLeft;
+        const startVibration = () => {
           const room = document.getElementById('room').value;
           if (room) {
             vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+            sliderTrack.classList.add('senderPulsing', 'flashing');
+            // Continuous pulsing for sender while at edge
+            if (!pulseInterval) {
+              pulseInterval = setInterval(() => {
+                sliderTrack.classList.add('flashing');
+                setTimeout(() => sliderTrack.classList.remove('flashing'), 300);
+              }, 400);
+            }
           }
+        };
+
+        const stopVibration = () => {
+          const room = document.getElementById('room').value;
+          if (room) {
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            vibrateButton.style.backgroundColor = '#3b82f6';
+            vibrateButton.classList.remove('pulsing');
+            sliderTrack.classList.remove('senderPulsing', 'flashing');
+            if (pulseInterval) {
+              clearInterval(pulseInterval);
+              pulseInterval = null;
+            }
+          }
+        };
+
+        vibrateButton.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          isDragging = true;
+          startX = e.clientX - vibrateButton.offsetLeft;
+          startVibration();
           lastPosition = vibrateButton.offsetLeft;
         });
 
@@ -131,7 +169,7 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.clientX - startX - trackRect.left;
-            let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30; // Adjust for padding
+            let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
             if (newY < 0) newY = 0;
@@ -144,12 +182,9 @@ app.get('/', (req, res) => {
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
-                const intensity = intensitySlider.value;
-                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-                sliderTrack.classList.add('pulsing', 'flashing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+                if (!pulseInterval) startVibration();
               } else {
-                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                stopVibration();
               }
             }
             lastPosition = currentPosition;
@@ -158,30 +193,17 @@ app.get('/', (req, res) => {
 
         document.addEventListener('mouseup', () => {
           if (isDragging) {
-            const room = document.getElementById('room').value;
-            if (room) {
-              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.backgroundColor = '#3b82f6';
-              vibrateButton.classList.remove('pulsing');
-            }
+            stopVibration();
             isDragging = false;
           }
         });
 
-        // For touch devices (phones)
+        // For touch devices
         vibrateButton.addEventListener('touchstart', (e) => {
           e.preventDefault();
           isDragging = true;
           startX = e.touches[0].clientX - vibrateButton.offsetLeft;
-          const room = document.getElementById('room').value;
-          if (room) {
-            vibrateButton.style.backgroundColor = '#1e40af';
-            vibrateButton.classList.add('pulsing');
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('pulsing', 'flashing');
-            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
-          }
+          startVibration();
           lastPosition = vibrateButton.offsetLeft;
         });
 
@@ -190,7 +212,7 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.touches[0].clientX - startX - trackRect.left;
-            let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30; // Adjust for padding
+            let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
             if (newY < 0) newY = 0;
@@ -203,12 +225,9 @@ app.get('/', (req, res) => {
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
-                const intensity = intensitySlider.value;
-                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-                sliderTrack.classList.add('pulsing', 'flashing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
+                if (!pulseInterval) startVibration();
               } else {
-                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                stopVibration();
               }
             }
             lastPosition = currentPosition;
@@ -217,12 +236,7 @@ app.get('/', (req, res) => {
 
         document.addEventListener('touchend', () => {
           if (isDragging) {
-            const room = document.getElementById('room').value;
-            if (room) {
-              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.backgroundColor = '#3b82f6';
-              vibrateButton.classList.remove('pulsing');
-            }
+            stopVibration();
             isDragging = false;
           }
         });
