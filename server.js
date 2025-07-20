@@ -19,10 +19,10 @@ app.get('/', (req, res) => {
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 80%; margin: 10px; accent-color: #60a5fa;">
       <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
       <br>
-      <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 50px; background-color: #4b5e97; border-radius: 25px; position: relative; margin-top: 20px; overflow: hidden;">
-        <div id="vibrateButton" style="font-size: 36px; padding: 10px; background-color: #3b82f6; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.2s; position: absolute; top: -5px; left: 0; cursor: pointer;">💙</div>
+      <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 80px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden;">
+        <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 10px; left: 0; cursor: pointer;">💙</div>
       </div>
-      <p style="font-size: 14px;">Hold and drag the heart back and forth to vibrate continuously. Release or stop moving to stop. Adjust intensity or drag speed.</p>
+      <p style="font-size: 14px;">Drag the heart from left to right repeatedly to vibrate. Release or stop to stop. Adjust intensity.</p>
       <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
       <style>
         @keyframes pulse {
@@ -75,8 +75,8 @@ app.get('/', (req, res) => {
         let isDragging = false;
         let lastX = null;
         let lastTime = null;
-        let lastMoveTime = null;
         let startX = 0;
+        let lastPosition = 0;
 
         // Set canvas size
         canvas.width = window.innerWidth;
@@ -161,8 +161,7 @@ app.get('/', (req, res) => {
           const room = document.getElementById('room').value;
           const intensity = intensitySlider.value;
           if (room) {
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            vibrateButton.style.backgroundColor = '#1e40af';
+            vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
             for (let i = 0; i < 5; i++) {
               particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
@@ -170,7 +169,7 @@ app.get('/', (req, res) => {
           }
           lastX = e.clientX;
           lastTime = performance.now();
-          lastMoveTime = performance.now();
+          lastPosition = vibrateButton.offsetLeft;
         });
 
         document.addEventListener('mousemove', (e) => {
@@ -178,9 +177,13 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.clientX - startX - trackRect.left;
+            let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+            if (newY < 10) newY = 10;
+            if (newY > trackRect.height - vibrateButton.offsetHeight - 10) newY = trackRect.height - vibrateButton.offsetHeight - 10;
             vibrateButton.style.left = newX + 'px';
+            vibrateButton.style.top = newY + 'px';
 
             const currentX = e.clientX;
             const currentTime = performance.now();
@@ -189,11 +192,10 @@ app.get('/', (req, res) => {
             const speed = distance / timeDiff; // Pixels per second
             let intensity = Math.min(5, Math.max(1, Math.floor(speed / 100))); // Scale speed to 1-5
             const room = document.getElementById('room').value;
-            if (room) {
+            const currentPosition = vibrateButton.offsetLeft;
+            if (room && lastPosition === 0 && currentPosition >= trackRect.width - vibrateButton.offsetWidth) {
               if (!isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
-                vibrateButton.style.backgroundColor = '#1e40af';
-                vibrateButton.classList.add('pulsing');
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
@@ -201,15 +203,19 @@ app.get('/', (req, res) => {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
               }
               lastMoveTime = currentTime; // Update last move time
+            } else if (room && isVibrating && (lastPosition > 0 || currentPosition < trackRect.width - vibrateButton.offsetWidth)) {
+              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+              isVibrating = false;
             }
             lastX = currentX;
             lastTime = currentTime;
+            lastPosition = currentPosition;
 
             // Stop vibration if no movement for 0.5 seconds
             if (lastMoveTime && currentTime - lastMoveTime > 500) {
               if (room && isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-                vibrateButton.style.backgroundColor = '#3b82f6';
+                vibrateButton.style.color = '#3b82f6';
                 vibrateButton.classList.remove('pulsing');
                 isVibrating = false;
               }
@@ -222,7 +228,7 @@ app.get('/', (req, res) => {
             const room = document.getElementById('room').value;
             if (room && isVibrating) {
               ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.backgroundColor = '#3b82f6';
+              vibrateButton.style.color = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
             isDragging = false;
@@ -240,8 +246,7 @@ app.get('/', (req, res) => {
           const room = document.getElementById('room').value;
           const intensity = intensitySlider.value;
           if (room) {
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            vibrateButton.style.backgroundColor = '#1e40af';
+            vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
             for (let i = 0; i < 5; i++) {
               particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
@@ -249,7 +254,7 @@ app.get('/', (req, res) => {
           }
           lastX = e.touches[0].clientX;
           lastTime = performance.now();
-          lastMoveTime = performance.now();
+          lastPosition = vibrateButton.offsetLeft;
         });
 
         document.addEventListener('touchmove', (e) => {
@@ -257,9 +262,13 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.touches[0].clientX - startX - trackRect.left;
+            let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+            if (newY < 10) newY = 10;
+            if (newY > trackRect.height - vibrateButton.offsetHeight - 10) newY = trackRect.height - vibrateButton.offsetHeight - 10;
             vibrateButton.style.left = newX + 'px';
+            vibrateButton.style.top = newY + 'px';
 
             const currentX = e.touches[0].clientX;
             const currentTime = performance.now();
@@ -268,11 +277,10 @@ app.get('/', (req, res) => {
             const speed = distance / timeDiff; // Pixels per second
             let intensity = Math.min(5, Math.max(1, Math.floor(speed / 100))); // Scale speed to 1-5
             const room = document.getElementById('room').value;
-            if (room) {
+            const currentPosition = vibrateButton.offsetLeft;
+            if (room && lastPosition === 0 && currentPosition >= trackRect.width - vibrateButton.offsetWidth) {
               if (!isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
-                vibrateButton.style.backgroundColor = '#1e40af';
-                vibrateButton.classList.add('pulsing');
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
@@ -280,15 +288,19 @@ app.get('/', (req, res) => {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
               }
               lastMoveTime = currentTime; // Update last move time
+            } else if (room && isVibrating && (lastPosition > 0 || currentPosition < trackRect.width - vibrateButton.offsetWidth)) {
+              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+              isVibrating = false;
             }
             lastX = currentX;
             lastTime = currentTime;
+            lastPosition = currentPosition;
 
             // Stop vibration if no movement for 0.5 seconds
             if (lastMoveTime && currentTime - lastMoveTime > 500) {
               if (room && isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-                vibrateButton.style.backgroundColor = '#3b82f6';
+                vibrateButton.style.color = '#3b82f6';
                 vibrateButton.classList.remove('pulsing');
                 isVibrating = false;
               }
@@ -301,7 +313,7 @@ app.get('/', (req, res) => {
             const room = document.getElementById('room').value;
             if (room && isVibrating) {
               ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.backgroundColor = '#3b82f6';
+              vibrateButton.style.color = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
             isDragging = false;
