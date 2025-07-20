@@ -15,19 +15,19 @@ app.get('/', (req, res) => {
 <body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
   <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; margin: 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
   <br>
-  <div id="intensityContainer" style="width: 80%; max-width: 250px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+  <div id="intensityContainer" style="width: 80%; max-width: 150px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
   </div>
   <label for="intensity"><span id="intensityValue" style="color: #60a5fa;">3</span></label>
   <br>
   <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
-    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
-    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 2;">💙</div>
-    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
-    <div class="pulse-symbol left" style="position: absolute; top: -30px; left: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
-    <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
-    <div class="glint left" style="position: absolute; left: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(-10deg); z-index: 1;"></div>
-    <div class="glint right" style="position: absolute; right: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(10deg); z-index: 1;"></div>
+    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
+    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
+    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
+    <div class="pulse-symbol left" style="position: absolute; top: -30px; left: 10px; font-size: 20px; color: #ff3333; z-index: 4;">〰️</div>
+    <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 4;">〰️</div>
+    <div class="glint left" style="position: absolute; left: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(-10deg); z-index: 2;"></div>
+    <div class="glint right" style="position: absolute; right: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(10deg); z-index: 2;"></div>
     <div id="distortionLayer" style="position: absolute; top: 0; width: 60px; height: 120px; background-color: #1e1b4b; border-radius: 60px; z-index: 1;"></div>
   </div>
   <style>
@@ -88,7 +88,7 @@ app.get('/', (req, res) => {
       top: 0;
       width: 30px;
       height: 100%;
-      z-index: 1;
+      z-index: 2;
     }
     #sliderTrack::before {
       left: 0;
@@ -101,17 +101,17 @@ app.get('/', (req, res) => {
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
-      margin-top: -5px;
+      margin-top: -6px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       background: #93c5fd;
       border-radius: 50%;
       cursor: pointer;
@@ -120,13 +120,13 @@ app.get('/', (req, res) => {
     }
     input[type="range"]::-webkit-slider-runnable-track {
       background: #1e3a8a;
-      height: 6px;
-      border-radius: 3px;
+      height: 10px;
+      border-radius: 5px;
     }
     input[type="range"]::-moz-range-track {
       background: #1e3a8a;
-      height: 6px;
-      border-radius: 3px;
+      height: 10px;
+      border-radius: 5px;
     }
     @media (orientation: landscape) {
       body {
@@ -137,7 +137,7 @@ app.get('/', (req, res) => {
       }
       #room, #intensityContainer {
         width: 40%;
-        max-width: 150px;
+        max-width: 100px;
       }
       #room {
         width: 40px;
