@@ -19,9 +19,9 @@ app.get('/', (req, res) => {
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 80%; margin: 10px; accent-color: #60a5fa;">
       <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
       <br>
-      <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 80px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+      <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
         <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>
-        <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: #3b82f6; color: white; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.2s; position: absolute; top: 10px; left: 0; cursor: pointer; touch-action: none;">💙</div>
+        <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
         <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>
       </div>
       <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
@@ -171,9 +171,13 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.clientX - startX - trackRect.left;
+            let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30; // Adjust for padding
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+            if (newY < 0) newY = 0;
+            if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
             vibrateButton.style.left = newX + 'px';
+            vibrateButton.style.top = newY + 'px';
 
             const room = document.getElementById('room').value;
             const currentPosition = vibrateButton.offsetLeft;
@@ -226,9 +230,13 @@ app.get('/', (req, res) => {
             e.preventDefault();
             const trackRect = sliderTrack.getBoundingClientRect();
             let newX = e.touches[0].clientX - startX - trackRect.left;
+            let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30; // Adjust for padding
             if (newX < 0) newX = 0;
             if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+            if (newY < 0) newY = 0;
+            if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
             vibrateButton.style.left = newX + 'px';
+            vibrateButton.style.top = newY + 'px';
 
             const room = document.getElementById('room').value;
             const currentPosition = vibrateButton.offsetLeft;
