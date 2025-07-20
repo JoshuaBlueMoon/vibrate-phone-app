@@ -12,19 +12,23 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="background: linear-gradient(to bottom, #1a2a44, #000000); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
-  <h1 style="font-size: 24px;">Pulse</h1>
-  <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white; width: 80%;">
+<body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
+  <input id="room" type="text" placeholder="Code" style="width: 80px; height: 40px; font-size: 16px; padding: 8px; margin: 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
   <br>
-  <input type="range" id="intensity" min="1" max="5" value="3" style="width: 80%; margin: 10px; accent-color: #60a5fa;">
-  <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
-  <br>
-  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
-    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
-    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
+  <div id="intensityContainer" style="width: 80%; max-width: 250px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+    <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #60a5fa;">
   </div>
-  <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
+  <label for="intensity"><span id="intensityValue" style="color: #60a5fa;">3</span></label>
+  <br>
+  <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
+    <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 2;">💙</div>
+    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 2;"></div>
+    <div class="pulse-symbol left" style="position: absolute; top: -30px; left: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
+    <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 3;">〰️</div>
+    <div class="glint left" style="position: absolute; left: 5px; top: 10px; width: 20px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent); z-index: 1;"></div>
+    <div class="glint right" style="position: absolute; right: 5px; top: 10px; width: 20px; height: 100px; background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent); z-index: 1;"></div>
+  </div>
   <style>
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -37,13 +41,18 @@ app.get('/', (req, res) => {
       100% { transform: scale(1); }
     }
     @keyframes flash {
-      0% { background-color: #4b5e97; }
+      0% { background-color: #1e1b4b; }
       20% { background-color: #ff0000; }
-      100% { background-color: #4b5e97; }
+      100% { background-color: #1e1b4b; }
     }
     @keyframes particle {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
+    }
+    @keyframes pinch {
+      0% { transform: scaleY(1); }
+      50% { transform: scaleY(0.9); }
+      100% { transform: scaleY(1); }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -54,12 +63,59 @@ app.get('/', (req, res) => {
     .flashing {
       animation: flash 0.3s ease-out;
     }
+    .pinching {
+      animation: pinch 0.3s ease-in-out;
+    }
     .particle {
       position: absolute;
       font-size: 20px;
       color: purple;
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
+    }
+    #sliderTrack::before, #sliderTrack::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 30px;
+      height: 100%;
+      z-index: 1;
+    }
+    #sliderTrack::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(255, 51, 51, 0.5), transparent);
+    }
+    #sliderTrack::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(255, 51, 51, 0.5), transparent);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #60a5fa;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -5px;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #60a5fa;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: transparent;
+      height: 6px;
+      border-radius: 3px;
+    }
+    input[type="range"]::-moz-range-track {
+      background: transparent;
+      height: 6px;
+      border-radius: 3px;
     }
     @media (orientation: landscape) {
       body {
@@ -68,13 +124,13 @@ app.get('/', (req, res) => {
         align-items: center;
         padding: 10px;
       }
-      h1 {
-        font-size: 20px;
-        margin: 0 10px;
-      }
-      #room, #intensity {
+      #room, #intensityContainer {
         width: 40%;
         max-width: 150px;
+      }
+      #room {
+        width: 80px;
+        height: 40px;
       }
       label {
         margin-left: 10px;
@@ -84,9 +140,17 @@ app.get('/', (req, res) => {
         max-width: 400px;
         margin-left: 20px;
       }
-      p {
-        max-width: 150px;
-        margin-left: 20px;
+      .pulse-symbol.left {
+        left: 5px;
+      }
+      .pulse-symbol.right {
+        right: 5px;
+      }
+      .glint.left {
+        left: 5px;
+      }
+      .glint.right {
+        right: 5px;
       }
     }
   </style>
@@ -135,7 +199,6 @@ app.get('/', (req, res) => {
       const particleCount = 5;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
-      // Convert sliderTrack coordinates to body coordinates
       const bodyX = x + trackRect.left - bodyRect.left;
       const bodyY = y + trackRect.top - bodyRect.top;
       for (let i = 0; i < particleCount; i++) {
@@ -144,20 +207,18 @@ app.get('/', (req, res) => {
         particle.textContent = '💜';
         particle.style.left = bodyX + 'px';
         particle.style.top = bodyY + 'px';
-        // Random trajectory for screen-wide movement
         const angle = Math.random() * 2 * Math.PI;
-        const distance = 50 + Math.random() * 100; // Larger range: 50-150px
+        const distance = 50 + Math.random() * 100;
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
         particle.style.setProperty('--tx', tx + 'px');
         particle.style.setProperty('--ty', ty + 'px');
         document.body.appendChild(particle);
-        setTimeout(() => particle.remove(), 1500); // Match animation duration
+        setTimeout(() => particle.remove(), 1500);
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    // Drag handling
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
@@ -166,6 +227,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
+        sliderTrack.classList.add('pinching');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -218,14 +280,13 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
         lastCollision = null;
       }
     });
 
-    // For touch devices (phones)
     vibrateButton.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isDragging = true;
@@ -234,6 +295,7 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
+        sliderTrack.classList.add('pinching');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
         sliderTrack.classList.add('pulsing', 'flashing');
@@ -286,7 +348,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
         lastCollision = null;
