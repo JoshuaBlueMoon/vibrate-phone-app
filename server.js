@@ -17,24 +17,26 @@ app.get('/', (req, res) => {
   <div id="topContainer" style="display: flex; justify-content: center; align-items: center; margin: 10px auto;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
-  <div id="sliderTrack" style="width: 80px; height: 60%; max-height: 400px; background-color: #1e1b4b; border-radius: 40px; position: relative; margin: 10px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-    <div class="red-dot" style="width: 16px; height: 16px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
-    <div id="vibrateButton" style="font-size: 36px; padding: 8px; background-color: transparent; color: #3b82f6; border: none; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 0; left: 16px; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
-    <div class="red-dot" style="width: 16px; height: 16px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
-    <div class="pulse-symbol top" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 16px; color: #ff3333; z-index: 4;">〰️</div>
-    <div class="pulse-symbol bottom" style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 16px; color: #ff3333; z-index: 4;">〰️</div>
-    <div class="glint top" style="position: absolute; top: 6px; left: 50%; width: 48px; height: 12px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(-10deg); z-index: 2;"></div>
-    <div class="glint bottom" style="position: absolute; bottom: 6px; left: 50%; width: 48px; height: 12px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(10deg); z-index: 2;"></div>
-    <div id="distortionLayer" style="position: absolute; left: 0; width: 80px; height: 48px; background-color: #1e1b4b; border-radius: 40px; z-index: 1;"></div>
+  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
+    <div class="red-dot" style="width: 18px; height: 18px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
+    <div id="vibrateButton" style="font-size: 40px; padding: 8px; background-color: transparent; color: #3b82f6; border: none; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 0; left: 24px; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
+    <div class="red-dot" style="width: 18px; height: 18px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
+    <div class="pulse-symbol top" style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
+    <div class="pulse-symbol bottom" style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
+    <div class="glint top" style="position: absolute; top: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(-10deg); z-index: 2;"></div>
+    <div class="glint bottom" style="position: absolute; bottom: 8px; left: 50%; width: 60px; height: 14px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: translateX(-50%) skewY(10deg); z-index: 2;"></div>
+    <div id="distortionLayer" style="position: absolute; left: 0; width: 100px; height: 52px; background-color: #1e40af; border-radius: 50px; z-index: 1; opacity: 0.3;"></div>
   </div>
-  <div id="toggleContainer" style="display: flex; justify-content: center; gap: 10px; margin: 5px;">
-    <div id="pulseToggle" class="toggle-button toggled" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">💓</div>
-    <div id="waveToggle" class="toggle-button" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">〰️</div>
+  <div id="bottomControls" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 10px; margin: 5px;">
+      <div id="pulseToggle" class="toggle-button toggled" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">💓</div>
+      <div id="waveToggle" class="toggle-button" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">〰️</div>
+    </div>
+    <div id="intensityContainer" style="width: 80%; max-width: 200px; padding: 4px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
+      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
+    </div>
+    <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
   </div>
-  <div id="intensityContainer" style="width: 80%; max-width: 120px; padding: 4px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-    <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
-  </div>
-  <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
   <style>
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -47,9 +49,9 @@ app.get('/', (req, res) => {
       100% { transform: scale(1); }
     }
     @keyframes flash {
-      0% { background-color: #1e1b4b; }
+      0% { background-color: #1e40af; }
       20% { background-color: #ff0000; }
-      100% { background-color: #1e1b4b; }
+      100% { background-color: #1e40af; }
     }
     @keyframes particle {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
@@ -66,9 +68,9 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
     @keyframes redPulse {
-      0% { background-color: #1e1b4b; }
-      50% { background-color: #ff3333; }
-      100% { background-color: #1e1b4b; }
+      0% { background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); }
+      50% { background: linear-gradient(to bottom, #ff6666, #ff3333, #ff6666); }
+      100% { background: linear-gradient(to bottom, #60a5fa, #1e40af, #60a5fa); }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -169,6 +171,15 @@ app.get('/', (req, res) => {
         height: 18px;
         font-size: 10px;
       }
+      #sliderTrack {
+        width: 100px;
+        height: 50%;
+        max-height: 300px;
+        margin: 5px auto 15px auto;
+      }
+      #bottomControls {
+        margin-top: 15px;
+      }
       #toggleContainer {
         flex-direction: row;
         gap: 8px;
@@ -176,16 +187,10 @@ app.get('/', (req, res) => {
       }
       #intensityContainer {
         width: 80%;
-        max-width: 100px;
+        max-width: 180px;
       }
       #intensityValue {
         font-size: 10px;
-      }
-      #sliderTrack {
-        width: 80px;
-        height: 50%;
-        max-height: 300px;
-        margin: 5px auto;
       }
       .pulse-symbol.top {
         top: -18px;
@@ -196,14 +201,14 @@ app.get('/', (req, res) => {
         font-size: 14px;
       }
       .glint.top {
-        top: 5px;
-        width: 40px;
-        height: 10px;
+        top: 6px;
+        width: 50px;
+        height: 12px;
       }
       .glint.bottom {
-        bottom: 5px;
-        width: 40px;
-        height: 10px;
+        bottom: 6px;
+        width: 50px;
+        height: 12px;
       }
     }
   </style>
@@ -324,7 +329,7 @@ app.get('/', (req, res) => {
         let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '16px';
+        vibrateButton.style.left = '24px';
         vibrateButton.style.top = newY + 'px';
         distortionLayer.style.top = newY + 'px';
 
@@ -387,7 +392,7 @@ app.get('/', (req, res) => {
         let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2);
         if (newY < 0) newY = 0;
         if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = '16px';
+        vibrateButton.style.left = '24px';
         vibrateButton.style.top = newY + 'px';
         distortionLayer.style.top = newY + 'px';
 
