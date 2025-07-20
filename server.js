@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; max-width: 414px; margin: 0 auto;">
-  <div style="display: flex; align-items: center; gap: 20px; margin: 20px 10px 40px 10px;">
+  <div id="topContainer" style="display: flex; justify-content: center; align-items: center; gap: 20px; margin: 20px 10px 40px 10px;">
     <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <div id="scoreDisplay" style="font-size: 16px; color: #60a5fa; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);">Score: <span id="score">0</span></div>
   </div>
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
   <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #1e1b4b; border-radius: 60px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
     <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform: 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none; z-index: 3;">💙</div>
-    <div class="red-dot" style="width: 20px; height: 20px; radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
+    <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%; z-index: 3;"></div>
     <div class="pulse-symbol left" style="position: absolute; top: -30px; left: 10px; font-size: 20px; color: #ff3333; z-index: 4;">〰️</div>
     <div class="pulse-symbol right" style="position: absolute; top: -30px; right: 10px; font-size: 20px; color: #ff3333; z-index: 4;">〰️</div>
     <div class="glint left" style="position: absolute; left: 8px; top: 20px; width: 15px; height: 60px; background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent); border-radius: 50%; transform: skewX(-10deg); z-index: 2;"></div>
@@ -65,6 +65,11 @@ app.get('/', (req, res) => {
       50% { transform: scaleY(0.85); }
       100% { transform: scaleY(1); }
     }
+    @keyframes redPulse {
+      0% { background-color: #1e1b4b; }
+      50% { background-color: #ff3333; }
+      100% { background-color: #1e1b4b; }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -80,6 +85,9 @@ app.get('/', (req, res) => {
     .squeezing {
       animation: localSqueeze 0.4s ease-in-out infinite;
     }
+    .red-pulsing {
+      animation: redPulse 2s ease-in-out infinite;
+    }
     .particle {
       position: absolute;
       font-size: 20px;
@@ -87,7 +95,11 @@ app.get('/', (req, res) => {
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
     }
-    .toggled {
+    .toggle-button {
+      background-color: #2b4d9e;
+      color: white;
+    }
+    .toggle-button.toggled {
       background-color: white !important;
       color: #1e40af !important;
     }
@@ -144,10 +156,14 @@ app.get('/', (req, res) => {
         align-items: center;
         padding: 10px;
       }
+      #topContainer {
+        flex-direction: column;
+        gap: 10px;
+        margin: 0 10px;
+      }
       #room {
         width: 40px;
         height: 20px;
-        margin: 0 10px;
       }
       #scoreDisplay {
         font-size: 14px;
@@ -247,6 +263,9 @@ app.get('/', (req, res) => {
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
+      if (score >= 60) {
+        sliderTrack.classList.add('red-pulsing');
+      }
       const particleCount = 5;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
