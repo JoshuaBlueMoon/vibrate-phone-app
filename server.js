@@ -15,8 +15,8 @@ app.get('/', (req, res) => {
 <body style="background: linear-gradient(to bottom, #1a2a44, #3b82f6); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; max-width: 414px; margin: 0 auto;">
   <input id="room" type="text" placeholder="Code" style="width: 40px; height: 20px; font-size: 12px; padding: 4px; margin: 20px 10px 40px 10px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
   <div id="toggleContainer" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
-    <div id="pulseToggle" class="toggle-button toggled" style="width: 40px; height: 40px; background-color: #2b4d9e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: 2px solid white;">💓</div>
-    <div id="waveToggle" class="toggle-button" style="width: 40px; height: 40px; background-color: #2b4d9e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: 2px solid transparent;">〰️</div>
+    <div id="pulseToggle" class="toggle-button toggled" style="width: 40px; height: 40px; background-color: white; color: #1e40af; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: none;">💓</div>
+    <div id="waveToggle" class="toggle-button" style="width: 40px; height: 40px; background-color: #2b4d9e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); border: none;">〰️</div>
   </div>
   <div id="intensityContainer" style="width: 80%; max-width: 150px; padding: 4px; background: linear-gradient(to right, #60a5fa, #a855f7); border-radius: 20px; margin: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
     <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
@@ -85,7 +85,8 @@ app.get('/', (req, res) => {
       animation: particle 1.5s ease-out forwards;
     }
     .toggled {
-      border: 2px solid white !important;
+      background-color: white !important;
+      color: #1e40af !important;
     }
     #sliderTrack::before, #sliderTrack::after {
       content: '';
@@ -270,20 +271,6 @@ app.get('/', (req, res) => {
         distortionLayer.classList.add('squeezing');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-        if (vibrationMode === 'wave' && navigator.vibrate) {
-          navigator.vibrate([1000]);
-        } else if (vibrationMode === 'pulse' && navigator.vibrate) {
-          let pattern;
-          switch (intensity) {
-            case 1: pattern = [50, 200]; break;
-            case 2: pattern = [50, 100]; break;
-            case 3: pattern = [50, 50]; break;
-            case 4: pattern = [100, 50]; break;
-            case 5: pattern = [200]; break;
-            default: pattern = [50, 50];
-          }
-          navigator.vibrate(pattern);
-        }
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
@@ -313,23 +300,8 @@ app.get('/', (req, res) => {
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, currentPosition <= 0 ? 'left' : 'right');
-            if (vibrationMode === 'wave' && navigator.vibrate) {
-              navigator.vibrate([1000]);
-            } else if (vibrationMode === 'pulse' && navigator.vibrate) {
-              let pattern;
-              switch (intensity) {
-                case 1: pattern = [50, 200]; break;
-                case 2: pattern = [50, 100]; break;
-                case 3: pattern = [50, 50]; break;
-                case 4: pattern = [100, 50]; break;
-                case 5: pattern = [200]; break;
-                default: pattern = [50, 50];
-              }
-              navigator.vibrate(pattern);
-            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            if (navigator.vibrate) navigator.vibrate(0);
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
@@ -343,7 +315,6 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          if (navigator.vibrate) navigator.vibrate(0);
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           distortionLayer.classList.remove('squeezing');
@@ -365,20 +336,6 @@ app.get('/', (req, res) => {
         distortionLayer.classList.add('squeezing');
         const intensity = parseInt(intensitySlider.value);
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-        if (vibrationMode === 'wave' && navigator.vibrate) {
-          navigator.vibrate([1000]);
-        } else if (vibrationMode === 'pulse' && navigator.vibrate) {
-          let pattern;
-          switch (intensity) {
-            case 1: pattern = [50, 200]; break;
-            case 2: pattern = [50, 100]; break;
-            case 3: pattern = [50, 50]; break;
-            case 4: pattern = [100, 50]; break;
-            case 5: pattern = [200]; break;
-            default: pattern = [50, 50];
-          }
-          navigator.vibrate(pattern);
-        }
         sliderTrack.classList.add('pulsing', 'flashing');
         setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
@@ -408,23 +365,8 @@ app.get('/', (req, res) => {
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, currentPosition <= 0 ? 'left' : 'right');
-            if (vibrationMode === 'wave' && navigator.vibrate) {
-              navigator.vibrate([1000]);
-            } else if (vibrationMode === 'pulse' && navigator.vibrate) {
-              let pattern;
-              switch (intensity) {
-                case 1: pattern = [50, 200]; break;
-                case 2: pattern = [50, 100]; break;
-                case 3: pattern = [50, 50]; break;
-                case 4: pattern = [100, 50]; break;
-                case 5: pattern = [200]; break;
-                default: pattern = [50, 50];
-              }
-              navigator.vibrate(pattern);
-            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            if (navigator.vibrate) navigator.vibrate(0);
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
             lastCollision = null;
           }
@@ -438,7 +380,6 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          if (navigator.vibrate) navigator.vibrate(0);
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           distortionLayer.classList.remove('squeezing');
