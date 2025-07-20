@@ -25,7 +25,6 @@ app.get('/', (req, res) => {
         <div style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
       </div>
       <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
-      <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
       <style>
         @keyframes pulse {
           0% { transform: scale(1); }
@@ -34,7 +33,7 @@ app.get('/', (req, res) => {
         }
         @keyframes flash {
           0% { background-color: #4b5e97; }
-          20% { background-color: #cc6666; } /* Reduced saturation red */
+          20% { background-color: #ff0000; }
           100% { background-color: #4b5e97; }
         }
         .pulsing {
@@ -79,58 +78,9 @@ app.get('/', (req, res) => {
         const intensitySlider = document.getElementById('intensity');
         const sliderTrack = document.getElementById('sliderTrack');
         const vibrateButton = document.getElementById('vibrateButton');
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
         let isDragging = false;
         let startX = 0;
         let lastPosition = 0;
-
-        // Set canvas size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        window.addEventListener('resize', () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-        });
-
-        // Particle class for purple heart emojis
-        class Particle {
-          constructor(x, y) {
-            this.x = x;
-            this.y = y;
-            this.speedY = -Math.random() * 2 - 1; // Upward speed
-            this.speedX = Math.random() * 2 - 1; // Slight horizontal drift
-            this.size = 30; // Fixed size for emoji
-            this.life = 50; // Shorter life for quick fade
-          }
-          update() {
-            this.y += this.speedY;
-            this.x += this.speedX;
-            this.life -= 1;
-          }
-          draw() {
-            if (this.life > 0) {
-              ctx.fillStyle = '#a855f7'; // Purple color
-              ctx.font = `${this.size}px Arial`;
-              ctx.globalAlpha = this.life / 50; // Fade out
-              ctx.fillText('💜', this.x, this.y);
-              ctx.globalAlpha = 1; // Reset alpha
-            }
-          }
-        }
-
-        // Animation loop
-        function animateParticles() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          for (let i = particles.length - 1; i >= 0; i--) {
-            particles[i].update();
-            particles[i].draw();
-            if (particles[i].y + particles[i].size < 0 || particles[i].life <= 0) particles.splice(i, 1); // Remove when off-screen or life ends
-          }
-          requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
 
         intensitySlider.oninput = () => {
           intensityDisplay.textContent = intensitySlider.value;
@@ -154,12 +104,7 @@ app.get('/', (req, res) => {
               navigator.vibrate(pattern);
               console.log('Vibrate started with intensity:', intensity);
               sliderTrack.classList.add('pulsing', 'flashing');
-              for (let i = 0; i < 5; i++) {
-                particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-              }
-              setTimeout(() => {
-                sliderTrack.classList.remove('pulsing', 'flashing');
-              }, 500); // Match pulse duration
+              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
             }
           }
         };
@@ -176,12 +121,7 @@ app.get('/', (req, res) => {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('pulsing', 'flashing');
-            for (let i = 0; i < 5; i++) {
-              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-            }
-            setTimeout(() => {
-              sliderTrack.classList.remove('pulsing', 'flashing');
-            }, 500); // Match pulse duration
+            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -207,12 +147,7 @@ app.get('/', (req, res) => {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
                 sliderTrack.classList.add('pulsing', 'flashing');
-                for (let i = 0; i < 5; i++) {
-                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-                }
-                setTimeout(() => {
-                  sliderTrack.classList.remove('pulsing', 'flashing');
-                }, 500); // Match pulse duration
+                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -245,12 +180,7 @@ app.get('/', (req, res) => {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('pulsing', 'flashing');
-            for (let i = 0; i < 5; i++) {
-              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-            }
-            setTimeout(() => {
-              sliderTrack.classList.remove('pulsing', 'flashing');
-            }, 500); // Match pulse duration
+            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -276,12 +206,7 @@ app.get('/', (req, res) => {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
                 sliderTrack.classList.add('pulsing', 'flashing');
-                for (let i = 0; i < 5; i++) {
-                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
-                }
-                setTimeout(() => {
-                  sliderTrack.classList.remove('pulsing', 'flashing');
-                }, 500); // Match pulse duration
+                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
