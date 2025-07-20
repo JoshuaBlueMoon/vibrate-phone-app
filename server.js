@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
     <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
     <div class="red-dot" style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
   </div>
-  <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
+  <p style="font-size: 14px;">Drag the heart to the right red dot, then back to the left red dot to vibrate. Release to stop. Adjust intensity.</p>
   <style>
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -108,8 +108,7 @@ app.get('/', (req, res) => {
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let currentX = 0; // Current heart position for lerp
-    let currentY = 30; // Initial top position
+    let hasTouchedRight = false; // Track if right dot was touched
 
     connectButton.addEventListener('click', () => {
       if (roomInput.value === '1') {
@@ -174,10 +173,6 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function lerp(start, end, factor) {
-      return start + (end - start) * factor;
-    }
-
     // Drag handling
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
@@ -195,35 +190,27 @@ app.get('/', (req, res) => {
       if (isDragging) {
         e.preventDefault();
         const trackRect = sliderTrack.getBoundingClientRect();
-        const intensity = parseInt(intensitySlider.value);
-        // Calculate drag factor: 0.4 (intensity 1) to 0.2 (intensity 5)
-        const dragFactor = 0.4 - (intensity - 1) * 0.05;
-        let targetX = e.clientX - startX - trackRect.left;
-        let targetY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
-        if (targetX < 0) targetX = 0;
-        if (targetX > trackRect.width - vibrateButton.offsetWidth) targetX = trackRect.width - vibrateButton.offsetWidth;
-        if (targetY < 0) targetY = 0;
-        if (targetY > trackRect.height - vibrateButton.offsetHeight) targetY = trackRect.height - vibrateButton.offsetHeight;
-        // Apply lerp for smooth drag effect
-        currentX = lerp(currentX, targetX, dragFactor);
-        currentY = lerp(currentY, targetY, dragFactor);
-        vibrateButton.style.left = currentX + 'px';
-        vibrateButton.style.top = currentY + 'px';
+        let newX = e.clientX - startX - trackRect.left;
+        let newY = e.clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
+        if (newX < 0) newX = 0;
+        if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+        if (newY < 0) newY = 0;
+        if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
+        vibrateButton.style.left = newX + 'px';
+        vibrateButton.style.top = newY + 'px';
 
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
+          if (currentPosition >= maxPosition) {
+            hasTouchedRight = true; // Mark right dot as touched
+          } else if (currentPosition <= 0 && hasTouchedRight) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            hasTouchedRight = false; // Reset after triggering
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
@@ -244,6 +231,7 @@ app.get('/', (req, res) => {
         }
         isDragging = false;
         lastCollision = null;
+        hasTouchedRight = false; // Reset on release
       }
     });
 
@@ -264,35 +252,27 @@ app.get('/', (req, res) => {
       if (isDragging) {
         e.preventDefault();
         const trackRect = sliderTrack.getBoundingClientRect();
-        const intensity = parseInt(intensitySlider.value);
-        // Calculate drag factor: 0.4 (intensity 1) to 0.2 (intensity 5)
-        const dragFactor = 0.4 - (intensity - 1) * 0.05;
-        let targetX = e.touches[0].clientX - startX - trackRect.left;
-        let targetY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
-        if (targetX < 0) targetX = 0;
-        if (targetX > trackRect.width - vibrateButton.offsetWidth) targetX = trackRect.width - vibrateButton.offsetWidth;
-        if (targetY < 0) targetY = 0;
-        if (targetY > trackRect.height - vibrateButton.offsetHeight) targetY = trackRect.height - vibrateButton.offsetHeight;
-        // Apply lerp for smooth drag effect
-        currentX = lerp(currentX, targetX, dragFactor);
-        currentY = lerp(currentY, targetY, dragFactor);
-        vibrateButton.style.left = currentX + 'px';
-        vibrateButton.style.top = currentY + 'px';
+        let newX = e.touches[0].clientX - startX - trackRect.left;
+        let newY = e.touches[0].clientY - trackRect.top - (vibrateButton.offsetHeight / 2) + 30;
+        if (newX < 0) newX = 0;
+        if (newX > trackRect.width - vibrateButton.offsetWidth) newX = trackRect.width - vibrateButton.offsetWidth;
+        if (newY < 0) newY = 0;
+        if (newY > trackRect.height - vibrateButton.offsetHeight) newY = trackRect.height - vibrateButton.offsetHeight;
+        vibrateButton.style.left = newX + 'px';
+        vibrateButton.style.top = newY + 'px';
 
         const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
-          if (currentPosition <= 0) {
+          if (currentPosition >= maxPosition) {
+            hasTouchedRight = true; // Mark right dot as touched
+          } else if (currentPosition <= 0 && hasTouchedRight) {
             const intensity = intensitySlider.value;
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
             sliderTrack.classList.add('bar-pulsing', 'flashing');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'left');
-          } else if (currentPosition >= maxPosition) {
-            const intensity = intensitySlider.value;
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, 'right');
+            hasTouchedRight = false; // Reset after triggering
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing');
@@ -313,6 +293,7 @@ app.get('/', (req, res) => {
         }
         isDragging = false;
         lastCollision = null;
+        hasTouchedRight = false; // Reset on release
       }
     });
   </script>
