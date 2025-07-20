@@ -83,12 +83,12 @@ app.get('/', (req, res) => {
       75% { transform: scale(0.95, 1.05); }
       100% { transform: scale(1, 1); }
     }
-    @keyframes bottom-gelatin {
-      0% { transform: scaleY(1); }
-      25% { transform: scaleY(1.1); }
-      50% { transform: scaleY(0.95); }
-      75% { transform: scaleY(1.05); }
-      100% { transform: scaleY(1); }
+    @keyframes local-gelatin {
+      0% { transform: scale(1, 1); }
+      25% { transform: scale(0.9, 1.1); }
+      50% { transform: scale(1.1, 0.9); }
+      75% { transform: scale(0.95, 1.05); }
+      100% { transform: scale(1, 1); }
     }
     @keyframes redPulse {
       0% { background-color: rgba(0, 0, 0, 0); }
@@ -124,9 +124,19 @@ app.get('/', (req, res) => {
     .gelatin {
       animation: gelatin 0.5s ease-in-out;
     }
-    .bottom-gelatin {
-      animation: bottom-gelatin 0.5s ease-in-out;
-      transform-origin: bottom;
+    .local-gelatin::before {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 60px;
+      background: url('/images/custom-bar.png') no-repeat center center;
+      background-size: cover;
+      top: -20px; /* Center on heart */
+      left: 0;
+      z-index: 2;
+      clip-path: inset(0 0 0 0); /* Adjust to show only a section */
+      animation: local-gelatin 0.5s ease-in-out;
+      transform-origin: center;
     }
     .red-pulsing::before {
       content: '';
@@ -272,7 +282,7 @@ app.get('/', (req, res) => {
     let lastWaveBurstTime = 0;
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
-    let lastBottomGelatinTime = 0;
+    let lastLocalGelatinTime = 0;
 
     // Score reduction: 2 points per second
     setInterval(() => {
@@ -456,12 +466,12 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
-          sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-          lastBottomGelatinTime = currentTime;
+        if (currentPosition >= bottomThreshold && currentTime - lastLocalGelatinTime >= 500) {
+          vibrateButton.classList.add('local-gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('local-gelatin'); }, 500);
+          lastLocalGelatinTime = currentTime;
         } else if (currentPosition < bottomThreshold) {
-          sliderTrack.classList.remove('bottom-gelatin');
+          vibrateButton.classList.remove('local-gelatin');
         }
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
@@ -485,8 +495,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
-          vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          vibrateButton.classList.remove('pulsing', 'local-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
         lastCollision = null;
@@ -508,12 +518,12 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
-          sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-          lastBottomGelatinTime = currentTime;
+        if (currentPosition >= bottomThreshold && currentTime - lastLocalGelatinTime >= 500) {
+          vibrateButton.classList.add('local-gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('local-gelatin'); }, 500);
+          lastLocalGelatinTime = currentTime;
         } else if (currentPosition < bottomThreshold) {
-          sliderTrack.classList.remove('bottom-gelatin');
+          vibrateButton.classList.remove('local-gelatin');
         }
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
@@ -537,8 +547,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
-          vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          vibrateButton.classList.remove('pulsing', 'local-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
         }
         isDragging = false;
         lastCollision = null;
