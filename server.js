@@ -146,9 +146,11 @@ app.get('/', (req, res) => {
               }
               navigator.vibrate(pattern);
               isVibrating = true;
+              console.log('Vibration started with intensity:', intensity);
             } else if (data.command === 'stopVibrate' && isVibrating) {
               navigator.vibrate(0);
               isVibrating = false;
+              console.log('Vibration stopped');
             }
           }
         };
@@ -194,14 +196,16 @@ app.get('/', (req, res) => {
             const currentPosition = vibrateButton.offsetLeft;
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
-              if (!isVibrating && ((lastPosition === 0 && currentPosition >= maxPosition) || (lastPosition >= maxPosition && currentPosition <= 0))) {
+              if (!isVibrating && ((lastPosition > 0 && currentPosition <= 0) || (lastPosition < maxPosition && currentPosition >= maxPosition))) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
-              } else if (isVibrating && !(currentPosition === 0 || currentPosition >= maxPosition)) {
+                console.log('Vibration triggered at end:', currentPosition);
+              } else if (isVibrating && currentPosition > 0 && currentPosition < maxPosition) {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
                 isVibrating = false;
+                console.log('Vibration stopped in middle:', currentPosition);
               } else if (isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
               }
@@ -267,14 +271,16 @@ app.get('/', (req, res) => {
             const currentPosition = vibrateButton.offsetLeft;
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
             if (room) {
-              if (!isVibrating && ((lastPosition === 0 && currentPosition >= maxPosition) || (lastPosition >= maxPosition && currentPosition <= 0))) {
+              if (!isVibrating && ((lastPosition > 0 && currentPosition <= 0) || (lastPosition < maxPosition && currentPosition >= maxPosition))) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
-              } else if (isVibrating && !(currentPosition === 0 || currentPosition >= maxPosition)) {
+                console.log('Vibration triggered at end:', currentPosition);
+              } else if (isVibrating && currentPosition > 0 && currentPosition < maxPosition) {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
                 isVibrating = false;
+                console.log('Vibration stopped in middle:', currentPosition);
               } else if (isVibrating) {
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity }));
               }
