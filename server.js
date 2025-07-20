@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
         <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
         <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>
       </div>
-      <div id="connectCircle" style="width: 50px; height: 50px; background-color: #4b5e97; border-radius: 50%; margin-top: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.3s;" onclick="toggleConnection()"></div>
-      <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate. Tap the circle to connect. Adjust intensity.</p>
+      <div id="connectCircle" style="width: 50px; height: 50px; background-color: gray; border-radius: 50%; margin-top: 20px; cursor: pointer;" onclick="toggleConnect()"></div>
+      <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate. Tap the circle to connect—both must be white. Adjust intensity.</p>
       <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
       <style>
         @keyframes pulse {
@@ -57,11 +57,11 @@ app.get('/', (req, res) => {
             max-width: 400px;
             margin-left: 20px;
           }
-          #connectCircle {
-            margin-left: 20px;
-          }
           p {
             max-width: 150px;
+            margin-left: 20px;
+          }
+          #connectCircle {
             margin-left: 20px;
           }
         }
@@ -73,8 +73,8 @@ app.get('/', (req, res) => {
         const intensitySlider = document.getElementById('intensity');
         const sliderTrack = document.getElementById('sliderTrack');
         const vibrateButton = document.getElementById('vibrateButton');
-        const canvas = document.getElementById('particleCanvas');
         const connectCircle = document.getElementById('connectCircle');
+        const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let isDragging = false;
@@ -135,25 +135,56 @@ app.get('/', (req, res) => {
         ws.onopen = () => console.log('Connected to server');
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          if (data.command === 'toggleConnection') {
-            isConnected = data.state;
-            connectCircle.style.backgroundColor = isConnected ? 'white' : '#4b5e97';
+          if (data.command === 'startVibrate' && navigator.vibrate && isConnected) {
+            const intensity = data.intensity || 3;
+            let pattern;
+            switch (intensity) {
+              case 1: pattern = [50, 200]; break; // 50ms on, 200ms off
+              case 2: pattern = [50, 100]; break; // 50ms on, 100ms off
+              case 3: pattern = [50, 50]; break;  // 50ms on, 50ms off
+              case 4: pattern = [100, 50]; break; // 100ms on, 50ms off
+              case 5: pattern = [200]; break;     // 200ms on, no off
+              default: pattern = [50, 50];
+            }
+            navigator.vibrate(pattern);
+            console.log('Vibrate started with intensity:', intensity);
           }
         };
 
-        function toggleConnection() {
+        function toggleConnect() {
           isConnected = !isConnected;
-          connectCircle.style.backgroundColor = isConnected ? 'white' : '#4b5e97';
-          ws.send(JSON.stringify({ command: 'toggleConnection', state: isConnected }));
+          connectCircle.style.backgroundColor = isConnected ? 'white' : 'gray';
+          ws.send(JSON.stringify({ command: 'updateConnect', connected: isConnected }));
         }
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.command === 'updateConnect') {
+            isConnected = data.connected;
+            connectCircle.style.backgroundColor = isConnected ? 'white' : 'gray';
+          } else if (data.command === 'startVibrate' && navigator.vibrate && isConnected) {
+            const intensity = data.intensity || 3;
+            let pattern;
+            switch (intensity) {
+              case 1: pattern = [50, 200]; break;
+              case 2: pattern = [50, 100]; break;
+              case 3: pattern = [50, 50]; break;
+              case 4: pattern = [100, 50]; break;
+              case 5: pattern = [200]; break;
+              default: pattern = [50, 50];
+            }
+            navigator.vibrate(pattern);
+            console.log('Vibrate started with intensity:', intensity);
+          }
+        };
 
         // Drag handling
         vibrateButton.addEventListener('mousedown', (e) => {
           e.preventDefault();
           isDragging = true;
           startX = e.clientX - vibrateButton.offsetLeft;
-          const room = 'shared'; // Simplified to a fixed connection
-          if (room && isConnected) {
+          const room = document.getElementById('room')?.value || 'default';
+          if (isConnected) {
             vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
             for (let i = 0; i < 5; i++) {
@@ -176,18 +207,18 @@ app.get('/', (req, res) => {
             vibrateButton.style.left = newX + 'px';
             vibrateButton.style.top = newY + 'px';
 
-            const room = 'shared';
+            const room = document.getElementById('room')?.value || 'default';
             const currentPosition = vibrateButton.offsetLeft;
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
-            if (room && isConnected) {
+            if (isConnected) {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
-                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                ws.send(JSON.stringify({ command: 'startVibrate', intensity: parseInt(intensity) }));
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
               } else {
-                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                ws.send(JSON.stringify({ command: 'stopVibrate' }));
               }
             }
             lastPosition = currentPosition;
@@ -196,9 +227,9 @@ app.get('/', (req, res) => {
 
         document.addEventListener('mouseup', () => {
           if (isDragging) {
-            const room = 'shared';
-            if (room && isConnected) {
-              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            const room = document.getElementById('room')?.value || 'default';
+            if (isConnected) {
+              ws.send(JSON.stringify({ command: 'stopVibrate' }));
               vibrateButton.style.color = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
@@ -211,8 +242,8 @@ app.get('/', (req, res) => {
           e.preventDefault();
           isDragging = true;
           startX = e.touches[0].clientX - vibrateButton.offsetLeft;
-          const room = 'shared';
-          if (room && isConnected) {
+          const room = document.getElementById('room')?.value || 'default';
+          if (isConnected) {
             vibrateButton.style.color = '#1e40af';
             vibrateButton.classList.add('pulsing');
             for (let i = 0; i < 5; i++) {
@@ -235,18 +266,18 @@ app.get('/', (req, res) => {
             vibrateButton.style.left = newX + 'px';
             vibrateButton.style.top = newY + 'px';
 
-            const room = 'shared';
+            const room = document.getElementById('room')?.value || 'default';
             const currentPosition = vibrateButton.offsetLeft;
             const maxPosition = trackRect.width - vibrateButton.offsetWidth;
-            if (room && isConnected) {
+            if (isConnected) {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
-                ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                ws.send(JSON.stringify({ command: 'startVibrate', intensity: parseInt(intensity) }));
                 for (let i = 0; i < 5; i++) {
                   particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
                 }
               } else {
-                ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+                ws.send(JSON.stringify({ command: 'stopVibrate' }));
               }
             }
             lastPosition = currentPosition;
@@ -255,9 +286,9 @@ app.get('/', (req, res) => {
 
         document.addEventListener('touchend', () => {
           if (isDragging) {
-            const room = 'shared';
-            if (room && isConnected) {
-              ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            const room = document.getElementById('room')?.value || 'default';
+            if (isConnected) {
+              ws.send(JSON.stringify({ command: 'stopVibrate' }));
               vibrateButton.style.color = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
@@ -269,6 +300,7 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
+
 // WebSocket connection
 let clients = [];
 wss.on('connection', (ws) => {
