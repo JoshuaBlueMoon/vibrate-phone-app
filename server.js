@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
-    <body style="background: linear-gradient(to bottom, #1a2a44, #000000); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
+    <body style="background-color: #1e3a8a; color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
       <h1 style="font-size: 24px;">Vibrate My Friend's Phone</h1>
       <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white; width: 80%;">
       <br>
@@ -20,9 +20,9 @@ app.get('/', (req, res) => {
       <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
       <br>
       <div id="sliderTrack" style="width: 80%; max-width: 600px; height: 120px; background-color: #4b5e97; border-radius: 10px; position: relative; margin-top: 20px; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-        <div style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
+        <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>
         <div id="vibrateButton" style="font-size: 48px; padding: 10px; background-color: transparent; color: #3b82f6; border: none; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s; position: absolute; top: 30px; left: 0; cursor: pointer; touch-action: none;">💙</div>
-        <div style="width: 20px; height: 20px; background: radial-gradient(circle, red, #ff3333); border-radius: 50%;"></div>
+        <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>
       </div>
       <p style="font-size: 14px;">Drag the heart to the red dots back and forth to vibrate continuously. Release to stop. Adjust intensity.</p>
       <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
@@ -86,45 +86,40 @@ app.get('/', (req, res) => {
           canvas.height = window.innerHeight;
         });
 
-        // New Particle class for purple heart emojis
+        // Particle class (improved heart shape, no fade)
         class Particle {
-          constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = canvas.height + 50; // Start just off-screen bottom
-            this.speedY = -Math.random() * 2 - 1; // Upward speed
-            this.speedX = Math.random() * 2 - 1; // Slight horizontal drift
-            this.size = 30; // Fixed size for emoji
-            this.life = 100; // Life counter for removal
+          constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 60 + 50; // 50-110px
+            this.speedX = Math.random() * 2 - 1;
+            this.speedY = Math.random() * -3 - 1; // Faster upward
+            this.color = '#a855f7'; // Bright purple
           }
           update() {
             this.y += this.speedY;
             this.x += this.speedX;
-            this.life -= 1;
           }
           draw() {
-            if (this.life > 0) {
-              ctx.fillStyle = '#a855f7'; // Purple color
-              ctx.font = `${this.size}px Arial`;
-              ctx.fillText('💜', this.x, this.y);
-            }
-          }
-        }
-
-        // Spawn new particles periodically
-        function spawnParticle() {
-          if (Math.random() < 0.05) { // 5% chance per frame
-            particles.push(new Particle());
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y + this.size / 4);
+            ctx.quadraticCurveTo(this.x + this.size / 4, this.y - this.size / 4, this.x, this.y - this.size / 2);
+            ctx.quadraticCurveTo(this.x - this.size / 4, this.y - this.size / 4, this.x - this.size / 2, this.y);
+            ctx.quadraticCurveTo(this.x - this.size / 4, this.y + this.size / 4, this.x, this.y + this.size / 2);
+            ctx.quadraticCurveTo(this.x + this.size / 4, this.y + this.size / 4, this.x + this.size / 2, this.y);
+            ctx.closePath();
+            ctx.fill();
           }
         }
 
         // Animation loop
         function animateParticles() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          spawnParticle();
           for (let i = particles.length - 1; i >= 0; i--) {
             particles[i].update();
             particles[i].draw();
-            if (particles[i].y + particles[i].size < 0 || particles[i].life <= 0) particles.splice(i, 1); // Remove when off-screen or life ends
+            if (particles[i].y + particles[i].size < 0) particles.splice(i, 1); // Remove when off-screen
           }
           requestAnimationFrame(animateParticles);
         }
@@ -164,6 +159,9 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
+            for (let i = 0; i < 5; i++) {
+              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
+            }
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -188,6 +186,9 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                for (let i = 0; i < 5; i++) {
+                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
+                }
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -217,6 +218,9 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
+            for (let i = 0; i < 5; i++) {
+              particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
+            }
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -241,6 +245,9 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                for (let i = 0; i < 5; i++) {
+                  particles.push(new Particle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2));
+                }
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
