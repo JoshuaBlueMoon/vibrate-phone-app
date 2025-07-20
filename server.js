@@ -123,8 +123,8 @@ app.get('/', (req, res) => {
           }
           navigator.vibrate(pattern);
           console.log('Vibrate started with intensity:', intensity);
-          sliderTrack.classList.add('pulsing', 'flashing');
-          setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+          sliderTrack.classList.add('flashing');
+          setTimeout(() => sliderTrack.classList.remove('flashing'), 300);
         }
       }
     };
@@ -135,7 +135,6 @@ app.get('/', (req, res) => {
       const particleCount = 5;
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
-      // Convert sliderTrack coordinates to body coordinates
       const bodyX = x + trackRect.left - bodyRect.left;
       const bodyY = y + trackRect.top - bodyRect.top;
       for (let i = 0; i < particleCount; i++) {
@@ -144,15 +143,14 @@ app.get('/', (req, res) => {
         particle.textContent = '💜';
         particle.style.left = bodyX + 'px';
         particle.style.top = bodyY + 'px';
-        // Random trajectory for screen-wide movement
         const angle = Math.random() * 2 * Math.PI;
-        const distance = 50 + Math.random() * 100; // Larger range: 50-150px
+        const distance = 50 + Math.random() * 100;
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
         particle.style.setProperty('--tx', tx + 'px');
         particle.style.setProperty('--ty', ty + 'px');
         document.body.appendChild(particle);
-        setTimeout(() => particle.remove(), 1500); // Match animation duration
+        setTimeout(() => particle.remove(), 1500);
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
@@ -164,12 +162,9 @@ app.get('/', (req, res) => {
       startX = e.clientX - vibrateButton.offsetLeft;
       const room = document.getElementById('room').value;
       if (room) {
-        vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-        sliderTrack.classList.add('pulsing', 'flashing');
-        setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
       lastPosition = vibrateButton.offsetLeft;
     });
@@ -216,7 +211,6 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
@@ -232,12 +226,9 @@ app.get('/', (req, res) => {
       startX = e.touches[0].clientX - vibrateButton.offsetLeft;
       const room = document.getElementById('room').value;
       if (room) {
-        vibrateButton.style.backgroundColor = '#1e40af';
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
         ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
-        sliderTrack.classList.add('pulsing', 'flashing');
-        setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
       }
       lastPosition = vibrateButton.offsetLeft;
     });
@@ -284,7 +275,6 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'flashing');
         }
