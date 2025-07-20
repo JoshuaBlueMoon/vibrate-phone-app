@@ -87,6 +87,27 @@ app.get('/', (req, res) => {
       0% { transform: scale(1); opacity: 0.5; }
       100% { transform: scale(2); opacity: 0; }
     }
+    @keyframes enlargeBottom {
+      0% { transform: scale(1, 1); transform-origin: bottom center; }
+      25% { transform: scale(1.05, 1.15); transform-origin: bottom center; }
+      50% { transform: scale(1.1, 1.3); transform-origin: bottom center; }
+      75% { transform: scale(1.05, 1.15); transform-origin: bottom center; }
+      100% { transform: scale(1, 1); transform-origin: bottom center; }
+    }
+    @keyframes pinchTop {
+      0% { transform: scale(1, 1); transform-origin: top center; }
+      25% { transform: scale(0.85, 1); transform-origin: top center; }
+      50% { transform: scale(0.8, 1); transform-origin: top center; }
+      75% { transform: scale(0.85, 1); transform-origin: top center; }
+      100% { transform: scale(1, 1); transform-origin: top center; }
+    }
+    @keyframes twitch {
+      0% { transform: scale(1, 1) rotate(0deg); }
+      25% { transform: scale(1.02, 1.02) rotate(1deg); }
+      50% { transform: scale(1, 1) rotate(-1deg); }
+      75% { transform: scale(1.02, 1.02) rotate(1deg); }
+      100% { transform: scale(1, 1) rotate(0deg); }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -118,6 +139,15 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 1;
       animation: redPulse 2s ease-in-out infinite;
+    }
+    .enlarge-bottom {
+      animation: enlargeBottom 0.5s ease-in-out;
+    }
+    .pinch-top {
+      animation: pinchTop 0.5s ease-in-out;
+    }
+    .twitch {
+      animation: twitch 0.3s ease-in-out;
     }
     .particle {
       position: absolute;
@@ -253,6 +283,7 @@ app.get('/', (req, res) => {
     let lastWaveBurstTime = 0;
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
+    let lastDistortionTime = 0;
 
     // Score reduction: 2 points per second
     setInterval(() => {
@@ -264,6 +295,19 @@ app.get('/', (req, res) => {
         }
       }
     }, 1000);
+
+    // Subtle twitch every 3-6 seconds
+    function triggerTwitch() {
+      const randomInterval = Math.random() * 3000 + 3000; // 3-6 seconds
+      setTimeout(() => {
+        sliderTrack.classList.add('twitch');
+        setTimeout(() => {
+          sliderTrack.classList.remove('twitch');
+          triggerTwitch(); // Schedule next twitch
+        }, 300);
+      }, randomInterval);
+    }
+    triggerTwitch();
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -425,6 +469,21 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+        const currentTime = Date.now();
+
+        // Apply distortion based on heart position
+        if (currentTime - lastDistortionTime >= 500) {
+          sliderTrack.classList.remove('enlarge-bottom', 'pinch-top');
+          if (currentPosition <= maxPosition * 0.1) {
+            sliderTrack.classList.add('pinch-top');
+            setTimeout(() => { sliderTrack.classList.remove('pinch-top'); }, 500);
+          } else if (currentPosition >= maxPosition * 0.9) {
+            sliderTrack.classList.add('enlarge-bottom');
+            setTimeout(() => { sliderTrack.classList.remove('enlarge-bottom'); }, 500);
+          }
+          lastDistortionTime = currentTime;
+        }
+
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -448,7 +507,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'enlarge-bottom', 'pinch-top');
         }
         isDragging = false;
         lastCollision = null;
@@ -468,6 +527,21 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+        const currentTime = Date.now();
+
+        // Apply distortion based on heart position
+        if (currentTime - lastDistortionTime >= 500) {
+          sliderTrack.classList.remove('enlarge-bottom', 'pinch-top');
+          if (currentPosition <= maxPosition * 0.1) {
+            sliderTrack.classList.add('pinch-top');
+            setTimeout(() => { sliderTrack.classList.remove('pinch-top'); }, 500);
+          } else if (currentPosition >= maxPosition * 0.9) {
+            sliderTrack.classList.add('enlarge-bottom');
+            setTimeout(() => { sliderTrack.classList.remove('enlarge-bottom'); }, 500);
+          }
+          lastDistortionTime = currentTime;
+        }
+
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -491,7 +565,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'enlarge-bottom', 'pinch-top');
         }
         isDragging = false;
         lastCollision = null;
