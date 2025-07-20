@@ -162,7 +162,7 @@ app.get('/', (req, res) => {
           startX = e.clientX - vibrateButton.offsetLeft;
           const room = document.getElementById('room').value;
           if (room) {
-            vibrateButton.style.color = '#1e40af';
+            vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
           }
           lastPosition = vibrateButton.offsetLeft;
@@ -201,7 +201,7 @@ app.get('/', (req, res) => {
             const room = document.getElementById('room').value;
             if (room) {
               ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.color = '#3b82f6';
+              vibrateButton.style.backgroundColor = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
             isDragging = false;
@@ -215,7 +215,7 @@ app.get('/', (req, res) => {
           startX = e.touches[0].clientX - vibrateButton.offsetLeft;
           const room = document.getElementById('room').value;
           if (room) {
-            vibrateButton.style.color = '#1e40af';
+            vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
           }
           lastPosition = vibrateButton.offsetLeft;
@@ -254,7 +254,7 @@ app.get('/', (req, res) => {
             const room = document.getElementById('room').value;
             if (room) {
               ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-              vibrateButton.style.color = '#3b82f6';
+              vibrateButton.style.backgroundColor = '#3b82f6';
               vibrateButton.classList.remove('pulsing');
             }
             isDragging = false;
