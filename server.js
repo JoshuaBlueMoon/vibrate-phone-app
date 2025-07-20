@@ -14,8 +14,8 @@ app.get('/', (req, res) => {
 </head>
 <body style="background: linear-gradient(to bottom, #1a2a44, #000000); color: white; font-family: Arial; margin: 0; padding: 20px; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; max-width: 414px; margin: 0 auto;">
   <h1 style="font-size: 24px;">Pulse</h1>
-  <input id="room" type="text" placeholder="Enter room code (e.g., secret123)" style="font-size: 18px; padding: 10px; margin: 10px; background-color: #2b4d9e; border: none; border-radius: 5px; color: white; width: 80%;">
-  <br>
+  <div id="connectButton" style="width: 30px; height: 30px; background-color: #2b4d9e; border-radius: 50%; margin: 10px; cursor: pointer; transition: background-color 0.3s;"></div>
+  <input id="room" type="hidden" value="">
   <input type="range" id="intensity" min="1" max="5" value="3" style="width: 80%; margin: 10px; accent-color: #60a5fa;">
   <label for="intensity">Intensity: <span id="intensityValue" style="color: #60a5fa;">3</span></label>
   <br>
@@ -72,9 +72,14 @@ app.get('/', (req, res) => {
         font-size: 20px;
         margin: 0 10px;
       }
-      #room, #intensity {
+      #connectButton, #intensity {
         width: 40%;
         max-width: 150px;
+      }
+      #connectButton {
+        width: 30px;
+        height: 30px;
+        margin-left: 10px;
       }
       label {
         margin-left: 10px;
@@ -97,10 +102,17 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
+    const connectButton = document.getElementById('connectButton');
+    const roomInput = document.getElementById('room');
     let isDragging = false;
     let startX = 0;
     let lastPosition = 0;
     let lastCollision = null;
+
+    connectButton.addEventListener('click', () => {
+      roomInput.value = '1';
+      connectButton.style.backgroundColor = 'white';
+    });
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -109,7 +121,7 @@ app.get('/', (req, res) => {
     ws.onopen = () => console.log('Connected to server');
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.room === document.getElementById('room').value) {
+      if (data.room === roomInput.value) {
         if (data.command === 'startVibrate' && navigator.vibrate) {
           const intensity = data.intensity || 3;
           let pattern;
@@ -160,11 +172,10 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       startX = e.clientX - vibrateButton.offsetLeft;
-      const room = document.getElementById('room').value;
-      if (room) {
+      if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
-        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+        ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
     });
@@ -182,7 +193,7 @@ app.get('/', (req, res) => {
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
 
-        const room = document.getElementById('room').value;
+        const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
@@ -208,7 +219,7 @@ app.get('/', (req, res) => {
 
     document.addEventListener('mouseup', () => {
       if (isDragging) {
-        const room = document.getElementById('room').value;
+        const room = roomInput.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
@@ -224,11 +235,10 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       startX = e.touches[0].clientX - vibrateButton.offsetLeft;
-      const room = document.getElementById('room').value;
-      if (room) {
+      if (roomInput.value) {
         vibrateButton.classList.add('pulsing');
         const intensity = intensitySlider.value;
-        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+        ws.send(JSON.stringify({ room: roomInput.value, command: 'startVibrate', intensity: parseInt(intensity) }));
       }
       lastPosition = vibrateButton.offsetLeft;
     });
@@ -246,7 +256,7 @@ app.get('/', (req, res) => {
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
 
-        const room = document.getElementById('room').value;
+        const room = roomInput.value;
         const currentPosition = vibrateButton.offsetLeft;
         const maxPosition = trackRect.width - vibrateButton.offsetWidth;
         if (room) {
@@ -272,7 +282,7 @@ app.get('/', (req, res) => {
 
     document.addEventListener('touchend', () => {
       if (isDragging) {
-        const room = document.getElementById('room').value;
+        const room = roomInput.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
