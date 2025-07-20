@@ -31,8 +31,16 @@ app.get('/', (req, res) => {
           50% { transform: scale(1.1); }
           100% { transform: scale(1); }
         }
+        @keyframes flash {
+          0% { background-color: #4b5e97; }
+          20% { background-color: #ff0000; }
+          100% { background-color: #4b5e97; }
+        }
         .pulsing {
           animation: pulse 0.5s ease-in-out;
+        }
+        .flashing {
+          animation: flash 0.3s ease-out;
         }
         @media (orientation: landscape) {
           body {
@@ -70,6 +78,9 @@ app.get('/', (req, res) => {
         const intensitySlider = document.getElementById('intensity');
         const sliderTrack = document.getElementById('sliderTrack');
         const vibrateButton = document.getElementById('vibrateButton');
+        let isDragging = false;
+        let startX = 0;
+        let lastPosition = 0;
 
         intensitySlider.oninput = () => {
           intensityDisplay.textContent = intensitySlider.value;
@@ -92,8 +103,8 @@ app.get('/', (req, res) => {
               }
               navigator.vibrate(pattern);
               console.log('Vibrate started with intensity:', intensity);
-              sliderTrack.classList.add('pulsing');
-              setTimeout(() => sliderTrack.classList.remove('pulsing'), 500); // Match pulse duration
+              sliderTrack.classList.add('pulsing', 'flashing');
+              setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
             }
           }
         };
@@ -107,6 +118,10 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            sliderTrack.classList.add('pulsing', 'flashing');
+            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -131,6 +146,8 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                sliderTrack.classList.add('pulsing', 'flashing');
+                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -160,6 +177,10 @@ app.get('/', (req, res) => {
           if (room) {
             vibrateButton.style.backgroundColor = '#1e40af';
             vibrateButton.classList.add('pulsing');
+            const intensity = intensitySlider.value;
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+            sliderTrack.classList.add('pulsing', 'flashing');
+            setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
           }
           lastPosition = vibrateButton.offsetLeft;
         });
@@ -184,6 +205,8 @@ app.get('/', (req, res) => {
               if (currentPosition <= 0 || currentPosition >= maxPosition) {
                 const intensity = intensitySlider.value;
                 ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: parseInt(intensity) }));
+                sliderTrack.classList.add('pulsing', 'flashing');
+                setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500); // Match pulse duration
               } else {
                 ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
               }
@@ -208,6 +231,29 @@ app.get('/', (req, res) => {
     </html>
   `);
 });
+
+// WebSocket connection
+let clients = [];
+wss.on('connection', (ws) => {
+  clients.push(ws);
+  ws.on('close', () => {
+    clients = clients.filter(client => client !== ws);
+  });
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(data));
+        }
+      });
+    } catch (e) {
+      console.error('Error parsing message:', e);
+    }
+  });
+});
+
+server.listen(process.env.PORT || 3000, () => console.log('Server running'));
 
 // WebSocket connection
 let clients = [];
