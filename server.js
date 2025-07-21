@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
     <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
   </div>
-  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: url('/images/custom-bar.png') no-repeat center center; background-size: cover; border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
+  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: url('/images/custom-bar.png') no-repeat center center; background-size: cover; border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease-out;">
     <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
     <div id="vibrateButton" style="padding: 8px; background-color: transparent; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 0; left: calc(50% - 28px); cursor: pointer; touch-action: none; z-index: 3;">
       <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
@@ -91,20 +91,6 @@ app.get('/', (req, res) => {
       75% { transform: scaleY(1.05); }
       100% { transform: scaleY(1); }
     }
-    @keyframes gelatin-squeeze {
-      0% { transform: scale(0.9, 1.1); }
-      25% { transform: scale(0.85, 1.15); }
-      50% { transform: scale(0.95, 1.05); }
-      75% { transform: scale(0.88, 1.12); }
-      100% { transform: scale(0.9, 1.1); }
-    }
-    @keyframes gelatin-thicken {
-      0% { transform: scale(1.1, 0.9); }
-      25% { transform: scale(1.15, 0.85); }
-      50% { transform: scale(1.05, 0.95); }
-      75% { transform: scale(1.12, 0.88); }
-      100% { transform: scale(1.1, 0.9); }
-    }
     @keyframes fast-throb {
       0% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
       50% { background-color: rgba(255, 51, 51, 0.4); transform: scale(var(--scale)); }
@@ -154,12 +140,6 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .gelatin-squeeze {
-      animation: gelatin-squeeze 0.6s ease-in-out infinite;
-    }
-    .gelatin-thicken {
-      animation: gelatin-thicken 0.6s ease-in-out infinite;
-    }
     .fast-throb::before {
       content: '';
       position: absolute;
@@ -169,6 +149,12 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 1;
       animation: fast-throb var(--duration) ease-in-out infinite;
+    }
+    .thicker-shorter {
+      transform: scaleX(1.2) scaleY(0.9);
+    }
+    .thinner-squeezed {
+      transform: scaleX(0.8) scaleY(1.1);
     }
     .particle {
       position: absolute;
@@ -555,23 +541,6 @@ app.get('/', (req, res) => {
       }
     });
 
-    function updateSliderTrackSize(currentPosition, maxPosition) {
-      const topThreshold = maxPosition * 0.1; // Top 10% of track
-      const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-      const currentTime = Date.now();
-      
-      // Remove all size animations first
-      sliderTrack.classList.remove('gelatin-squeeze', 'gelatin-thicken', 'bottom-gelatin');
-      
-      if (currentPosition <= topThreshold && currentTime - lastTrackGelatinTime >= 600) {
-        sliderTrack.classList.add('gelatin-squeeze');
-        lastTrackGelatinTime = currentTime;
-      } else if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 600) {
-        sliderTrack.classList.add('gelatin-thicken');
-        lastBottomGelatinTime = currentTime;
-      }
-    }
-
     document.addEventListener('mousemove', (e) => {
       if (isDragging) {
         e.preventDefault();
@@ -585,7 +554,26 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        updateSliderTrackSize(currentPosition, maxPosition);
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const currentTime = Date.now();
+
+        // Apply thicker-shorter or thinner-squeezed based on position
+        if (currentPosition <= topThreshold) {
+          sliderTrack.classList.add('thinner-squeezed');
+          sliderTrack.classList.remove('thicker-shorter', 'bottom-gelatin');
+        } else if (currentPosition >= bottomThreshold) {
+          sliderTrack.classList.add('thicker-shorter');
+          sliderTrack.classList.remove('thinner-squeezed');
+          if (currentTime - lastBottomGelatinTime >= 500) {
+            sliderTrack.classList.add('bottom-gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+            lastBottomGelatinTime = currentTime;
+          }
+        } else {
+          sliderTrack.classList.remove('thicker-shorter', 'thinner-squeezed', 'bottom-gelatin');
+        }
+
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -609,7 +597,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'gelatin-squeeze', 'gelatin-thicken');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'thicker-shorter', 'thinner-squeezed');
         }
         isDragging = false;
         lastCollision = null;
@@ -629,7 +617,26 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        updateSliderTrackSize(currentPosition, maxPosition);
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const currentTime = Date.now();
+
+        // Apply thicker-shorter or thinner-squeezed based on position
+        if (currentPosition <= topThreshold) {
+          sliderTrack.classList.add('thinner-squeezed');
+          sliderTrack.classList.remove('thicker-shorter', 'bottom-gelatin');
+        } else if (currentPosition >= bottomThreshold) {
+          sliderTrack.classList.add('thicker-shorter');
+          sliderTrack.classList.remove('thinner-squeezed');
+          if (currentTime - lastBottomGelatinTime >= 500) {
+            sliderTrack.classList.add('bottom-gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+            lastBottomGelatinTime = currentTime;
+          }
+        } else {
+          sliderTrack.classList.remove('thicker-shorter', 'thinner-squeezed', 'bottom-gelatin');
+        }
+
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -653,7 +660,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'gelatin-squeeze', 'gelatin-thicken');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'thicker-shorter', 'thinner-squeezed');
         }
         isDragging = false;
         lastCollision = null;
