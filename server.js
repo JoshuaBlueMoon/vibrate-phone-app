@@ -91,6 +91,20 @@ app.get('/', (req, res) => {
       75% { transform: scaleY(1.05); }
       100% { transform: scaleY(1); }
     }
+    @keyframes gelatin-squeeze {
+      0% { transform: scale(0.9, 1.1); }
+      25% { transform: scale(0.85, 1.15); }
+      50% { transform: scale(0.95, 1.05); }
+      75% { transform: scale(0.88, 1.12); }
+      100% { transform: scale(0.9, 1.1); }
+    }
+    @keyframes gelatin-thicken {
+      0% { transform: scale(1.1, 0.9); }
+      25% { transform: scale(1.15, 0.85); }
+      50% { transform: scale(1.05, 0.95); }
+      75% { transform: scale(1.12, 0.88); }
+      100% { transform: scale(1.1, 0.9); }
+    }
     @keyframes fast-throb {
       0% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
       50% { background-color: rgba(255, 51, 51, 0.4); transform: scale(var(--scale)); }
@@ -139,6 +153,12 @@ app.get('/', (req, res) => {
     .bottom-gelatin {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
+    }
+    .gelatin-squeeze {
+      animation: gelatin-squeeze 0.6s ease-in-out infinite;
+    }
+    .gelatin-thicken {
+      animation: gelatin-thicken 0.6s ease-in-out infinite;
     }
     .fast-throb::before {
       content: '';
@@ -535,6 +555,23 @@ app.get('/', (req, res) => {
       }
     });
 
+    function updateSliderTrackSize(currentPosition, maxPosition) {
+      const topThreshold = maxPosition * 0.1; // Top 10% of track
+      const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+      const currentTime = Date.now();
+      
+      // Remove all size animations first
+      sliderTrack.classList.remove('gelatin-squeeze', 'gelatin-thicken', 'bottom-gelatin');
+      
+      if (currentPosition <= topThreshold && currentTime - lastTrackGelatinTime >= 600) {
+        sliderTrack.classList.add('gelatin-squeeze');
+        lastTrackGelatinTime = currentTime;
+      } else if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 600) {
+        sliderTrack.classList.add('gelatin-thicken');
+        lastBottomGelatinTime = currentTime;
+      }
+    }
+
     document.addEventListener('mousemove', (e) => {
       if (isDragging) {
         e.preventDefault();
@@ -548,15 +585,7 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
-          sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-          lastBottomGelatinTime = currentTime;
-        } else if (currentPosition < bottomThreshold) {
-          sliderTrack.classList.remove('bottom-gelatin');
-        }
+        updateSliderTrackSize(currentPosition, maxPosition);
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -580,7 +609,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'gelatin-squeeze', 'gelatin-thicken');
         }
         isDragging = false;
         lastCollision = null;
@@ -600,15 +629,7 @@ app.get('/', (req, res) => {
         const room = document.getElementById('room').value;
         const currentPosition = vibrateButton.offsetTop;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const currentTime = Date.now();
-        if (currentPosition >= bottomThreshold && currentTime - lastBottomGelatinTime >= 500) {
-          sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-          lastBottomGelatinTime = currentTime;
-        } else if (currentPosition < bottomThreshold) {
-          sliderTrack.classList.remove('bottom-gelatin');
-        }
+        updateSliderTrackSize(currentPosition, maxPosition);
         if (room) {
           if (currentPosition <= 0 || currentPosition >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
@@ -632,7 +653,7 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.style.backgroundColor = '#3b82f6';
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin', 'gelatin-squeeze', 'gelatin-thicken');
         }
         isDragging = false;
         lastCollision = null;
