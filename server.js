@@ -43,70 +43,6 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-      <input lesquels
-
-System: I'm sorry, but it looks like your code was cut off. I'll complete the changes based on your requirements, ensuring the `top-asset` movement is slower and more dynamic with a gelatin/liquid drop effect. Below is the corrected and complete code with the requested modifications.
-
-### Changes Implemented
-1. **Dynamic Movement for `top-asset`**:
-   - The `top-asset-move` animation is updated to span 8 seconds with three phases:
-     - **0-37.5% (3 seconds)**: Moves slowly to 20% of the `sliderTrack` height (`top: 20%`).
-     - **37.5-75% (3 seconds)**: Accelerates to 2x speed, covering 60% of the height (`top: 80%`).
-     - **75-100% (2 seconds)**: Slows down, covering the remaining 20% and fading out (`opacity: 0`).
-   - The `createTopAsset` function is updated to set the animation duration to 8 seconds and remove the asset after the animation completes.
-2. **Gelatin/Liquid Drop Effect**:
-   - Added a `top-asset-stretch` animation that stretches the asset vertically (`scaleY`) to simulate a liquid drop with a tail, using `transform-origin: top` so the bottom stretches downward.
-   - The animation stretches the asset during the fast phase (37.5-75%) to emphasize the drag effect, with a slight wobble to mimic gelatin.
-   - Applied a subtle `filter: blur(1px)` to the `top-asset` to enhance the liquid-like appearance, which can be adjusted based on the `top-asset.png` design.
-
-### Updated Code
-
-<xaiArtifact artifact_id="6019c051-f34e-4267-8326-e9e280e9207b" artifact_version_id="0dbbdb9e-8039-4a7f-a8e0-b50d858b4d8f" title="server.js" contentType="text/javascript">
-const express = require('express');
-const WebSocket = require('ws');
-const app = express();
-const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Serve static files from the public directory
-app.use(express.static('public'));
-
-// Serve the web page
-app.get('/', (req, res) => {
-  res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
-<body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
-  <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
-  <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
-    <span id="score">0</span>
-  </div>
-  <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
-    <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-  </div>
-  <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; background: url('/images/custom-bar.png') no-repeat center center; background-size: cover; border-radius: 50px; position: relative; margin: 10px auto 20px auto; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);">
-    <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
-    <div id="vibrateButton" style="padding: 8px; background-color: transparent; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 0; left: calc(50% - 28px); cursor: pointer; touch-action: none; z-index: 3;">
-      <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
-    </div>
-    <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
-    <div class="pulse-symbol top" style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
-    <div class="pulse-symbol bottom" style="position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
-  </div>
-  <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
-      <div id="pulseToggle" class="toggle-button toggled" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
-        <img src="/images/pulse-icon.png" alt="Pulse Icon" style="width: 24px; height: 24px;">
-      </div>
-      <div id="waveToggle" class="toggle-button" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
-        <img src="/images/wave-icon.png" alt="Wave Icon" style="width: 24px; height: 24px;">
-      </div>
-    </div>
-    <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
       <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
     </div>
     <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
@@ -166,17 +102,17 @@ app.get('/', (req, res) => {
     }
     @keyframes top-asset-move {
       0% { top: 0; opacity: 1; }
-      37.5% { top: 20%; opacity: 1; } /* Slow for 3s */
-      75% { top: 80%; opacity: 1; } /* Fast for 3s */
-      100% { top: 100%; opacity: 0; } /* Slow and fade for 2s */
+      30% { top: 30%; opacity: 1; } /* Slow for first 3s */
+      80% { top: 90%; opacity: 0.7; } /* Fast for next 5s */
+      100% { top: 100%; opacity: 0; } /* Slow and fade for last 2s */
     }
     @keyframes top-asset-stretch {
-      0% { transform: scaleY(1); }
-      37.5% { transform: scaleY(1.2); }
-      50% { transform: scaleY(1.5); }
-      62.5% { transform: scaleY(1.3); }
-      75% { transform: scaleY(1.5); }
-      100% { transform: scaleY(1); }
+      0% { transform: translateX(-50%) scaleY(1); }
+      20% { transform: translateX(-50%) scaleY(1.3); }
+      40% { transform: translateX(-48%) scaleY(1.5); }
+      60% { transform: translateX(-52%) scaleY(1.7); }
+      80% { transform: translateX(-50%) scaleY(1.4); }
+      100% { transform: translateX(-50%) scaleY(1); }
     }
     @keyframes glowPulse {
       0% { opacity: 0.3; transform: scale(1); }
@@ -242,11 +178,10 @@ app.get('/', (req, res) => {
       width: 20px;
       height: 20px;
       left: 50%;
-      transform: translateX(-50%) scaleY(1);
-      transform-origin: top;
+      transform: translateX(-50%);
       z-index: 2;
-      filter: blur(1px);
-      animation: top-asset-move 8s linear forwards, top-asset-stretch 8s ease-in-out forwards;
+      animation: top-asset-move 10s linear forwards, top-asset-stretch 10s ease-in-out forwards;
+      transform-origin: top;
     }
     .glow-dot {
       position: absolute;
@@ -420,7 +355,7 @@ app.get('/', (req, res) => {
       const randomX = Math.random() * (100 - 20); // Random position within 100px width
       asset.style.left = randomX + 'px';
       sliderTrack.appendChild(asset);
-      setTimeout(() => { asset.remove(); }, 8000); // Remove after 8s animation
+      setTimeout(() => { asset.remove(); }, 10000); // Remove after animation
     }
 
     // Apply fast throb animation with randomness
