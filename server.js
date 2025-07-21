@@ -102,17 +102,9 @@ app.get('/', (req, res) => {
     }
     @keyframes top-asset-move {
       0% { top: 0; opacity: 1; }
-      30% { top: 30%; opacity: 1; } /* Slow for first 3s */
-      80% { top: 90%; opacity: 0.7; } /* Fast for next 5s */
-      100% { top: 100%; opacity: 0; } /* Slow and fade for last 2s */
-    }
-    @keyframes top-asset-stretch {
-      0% { transform: translateX(-50%) scaleY(1); }
-      20% { transform: translateX(-50%) scaleY(1.3); }
-      40% { transform: translateX(-48%) scaleY(1.5); }
-      60% { transform: translateX(-52%) scaleY(1.7); }
-      80% { transform: translateX(-50%) scaleY(1.4); }
-      100% { transform: translateX(-50%) scaleY(1); }
+      33.33% { top: 20%; opacity: 1; } /* Slow for first 3s */
+      88.89% { top: 80%; opacity: 1; } /* Fast for next 5s */
+      100% { top: 100%; opacity: 0; } /* Slow and fade for last 1s */
     }
     @keyframes glowPulse {
       0% { opacity: 0.3; transform: scale(1); }
@@ -180,8 +172,7 @@ app.get('/', (req, res) => {
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
-      animation: top-asset-move 10s linear forwards, top-asset-stretch 10s ease-in-out forwards;
-      transform-origin: top;
+      animation: top-asset-move 9s linear forwards;
     }
     .glow-dot {
       position: absolute;
@@ -355,7 +346,7 @@ app.get('/', (req, res) => {
       const randomX = Math.random() * (100 - 20); // Random position within 100px width
       asset.style.left = randomX + 'px';
       sliderTrack.appendChild(asset);
-      setTimeout(() => { asset.remove(); }, 10000); // Remove after animation
+      setTimeout(() => { asset.remove(); }, 9000); // Remove after 9s animation
     }
 
     // Apply fast throb animation with randomness
