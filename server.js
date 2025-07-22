@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 32px; height: 32px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 64px; height: 64x; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
   </div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
@@ -34,8 +34,8 @@ app.get('/', (req, res) => {
   <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
     <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
   </div>
-  <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
+  <div id="bottomControls" style="margin-top: 14px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 6px; margin: 5px auto;">
       <div id="pulseToggle" class="toggle-button toggled" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
         <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
       </div>
@@ -149,7 +149,7 @@ app.get('/', (req, res) => {
       color: white;
     }
     .toggle-button.toggled img {
-      transform: scale(2);
+      transform: scale(1.5);
       filter: brightness(1.2);
     }
     #vibrateButton img:hover {
@@ -231,11 +231,11 @@ app.get('/', (req, res) => {
         height: 100%;
       }
       #bottomControls {
-        margin-top: 25px;
+        margin-top: 14px;
       }
       #toggleContainer {
         flex-direction: row;
-        gap: 8px;
+        gap: 4px;
         margin: 5px auto;
       }
       #intensityContainer {
@@ -267,7 +267,7 @@ app.get('/', (req, res) => {
         height: 60px;
       }
       .toggle-button.toggled img {
-        transform: scale(2);
+        transform: scale(1.5);
       }
       input[type="range"] {
         height: 22px;
