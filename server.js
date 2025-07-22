@@ -15,54 +15,6 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10teller
-
-System: I'm sorry, but your message was cut off. It looks like you were requesting changes to the code, including removing the red flash, purple hearts (wave burst), addressing vibration lag, and adding a pendulum-like wobble to the bar. Below is the complete updated code addressing all your requests, along with explanations.
-
-### Changes Made
-
-1. **Remove the Red Flash**:
-   - Removed the `flashing` class and its associated CSS (`@keyframes flash` and `.flashing::before`) from the style section.
-   - Removed `flashing` class additions/removals from the JavaScript code in the `ws.onmessage`, `mousemove`, and `touchmove` event listeners.
-   - This ensures the `custom-bar.png` does not display a red flash during vibrations, relying solely on the PNG's appearance.
-
-2. **Remove Purple Hearts (Wave Burst)**:
-   - Removed the `wave-burst` creation code from the `createParticle` function, including the associated DOM manipulation and timing logic (`lastWaveBurstTime`).
-   - Removed the CSS rules for `.wave-burst` and `@keyframes waveBurst` from the style section.
-   - Removed the `lastWaveBurstTime` variable from the JavaScript code.
-   - This eliminates the purple heart wave burst effect during vibrations.
-
-3. **Address Vibration Lag**:
-   - Reduced `particleCount` in the `createParticle` function from 3 to 1 to decrease the number of particles spawned during vibrations, reducing rendering overhead.
-   - Removed unnecessary animation classes (`pinching`) from vibration triggers to minimize CSS animation load.
-   - Ensured no additional DOM manipulations or heavy animations are triggered during vibrations, which should help reduce lag.
-   - Kept the `pulsing` and `bar-pulsing` animations as they are minimal and integral to visual feedback.
-
-4. **Add Pendulum-like Wobble on Bar Top**:
-   - Added a new CSS animation `@keyframes pendulumWobble` that rotates the `sliderTrack` slightly on the Y-axis (using `rotate` transform) with `transform-origin: bottom` to keep the base fixed.
-   - Modified the `sliderTrack` click event listener to detect taps in the top 20% of the track and apply the `pendulum-wobble` class, triggering the animation.
-   - Ensured the `custom-bar.png` (inside `sliderTrack`) follows the wobble since it is a child element with `position: absolute`.
-
-### Updated Code
-
-<xaiArtifact artifact_id="6019c051-f34e-4267-8326-e9e280e9207b" artifact_version_id="319fb662-a46f-4882-b4f2-9e9a24cac249" title="server.js" contentType="text/javascript">
-const express = require('express');
-const WebSocket = require('ws');
-const app = express();
-const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Serve static files from the public directory
-app.use(express.static('public'));
-
-// Serve the web page
-app.get('/', (req, res) => {
-  res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
@@ -117,12 +69,14 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
-    @keyframes pendulumWobble {
-      0% { transform: rotate(0deg); }
-      25% { transform: rotate(2deg); }
-      50% { transform: rotate(0deg); }
-      75% { transform: rotate(-2deg); }
-      100% { transform: rotate(0deg); }
+    @keyframes particle {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
+    }
+    @keyframes pinch {
+      0% { transform: scaleX(1); }
+      50% { transform: scaleX(0.9); }
+      100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
@@ -143,12 +97,6 @@ app.get('/', (req, res) => {
       50% { background-color: rgba(255, 51, 51, 0.4); transform: scale(var(--scale)); }
       100% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
     }
-    @keyframes top-asset-move {
-      0% { top: 0; opacity: 1; }
-      33.33% { top: 20%; opacity: 1; } /* Slow for first 3s */
-      88.89% { top: 80%; opacity: 1; } /* Fast for next 5s */
-      100% { top: 100%; opacity: 0; } /* Slow and fade for last 1s */
-    }
     @keyframes glowPulse {
       0% { opacity: 0.3; transform: scale(1); }
       50% { opacity: 0.7; transform: scale(1.2); }
@@ -161,14 +109,13 @@ app.get('/', (req, res) => {
       animation: barPulse 0.4s ease-in-out infinite;
     }
     .subtle-pulsing {
-      animation: subtl
+      animation: subtlePulse 0.4s ease-in-out;
     }
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
     }
-    .pendulum-wobble {
-      animation: pendulumWobble 0.6s ease-in-out;
-      transform-origin: bottom;
+    .pinching {
+      animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
       animation: gelatin 0.5s ease-in-out;
@@ -191,15 +138,6 @@ app.get('/', (req, res) => {
       position: absolute;
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
-    }
-    .top-asset {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      animation: top-asset-move 9s linear forwards;
     }
     .glow-dot {
       position: absolute;
@@ -354,10 +292,9 @@ app.get('/', (req, res) => {
     let lastPosition = 0;
     let lastCollision = null;
     let lastGelatinTime = 0;
+    let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
-    let lastHeartGelatinTime = 0;
-    let topAssetInterval = null;
 
     // Create glowing dots
     function createGlowDots() {
@@ -376,38 +313,11 @@ app.get('/', (req, res) => {
     }
     createGlowDots();
 
-    // Create top asset
-    function createTopAsset() {
-      const asset = document.createElement('div');
-      asset.className = 'top-asset';
-      asset.innerHTML = '<img src="/images/top-asset.png" alt="Top Asset" style="width: 20px; height: 20px;">';
-      const randomX = Math.random() * (100 - 20); // Random position within 100px width
-      asset.style.left = randomX + 'px';
-      sliderTrack.appendChild(asset);
-      setTimeout(() => { asset.remove(); }, 9000); // Remove after 9s animation
-    }
-
-    // Apply fast throb animation with randomness
-    function applyFastThrob() {
-      const duration = 0.8 + Math.random() * 0.4; // Random duration between 0.8-1.2s
-      const scale = 1.05 + Math.random() * 0.05; // Random scale between 1.05-1.1
-      sliderTrack.style.setProperty('--duration', duration + 's');
-      sliderTrack.style.setProperty('--scale', scale);
-      sliderTrack.classList.add('fast-throb');
-    }
-
-    // Score reduction and asset spawning
+    // Score reduction
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
         scoreElement.textContent = score;
-        if (score < 60 && sliderTrack.classList.contains('fast-throb')) {
-          sliderTrack.classList.remove('fast-throb');
-          if (topAssetInterval) {
-            clearInterval(topAssetInterval);
-            topAssetInterval = null;
-          }
-        }
       }
     }, 1000);
 
@@ -470,16 +380,7 @@ app.get('/', (req, res) => {
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
-      if (score >= 60) {
-        applyFastThrob();
-        if (!topAssetInterval) {
-          createTopAsset(); // Initial asset spawn
-          topAssetInterval = setInterval(() => {
-            if (score >= 60) createTopAsset();
-          }, 10000); // Spawn every 10 seconds
-        }
-      }
-      const particleCount = 1; // Reduced to 1 for performance
+      const particleCount = 1; // Reduced from 3 to 1
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const bodyX = x + trackRect.left - bodyRect.left;
@@ -507,24 +408,6 @@ app.get('/', (req, res) => {
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
-
-    sliderTrack.addEventListener('click', (e) => {
-      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
-        const currentTime = Date.now();
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.2; // Top 20% of the track
-        if (clickY <= topThreshold && currentTime - lastTrackGelatinTime >= 600) {
-          sliderTrack.classList.add('pendulum-wobble');
-          setTimeout(() => { sliderTrack.classList.remove('pendulum-wobble'); }, 600);
-          lastTrackGelatinTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-          lastTrackGelatinTime = currentTime;
-        }
-      }
-    });
 
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
@@ -564,135 +447,19 @@ app.get('/', (req, res) => {
       lastPosition = vibrateButton.offsetTop;
     });
 
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        e.preventDefault();
-        const bodyRect = document.body.getBoundingClientRect();
-        let newX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        let newY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
-        if (newX < 0) newX = 0;
-        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY + 'px';
-
-        const room = document.getElementById('room').value;
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - trackRect.top;
-        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
+    sliderTrack.addEventListener('click', (e) => {
+      // Only trigger wobble if not clicking on vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const currentTime = Date.now();
-
-        // Dynamically set scale based on heart's position relative to track
-        if (relativeY <= topThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-          sliderTrack.classList.remove('bottom-gelatin');
-        } else if (relativeY >= bottomThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-          if (currentTime - lastBottomGelatinTime >= 500) {
-            sliderTrack.classList.add('bottom-gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-            lastBottomGelatinTime = currentTime;
-          }
-        } else {
-          sliderTrack.style.setProperty('--scale-x', 1); // Normal
-          sliderTrack.style.setProperty('--scale-y', 1); // Normal
-          sliderTrack.classList.remove('bottom-gelatin');
+        if (currentTime - lastTrackGelatinTime >= 500) {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          lastTrackGelatinTime = currentTime;
         }
-
-        if (room) {
-          if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = parseInt(intensitySlider.value);
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-            sliderTrack.classList.add('bar-pulsing');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-          } else {
-            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing');
-            lastCollision = null;
-          }
-        }
-        lastPosition = relativeY;
       }
     });
 
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        const room = document.getElementById('room').value;
-        if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-        }
-        isDragging = false;
-        lastCollision = null;
-      }
-    });
-
-    document.addEventListener('touchmove', (e) => {
-      if (isDragging) {
-        e.preventDefault();
-        const bodyRect = document.body.getBoundingClientRect();
-        let newX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        let newY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
-        if (newX < 0) newX = 0;
-        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY + 'px';
-
-        const room = document.getElementById('room').value;
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - trackRect.top;
-        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
-        const currentTime = Date.now();
-
-        // Dynamically set scale based on heart's position relative to track
-        if (relativeY <= topThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-          sliderTrack.classList.remove('bottom-gelatin');
-        } else if (relativeY >= bottomThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-          if (currentTime - lastBottomGelatinTime >= 500) {
-            sliderTrack.classList.add('bottom-gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-            lastBottomGelatinTime = currentTime;
-          }
-        } else {
-          sliderTrack.style.setProperty('--scale-x', 1); // Normal
-          sliderTrack.style.setProperty('--scale-y', 1); // Normal
-          sliderTrack.classList.remove('bottom-gelatin');
-        }
-
-        if (room) {
-          if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = parseInt(intensitySlider.value);
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-            sliderTrack.classList.add('bar-pulsing');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-          } else {
-            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing');
-            lastCollision = null;
-          }
-        }
-        lastPosition = relativeY;
-      }
+    andleMovement(e, true);
     });
 
     document.addEventListener('touchend', () => {
@@ -701,7 +468,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
         }
