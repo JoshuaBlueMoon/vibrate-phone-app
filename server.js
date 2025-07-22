@@ -69,6 +69,12 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
+    @keyframes pendulumWobble {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      25% { transform: translateX(-50%) rotate(3deg); }
+      75% { transform: translateX(-50%) rotate(-3deg); }
+      100% { transform: translateX(-50%) rotate(0deg); }
+    }
     @keyframes particle {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
@@ -92,11 +98,6 @@ app.get('/', (req, res) => {
       75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes fast-throb {
-      0% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
-      50% { background-color: rgba(255, 51, 51, 0.4); transform: scale(var(--scale)); }
-      100% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
-    }
     @keyframes glowPulse {
       0% { opacity: 0.3; transform: scale(1); }
       50% { opacity: 0.7; transform: scale(1.2); }
@@ -114,6 +115,10 @@ app.get('/', (req, res) => {
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
     }
+    .pendulum-wobble {
+      animation: pendulumWobble 0.6s ease-in-out;
+      transform-origin: bottom center;
+    }
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
@@ -123,16 +128,6 @@ app.get('/', (req, res) => {
     .bottom-gelatin {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
-    }
-    .fast-throb::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      animation: fast-throb var(--duration) ease-in-out infinite;
     }
     .particle {
       position: absolute;
@@ -281,6 +276,7 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
     const sliderTrack = document.getElementById('sliderTrack');
+    const barGraphic = document.querySelector('.bar-graphic');
     const vibrateButton = document.getElementById('vibrateButton');
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
@@ -295,6 +291,7 @@ app.get('/', (req, res) => {
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
+    let lastPendulumTime = 0;
 
     // Create glowing dots
     function createGlowDots() {
@@ -380,7 +377,7 @@ app.get('/', (req, res) => {
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
-      const particleCount = 1; // Reduced from 3 to 1
+      const particleCount = 1; // Single particle
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const bodyX = x + trackRect.left - bodyRect.left;
@@ -408,6 +405,48 @@ app.get('/', (req, res) => {
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
+
+    sliderTrack.addEventListener('click', (e) => {
+      // Only trigger wobble if not clicking on vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const clickY = e.clientY - trackRect.top;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const currentTime = Date.now();
+        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble on bar-graphic
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+          lastPendulumTime = currentTime;
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          lastTrackGelatinTime = currentTime;
+        }
+      }
+    });
+
+    sliderTrack.addEventListener('touchstart', (e) => {
+      // Only trigger wobble if not touching vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const touchY = e.touches[0].clientY - trackRect.top;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const currentTime = Date.now();
+        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble on bar-graphic
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+          lastPendulumTime = currentTime;
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          lastTrackGelatinTime = currentTime;
+        }
+      }
+    });
 
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
@@ -447,19 +486,135 @@ app.get('/', (req, res) => {
       lastPosition = vibrateButton.offsetTop;
     });
 
-    sliderTrack.addEventListener('click', (e) => {
-      // Only trigger wobble if not clicking on vibrateButton
-      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        const bodyRect = document.body.getBoundingClientRect();
+        let newX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+        let newY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to body bounds
+        if (newX < 0) newX = 0;
+        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+        if (newY < 0) newY = 0;
+        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+        vibrateButton.style.left = newX + 'px';
+        vibrateButton.style.top = newY + 'px';
+
+        const room = document.getElementById('room').value;
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const heartRect = vibrateButton.getBoundingClientRect();
+        const relativeY = heartRect.top - trackRect.top;
+        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
         const currentTime = Date.now();
-        if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-          lastTrackGelatinTime = currentTime;
+
+        // Dynamically set scale based on heart's position relative to track
+        if (relativeY <= topThreshold) {
+          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+          sliderTrack.classList.remove('bottom-gelatin');
+        } else if (relativeY >= bottomThreshold) {
+          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+          if (currentTime - lastBottomGelatinTime >= 500) {
+            sliderTrack.classList.add('bottom-gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+            lastBottomGelatinTime = currentTime;
+          }
+        } else {
+          sliderTrack.style.setProperty('--scale-x', 1); // Normal
+          sliderTrack.style.setProperty('--scale-y', 1); // Normal
+          sliderTrack.classList.remove('bottom-gelatin');
         }
+
+        if (room) {
+          if (relativeY <= 0 || relativeY >= maxPosition) {
+            const intensity = parseInt(intensitySlider.value);
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+            sliderTrack.classList.add('bar-pulsing', 'pinching');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+          } else {
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            sliderTrack.classList.remove('bar-pulsing', 'pinching');
+            lastCollision = null;
+          }
+        }
+        lastPosition = relativeY;
       }
     });
 
-    andleMovement(e, true);
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        const room = document.getElementById('room').value;
+        if (room) {
+          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          vibrateButton.classList.remove('pulsing');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'bottom-gelatin');
+          sliderTrack.style.setProperty('--scale-x', 1);
+          sliderTrack.style.setProperty('--scale-y', 1);
+        }
+        isDragging = false;
+        lastCollision = null;
+      }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        const bodyRect = document.body.getBoundingClientRect();
+        let newX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+        let newY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to body bounds
+        if (newX < 0) newX = 0;
+        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+        if (newY < 0) newY = 0;
+        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+        vibrateButton.style.left = newX + 'px';
+        vibrateButton.style.top = newY + 'px';
+
+        const room = document.getElementById('room').value;
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const heartRect = vibrateButton.getBoundingClientRect();
+        const relativeY = heartRect.top - trackRect.top;
+        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const currentTime = Date.now();
+
+        // Dynamically set scale based on heart's position relative to track
+        if (relativeY <= topThreshold) {
+          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+          sliderTrack.classList.remove('bottom-gelatin');
+        } else if (relativeY >= bottomThreshold) {
+          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+          if (currentTime - lastBottomGelatinTime >= 500) {
+            sliderTrack.classList.add('bottom-gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+            lastBottomGelatinTime = currentTime;
+          }
+        } else {
+          sliderTrack.style.setProperty('--scale-x', 1); // Normal
+          sliderTrack.style.setProperty('--scale-y', 1); // Normal
+          sliderTrack.classList.remove('bottom-gelatin');
+        }
+
+        if (room) {
+          if (relativeY <= 0 || relativeY >= maxPosition) {
+            const intensity = parseInt(intensitySlider.value);
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+            sliderTrack.classList.add('bar-pulsing', 'pinching');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+          } else {
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+            sliderTrack.classList.remove('bar-pulsing', 'pinching');
+            lastCollision = null;
+          }
+        }
+        lastPosition = relativeY;
+      }
     });
 
     document.addEventListener('touchend', () => {
