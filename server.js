@@ -37,10 +37,10 @@ app.get('/', (req, res) => {
   <div id="bottomControls" style="margin-top: 14px; width: 100%; display: flex; flex-direction: column; align-items: center;">
     <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
       <div id="pulseToggle" class="toggle-button toggled" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
       </div>
       <div id="waveToggle" class="toggle-button" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
       </div>
     </div>
     <div id="intensityContainer" style="width: 80%; max-width: 600px; padding: 12px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
@@ -80,6 +80,20 @@ app.get('/', (req, res) => {
       50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
+    @keyframes gelatin {
+      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+    }
+    @keyframes bottom-gelatin {
+      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+    }
     @keyframes glowPulse {
       0% { opacity: 0.3; transform: scale(1); }
       50% { opacity: 0.7; transform: scale(1.2); }
@@ -103,6 +117,13 @@ app.get('/', (req, res) => {
     }
     .pinching {
       animation: pinch 0.3s ease-in-out;
+    }
+    .gelatin {
+      animation: gelatin 0.5s ease-in-out;
+    }
+    .bottom-gelatin {
+      animation: bottom-gelatin 0.5s ease-in-out;
+      transform-origin: bottom;
     }
     .glow-dot {
       position: absolute;
@@ -233,8 +254,8 @@ app.get('/', (req, res) => {
         height: 80px;
       }
       .toggle-button img {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
@@ -279,8 +300,10 @@ app.get('/', (req, res) => {
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
+    let lastGelatinTime = 0;
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
+    let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle'; // Track heart position state
 
@@ -362,6 +385,20 @@ app.get('/', (req, res) => {
         }
       }
     };
+
+    function createParticle(x, y, side) {
+      if (lastCollision === side) return;
+      lastCollision = side;
+      score += 1;
+      scoreElement.textContent = score;
+      const currentTime = Date.now();
+      if (currentTime - lastGelatinTime >= 500) {
+        sliderTrack.classList.add('gelatin');
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        lastGelatinTime = currentTime;
+      }
+      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
+    }
 
     sliderTrack.addEventListener('click', (e) => {
       // Only trigger wobble if not clicking on vibrateButton
@@ -466,6 +503,7 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const currentTime = Date.now();
 
         // Determine heart position state
         let newHeartPosition = 'middle';
@@ -480,27 +518,35 @@ app.get('/', (req, res) => {
           if (newHeartPosition === 'top') {
             sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
             sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+            sliderTrack.classList.remove('bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
+            }
           } else if (newHeartPosition === 'bottom') {
             sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
             sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+            sliderTrack.classList.remove('gelatin');
+            if (currentTime - lastBottomGelatinTime >= 500) {
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+              lastBottomGelatinTime = currentTime;
+            }
           } else {
             sliderTrack.style.setProperty('--scale-x', 1); // Normal
             sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
-            if (lastCollision !== (relativeY <= 0 ? 'top' : 'bottom')) {
-              score += 1;
-              scoreElement.textContent = score;
-              lastCollision = relativeY <= 0 ? 'top' : 'bottom';
-              setTimeout(() => { if (lastCollision === (relativeY <= 0 ? 'top' : 'bottom')) lastCollision = null; }, 200);
-            }
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'pinching');
@@ -520,7 +566,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
@@ -536,7 +582,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
