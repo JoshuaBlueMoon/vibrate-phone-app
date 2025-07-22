@@ -18,11 +18,11 @@ app.get('/', (req, res) => {
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 32px; height: 32px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
   </div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
-    <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background-color: #2b4d9e; border: 2px solid #60a5fa; border-radius: 5px; color: white; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
+    <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
   </div>
   <div id="sliderTrack" style="width: 100px; height: 60%; max-height: 400px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
     <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
@@ -36,15 +36,15 @@ app.get('/', (req, res) => {
   </div>
   <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
     <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
-      <div id="pulseToggle" class="toggle-button toggled" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
+      <div id="pulseToggle" class="toggle-button toggled" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
         <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 24px; height: 24px; transition: transform 0.2s;">
       </div>
-      <div id="waveToggle" class="toggle-button" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); border: none;">
+      <div id="waveToggle" class="toggle-button" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
         <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 24px; height: 24px; transition: transform 0.2s;">
       </div>
     </div>
-    <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 15px; margin: 5px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: #93c5fd;">
+    <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
+      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: transparent;">
     </div>
     <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
   </div>
@@ -123,7 +123,7 @@ app.get('/', (req, res) => {
       animation: barPulse 0.4s ease-in-out infinite;
     }
     .subtle-pulsing {
-      animation: subtlePulse 0.4s ease-in-out;
+      animation: subtl
     }
     .flashing::before {
       content: '';
@@ -205,16 +205,22 @@ app.get('/', (req, res) => {
     #vibrateButton img:hover {
       transform: scale(1.1);
     }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 12px;
+      background: url('/images/intensity-track.png') no-repeat center center;
+      background-size: 100% 100%;
+    }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 24px;
       height: 24px;
-      background: #93c5fd;
-      border-radius: 50%;
+      background: url('/images/intensity-thumb.png') no-repeat center center;
+      background-size: contain;
       cursor: pointer;
-      margin-top: -7px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      margin-top: -6px;
       transition: transform 0.2s ease-out;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
@@ -223,27 +229,22 @@ app.get('/', (req, res) => {
     input[type="range"]::-moz-range-thumb {
       width: 24px;
       height: 24px;
-      background: #93c5fd;
-      border-radius: 50%;
+      background: url('/images/intensity-thumb.png') no-repeat center center;
+      background-size: contain;
       cursor: pointer;
       border: none;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
       transition: transform 0.2s ease-out;
     }
     input[type="range"]::-moz-range-thumb:hover {
       transform: scale(1.1);
     }
     input[type="range"]::-webkit-slider-runnable-track {
-      background: #1e3a8a;
       height: 12px;
-      border-radius: 6px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+      background: transparent;
     }
     input[type="range"]::-moz-range-track {
-      background: #1e3a8a;
       height: 12px;
-      border-radius: 6px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+      background: transparent;
     }
     @media (orientation: landscape) {
       body {
