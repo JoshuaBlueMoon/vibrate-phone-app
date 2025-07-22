@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 32px; height: 32px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
   </div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
@@ -36,17 +36,17 @@ app.get('/', (req, res) => {
   </div>
   <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
     <div id="toggleContainer" style="display: flex; justify-content: center; gap: 12px; margin: 5px auto;">
-      <div id="pulseToggle" class="toggle-button toggled" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 24px; height: 24px; transition: transform 0.2s;">
+      <div id="pulseToggle" class="toggle-button toggled" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
       </div>
-      <div id="waveToggle" class="toggle-button" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 24px; height: 24px; transition: transform 0.2s;">
+      <div id="waveToggle" class="toggle-button" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
       </div>
     </div>
-    <div id="intensityContainer" style="width: 80%; max-width: 240px; padding: 6px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
-      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; background: transparent; accent-color: transparent;">
+    <div id="intensityContainer" style="width: 80%; max-width: 600px; padding: 12px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
+      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 24px; background: transparent; accent-color: transparent;">
     </div>
-    <label for="intensity"><span id="intensityValue" style="font-size: 12px; color: #60a5fa;">3</span></label>
+    <label for="intensity"><span id="intensityValue" style="font-size: 14px; color: #60a5fa;">3</span></label>
   </div>
   <style>
     @keyframes pulse {
@@ -158,27 +158,27 @@ app.get('/', (req, res) => {
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
-      height: 12px;
+      height: 24px;
       background: url('/images/intensity-track.png') no-repeat center center;
       background-size: 100% 100%;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 24px;
-      height: 24px;
+      width: 48px;
+      height: 48px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
       background-size: contain;
       cursor: pointer;
-      margin-top: -6px;
+      margin-top: -12px;
       transition: transform 0.2s ease-out;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
+      width: 48px;
+      height: 48px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
       background-size: contain;
       cursor: pointer;
@@ -189,11 +189,11 @@ app.get('/', (req, res) => {
       transform: scale(1.1);
     }
     input[type="range"]::-webkit-slider-runnable-track {
-      height: 12px;
+      height: 24px;
       background: transparent;
     }
     input[type="range"]::-moz-range-track {
-      height: 12px;
+      height: 24px;
       background: transparent;
     }
     @media (orientation: landscape) {
@@ -240,11 +240,11 @@ app.get('/', (req, res) => {
       }
       #intensityContainer {
         width: 80%;
-        max-width: 220px;
-        padding: 5px;
+        max-width: 560px;
+        padding: 10px;
       }
       #intensityValue {
-        font-size: 10px;
+        font-size: 12px;
       }
       .pulse-symbol.top {
         top: -18px;
@@ -259,11 +259,33 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 48px;
-        height: 48px;
+        width: 120px;
+        height: 120px;
+      }
+      .toggle-button img {
+        width: 60px;
+        height: 60px;
       }
       .toggle-button.toggled img {
         transform: scale(2);
+      }
+      input[type="range"] {
+        height: 22px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        width: 44px;
+        height: 44px;
+        margin-top: -11px;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 44px;
+        height: 44px;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        height: 22px;
+      }
+      input[type="range"]::-moz-range-track {
+        height: 22px;
       }
     }
   </style>
@@ -292,6 +314,7 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
+    let currentHeartPosition = 'middle'; // Track heart position state
 
     // Create glowing dots
     function createGlowDots() {
@@ -486,12 +509,14 @@ app.get('/', (req, res) => {
       lastPosition = vibrateButton.offsetTop;
     });
 
-    document.addEventListener('mousemove', (e) => {
+    function handleMovement(e, isTouch = false) {
       if (isDragging) {
         e.preventDefault();
         const bodyRect = document.body.getBoundingClientRect();
-        let newX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        let newY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        let newX = isTouch ? e.touches[0].clientX : e.clientX;
+        let newY = isTouch ? e.touches[0].clientY : e.clientY;
+        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
         // Constrain to body bounds
         if (newX < 0) newX = 0;
         if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
@@ -509,23 +534,40 @@ app.get('/', (req, res) => {
         const topThreshold = maxPosition * 0.1; // Top 10% of track
         const currentTime = Date.now();
 
-        // Dynamically set scale based on heart's position relative to track
+        // Determine heart position state
+        let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-          sliderTrack.classList.remove('bottom-gelatin');
+          newHeartPosition = 'top';
         } else if (relativeY >= bottomThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-          if (currentTime - lastBottomGelatinTime >= 500) {
-            sliderTrack.classList.add('bottom-gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-            lastBottomGelatinTime = currentTime;
+          newHeartPosition = 'bottom';
+        }
+
+        // Update scale only if position state changes
+        if (newHeartPosition !== currentHeartPosition) {
+          if (newHeartPosition === 'top') {
+            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+            sliderTrack.classList.remove('bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
+            }
+          } else if (newHeartPosition === 'bottom') {
+            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+            sliderTrack.classList.remove('gelatin');
+            if (currentTime - lastBottomGelatinTime >= 500) {
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+              lastBottomGelatinTime = currentTime;
+            }
+          } else {
+            sliderTrack.style.setProperty('--scale-x', 1); // Normal
+            sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
-        } else {
-          sliderTrack.style.setProperty('--scale-x', 1); // Normal
-          sliderTrack.style.setProperty('--scale-y', 1); // Normal
-          sliderTrack.classList.remove('bottom-gelatin');
+          currentHeartPosition = newHeartPosition;
         }
 
         if (room) {
@@ -542,7 +584,10 @@ app.get('/', (req, res) => {
         }
         lastPosition = relativeY;
       }
-    });
+    }
+
+    document.addEventListener('mousemove', (e) => handleMovement(e, false));
+    document.addEventListener('touchmove', (e) => handleMovement(e, true));
 
     document.addEventListener('mouseup', () => {
       if (isDragging) {
@@ -550,70 +595,13 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
+          currentHeartPosition = 'middle';
         }
         isDragging = false;
         lastCollision = null;
-      }
-    });
-
-    document.addEventListener('touchmove', (e) => {
-      if (isDragging) {
-        e.preventDefault();
-        const bodyRect = document.body.getBoundingClientRect();
-        let newX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        let newY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
-        if (newX < 0) newX = 0;
-        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
-        vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY + 'px';
-
-        const room = document.getElementById('room').value;
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - trackRect.top;
-        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
-        const currentTime = Date.now();
-
-        // Dynamically set scale based on heart's position relative to track
-        if (relativeY <= topThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-          sliderTrack.classList.remove('bottom-gelatin');
-        } else if (relativeY >= bottomThreshold) {
-          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-          if (currentTime - lastBottomGelatinTime >= 500) {
-            sliderTrack.classList.add('bottom-gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-            lastBottomGelatinTime = currentTime;
-          }
-        } else {
-          sliderTrack.style.setProperty('--scale-x', 1); // Normal
-          sliderTrack.style.setProperty('--scale-y', 1); // Normal
-          sliderTrack.classList.remove('bottom-gelatin');
-        }
-
-        if (room) {
-          if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = parseInt(intensitySlider.value);
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-            sliderTrack.classList.add('bar-pulsing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-          } else {
-            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'pinching');
-            lastCollision = null;
-          }
-        }
-        lastPosition = relativeY;
       }
     });
 
@@ -623,9 +611,10 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
+          currentHeartPosition = 'middle';
         }
         isDragging = false;
         lastCollision = null;
