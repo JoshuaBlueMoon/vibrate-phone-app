@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
   <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 64px; height: 64x; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+    <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
     <span id="score">0</span>
   </div>
   <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
@@ -35,16 +35,16 @@ app.get('/', (req, res) => {
     <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
   </div>
   <div id="bottomControls" style="margin-top: 14px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 6px; margin: 5px auto;">
-      <div id="pulseToggle" class="toggle-button toggled" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
+    <div id="toggleContainer" style="display: flex; justify-content: center; gap: 4px; margin: 5px auto;">
+      <div id="pulseToggle" class="toggle-button toggled" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
-      <div id="waveToggle" class="toggle-button" style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
+      <div id="waveToggle" class="toggle-button" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
     <div id="intensityContainer" style="width: 80%; max-width: 600px; padding: 12px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
-      <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 24px; background: transparent; accent-color: transparent;">
+      <input type="range" id="intensity" min="1" max="5" step="0.1" value="3" style="width: 100%; height: 24px; background: transparent; accent-color: transparent;">
     </div>
     <label for="intensity"><span id="intensityValue" style="font-size: 14px; color: #60a5fa;">3</span></label>
   </div>
@@ -74,10 +74,6 @@ app.get('/', (req, res) => {
       25% { transform: translateX(-50%) rotate(3deg); }
       75% { transform: translateX(-50%) rotate(-3deg); }
       100% { transform: translateX(-50%) rotate(0deg); }
-    }
-    @keyframes particle {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
     }
     @keyframes pinch {
       0% { transform: scaleX(1); }
@@ -129,11 +125,6 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .particle {
-      position: absolute;
-      pointer-events: none;
-      animation: particle 1.5s ease-out forwards;
-    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -171,7 +162,7 @@ app.get('/', (req, res) => {
       background-size: contain;
       cursor: pointer;
       margin-top: -12px;
-      transition: transform 0.2s ease-out;
+      transition: transform 0.2s ease-out, left 0.1s ease-out;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
@@ -183,7 +174,7 @@ app.get('/', (req, res) => {
       background-size: contain;
       cursor: pointer;
       border: none;
-      transition: transform 0.2s ease-out;
+      transition: transform 0.2s ease-out, left 0.1s ease-out;
     }
     input[type="range"]::-moz-range-thumb:hover {
       transform: scale(1.1);
@@ -235,7 +226,7 @@ app.get('/', (req, res) => {
       }
       #toggleContainer {
         flex-direction: row;
-        gap: 4px;
+        gap: 2px;
         margin: 5px auto;
       }
       #intensityContainer {
@@ -259,12 +250,12 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
       }
       .toggle-button img {
-        width: 60px;
-        height: 60px;
+        width: 40px;
+        height: 40px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
@@ -276,10 +267,12 @@ app.get('/', (req, res) => {
         width: 44px;
         height: 44px;
         margin-top: -11px;
+        transition: transform 0.2s ease-out, left 0.1s ease-out;
       }
       input[type="range"]::-moz-range-thumb {
         width: 44px;
         height: 44px;
+        transition: transform 0.2s ease-out, left 0.1s ease-out;
       }
       input[type="range"]::-webkit-slider-runnable-track {
         height: 22px;
@@ -351,7 +344,7 @@ app.get('/', (req, res) => {
     triggerSubtlePulse();
 
     intensitySlider.oninput = () => {
-      intensityDisplay.textContent = intensitySlider.value;
+      intensityDisplay.textContent = Math.round(intensitySlider.value);
       intensityContainer.classList.add('intensity-pulsing');
       setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
     };
@@ -373,7 +366,7 @@ app.get('/', (req, res) => {
       const data = JSON.parse(event.data);
       if (data.room === document.getElementById('room').value) {
         if (data.command === 'startVibrate' && navigator.vibrate) {
-          const intensity = data.intensity || 3;
+          const intensity = Math.round(data.intensity) || 3;
           let pattern = [1000]; // Default for wave mode
           if (data.mode === 'pulse') {
             switch (intensity) {
@@ -400,26 +393,6 @@ app.get('/', (req, res) => {
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
-      const particleCount = 1; // Single particle
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const bodyX = x + trackRect.left - bodyRect.left;
-      const bodyY = y + trackRect.top - bodyRect.top;
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.innerHTML = '<img src="/images/custom-particle.png" alt="Particle" style="width: 20px; height: 20px;">';
-        particle.style.left = (bodyX - 2) + 'px';
-        particle.style.top = (bodyY - 2) + 'px';
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = 30 + Math.random() * 70;
-        const tx = Math.cos(angle) * distance;
-        const ty = Math.sin(angle) * distance;
-        particle.style.setProperty('--tx', tx + 'px');
-        particle.style.setProperty('--ty', ty + 'px');
-        document.body.appendChild(particle);
-        setTimeout(() => { particle.remove(); }, 1500);
-      }
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
         sliderTrack.classList.add('gelatin');
@@ -430,19 +403,16 @@ app.get('/', (req, res) => {
     }
 
     sliderTrack.addEventListener('click', (e) => {
-      // Only trigger wobble if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble on bar-graphic
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -451,19 +421,16 @@ app.get('/', (req, res) => {
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
-      // Only trigger wobble if not touching vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble on bar-graphic
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -517,7 +484,6 @@ app.get('/', (req, res) => {
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
         if (newX < 0) newX = 0;
         if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
@@ -530,11 +496,10 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const bottomThreshold = maxPosition * 0.9;
+        const topThreshold = maxPosition * 0.1;
         const currentTime = Date.now();
 
-        // Determine heart position state
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -542,11 +507,10 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale only if position state changes
         if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+            sliderTrack.style.setProperty('--scale-x', 0.8);
+            sliderTrack.style.setProperty('--scale-y', 1.1);
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
@@ -554,8 +518,8 @@ app.get('/', (req, res) => {
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+            sliderTrack.style.setProperty('--scale-x', 1.2);
+            sliderTrack.style.setProperty('--scale-y', 0.9);
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
@@ -563,8 +527,8 @@ app.get('/', (req, res) => {
               lastBottomGelatinTime = currentTime;
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', 1); // Normal
-            sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
             sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
@@ -572,7 +536,7 @@ app.get('/', (req, res) => {
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = parseInt(intensitySlider.value);
+            const intensity = Math.round(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
