@@ -14,7 +14,6 @@ app.get('/', (req, res) => {
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="preload" href="/images/gravity-particle.png" as="image">
 </head>
 <body style="background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); color: white; font-family: Arial; margin: 0 auto; padding: 10px; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box;">
   <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
@@ -65,6 +64,11 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.02); }
       100% { transform: scale(1); }
     }
+    @keyframes intensityPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
     @keyframes flash {
       0% { background-color: rgba(0, 0, 0, 0); }
       20% { background-color: rgba(255, 51, 51, 0.3); }
@@ -73,10 +77,6 @@ app.get('/', (req, res) => {
     @keyframes particle {
       0% { opacity: 1; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
-    }
-    @keyframes gravityParticle {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), 100px) scale(0.5); }
     }
     @keyframes pinch {
       0% { transform: scaleX(1); }
@@ -126,6 +126,9 @@ app.get('/', (req, res) => {
     .subtle-pulsing {
       animation: subtlePulse 0.4s ease-in-out;
     }
+    .intensity-pulsing {
+      animation: intensityPulse 0.3s ease-in-out;
+    }
     .flashing::before {
       content: '';
       position: absolute;
@@ -160,11 +163,6 @@ app.get('/', (req, res) => {
       position: absolute;
       pointer-events: none;
       animation: particle 1.5s ease-out forwards;
-    }
-    .gravity-particle {
-      position: absolute;
-      pointer-events: none;
-      animation: gravityParticle 1.5s ease-out forwards;
     }
     .wave-burst {
       position: absolute;
@@ -325,6 +323,7 @@ app.get('/', (req, res) => {
     let score = 0;
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
+    const intensityContainer = document.getElementById('intensityContainer');
     const sliderTrack = document.getElementById('sliderTrack');
     const vibrateButton = document.getElementById('vibrateButton');
     const pulseToggle = document.getElementById('pulseToggle');
@@ -342,7 +341,6 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let topAssetInterval = null;
-    let lastGravityBurstTime = 0;
 
     // Create glowing dots
     function createGlowDots() {
@@ -381,38 +379,6 @@ app.get('/', (req, res) => {
       sliderTrack.classList.add('fast-throb');
     }
 
-    // Create gravity particle burst
-    function createGravityParticle() {
-      const currentTime = Date.now();
-      if (currentTime - lastGravityBurstTime < 500) return; // Prevent overlapping bursts
-      lastGravityBurstTime = currentTime;
-
-      const particleCount = Math.floor(Math.random() * 4) + 5; // 5-8 particles
-      const fragment = document.createDocumentFragment(); // Batch DOM updates
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const baseLeft = trackRect.left - bodyRect.left + trackRect.width / 2 - 10;
-      const baseTop = trackRect.top - bodyRect.top - 10;
-
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'gravity-particle';
-        particle.innerHTML = '<img src="/images/gravity-particle.png" alt="Gravity Particle" style="width: 20px; height: 20px;">';
-        particle.style.left = baseLeft + 'px';
-        particle.style.top = baseTop + 'px';
-        const direction = Math.random() < 0.5 ? -1 : 1; // Random left or right arc
-        const tx = direction * (20 + Math.random() * 30); // Horizontal offset 20-50px
-        particle.style.setProperty('--tx', tx + 'px');
-        particle.style.animationDelay = (i * 0.5 / particleCount) + 's'; // Spread over 0.5s
-        fragment.appendChild(particle);
-      }
-      document.body.appendChild(fragment);
-      setTimeout(() => {
-        const particles = document.querySelectorAll('.gravity-particle');
-        particles.forEach(p => p.remove());
-      }, 2000); // Remove after 2s to account for animation duration
-    }
-
     // Score reduction and asset spawning
     setInterval(() => {
       if (score > 0) {
@@ -439,6 +405,8 @@ app.get('/', (req, res) => {
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
+      intensityContainer.classList.add('intensity-pulsing');
+      setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
     };
 
     pulseToggle.addEventListener('click', () => {
@@ -473,7 +441,6 @@ app.get('/', (req, res) => {
           navigator.vibrate(pattern);
           console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
           sliderTrack.classList.add('pulsing', 'flashing');
-          createGravityParticle(); // Spawn gravity particle burst on vibration
           setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
         } else if (data.command === 'stopVibrate' && navigator.vibrate) {
           navigator.vibrate(0);
@@ -631,7 +598,6 @@ app.get('/', (req, res) => {
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-            createGravityParticle(); // Spawn gravity particle burst on vibration
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
@@ -705,7 +671,6 @@ app.get('/', (req, res) => {
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-            createGravityParticle(); // Spawn gravity particle burst on vibration
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
