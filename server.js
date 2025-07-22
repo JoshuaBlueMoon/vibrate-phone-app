@@ -54,11 +54,6 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
-    @keyframes barPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
     @keyframes subtlePulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.02); }
@@ -68,20 +63,6 @@ app.get('/', (req, res) => {
       0% { transform: scale(1); }
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
-    }
-    @keyframes flash {
-      0% { background-color: rgba(0, 0, 0, 0); }
-      20% { background-color: rgba(255, 51, 51, 0.3); }
-      100% { background-color: rgba(0, 0, 0, 0); }
-    }
-    @keyframes particle {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
-    }
-    @keyframes pinch {
-      0% { transform: scaleX(1); }
-      50% { transform: scaleX(0.9); }
-      100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
@@ -102,10 +83,6 @@ app.get('/', (req, res) => {
       50% { background-color: rgba(255, 51, 51, 0.4); transform: scale(var(--scale)); }
       100% { background-color: rgba(0, 0, 0, 0); transform: scale(1); }
     }
-    @keyframes waveBurst {
-      0% { transform: scale(1); opacity: 0.5; }
-      100% { transform: scale(2); opacity: 0; }
-    }
     @keyframes top-asset-move {
       0% { top: 0; opacity: 1; }
       33.33% { top: 20%; opacity: 1; } /* Slow for first 3s */
@@ -120,27 +97,11 @@ app.get('/', (req, res) => {
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
-    .bar-pulsing {
-      animation: barPulse 0.4s ease-in-out infinite;
-    }
     .subtle-pulsing {
       animation: subtlePulse 0.4s ease-in-out;
     }
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
-    }
-    .flashing::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      animation: flash 0.3s ease-out;
-    }
-    .pinching {
-      animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
       animation: gelatin 0.5s ease-in-out;
@@ -158,21 +119,6 @@ app.get('/', (req, res) => {
       height: 100%;
       z-index: 1;
       animation: fast-throb var(--duration) ease-in-out infinite;
-    }
-    .particle {
-      position: absolute;
-      pointer-events: none;
-      animation: particle 1.5s ease-out forwards;
-    }
-    .wave-burst {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: waveBurst 1s ease-out forwards;
-      z-index: 1;
     }
     .top-asset {
       position: absolute;
@@ -336,7 +282,6 @@ app.get('/', (req, res) => {
     let lastPosition = 0;
     let lastCollision = null;
     let lastGelatinTime = 0;
-    let lastWaveBurstTime = 0;
     let lastHeartGelatinTime = 0;
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
@@ -440,65 +385,13 @@ app.get('/', (req, res) => {
           }
           navigator.vibrate(pattern);
           console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
-          sliderTrack.classList.add('pulsing', 'flashing');
-          setTimeout(() => sliderTrack.classList.remove('pulsing', 'flashing'), 500);
+          sliderTrack.classList.add('pulsing');
+          setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
         } else if (data.command === 'stopVibrate' && navigator.vibrate) {
           navigator.vibrate(0);
         }
       }
     };
-
-    function createParticle(x, y, side) {
-      if (lastCollision === side) return;
-      lastCollision = side;
-      score += 1;
-      scoreElement.textContent = score;
-      if (score >= 60) {
-        applyFastThrob();
-        if (!topAssetInterval) {
-          createTopAsset(); // Initial asset spawn
-          topAssetInterval = setInterval(() => {
-            if (score >= 60) createTopAsset();
-          }, 10000); // Spawn every 10 seconds
-        }
-      }
-      const particleCount = 3;
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const bodyX = x + trackRect.left - bodyRect.left;
-      const bodyY = y + trackRect.top - bodyRect.top;
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.innerHTML = '<img src="/images/custom-particle.png" alt="Particle" style="width: 20px; height: 20px;">';
-        particle.style.left = (bodyX - 2) + 'px';
-        particle.style.top = (bodyY - 2) + 'px';
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = 30 + Math.random() * 70;
-        const tx = Math.cos(angle) * distance;
-        const ty = Math.sin(angle) * distance;
-        particle.style.setProperty('--tx', tx + 'px');
-        particle.style.setProperty('--ty', ty + 'px');
-        document.body.appendChild(particle);
-        setTimeout(() => { particle.remove(); }, 1500);
-      }
-      const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 500) {
-        sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-        lastGelatinTime = currentTime;
-      }
-      if (currentTime - lastWaveBurstTime >= 500) {
-        const waveBurst = document.createElement('div');
-        waveBurst.className = 'wave-burst';
-        waveBurst.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - 50) + 'px';
-        waveBurst.style.top = (trackRect.top - bodyRect.top + trackRect.height / 2 - 50) + 'px';
-        document.body.appendChild(waveBurst);
-        setTimeout(() => { waveBurst.remove(); }, 1000);
-        lastWaveBurstTime = currentTime;
-      }
-      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
-    }
 
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
@@ -596,11 +489,26 @@ app.get('/', (req, res) => {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+            sliderTrack.classList.add('gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+            if (lastCollision !== (relativeY <= 0 ? 'top' : 'bottom')) {
+              lastCollision = relativeY <= 0 ? 'top' : 'bottom';
+              score += 1;
+              scoreElement.textContent = score;
+              if (score >= 60) {
+                applyFastThrob();
+                if (!topAssetInterval) {
+                  createTopAsset(); // Initial asset spawn
+                  topAssetInterval = setInterval(() => {
+                    if (score >= 60) createTopAsset();
+                  }, 10000); // Spawn every 10 seconds
+                }
+              }
+              setTimeout(() => { if (lastCollision === (relativeY <= 0 ? 'top' : 'bottom')) lastCollision = null; }, 200);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+            sliderTrack.classList.remove('gelatin');
             lastCollision = null;
           }
         }
@@ -614,7 +522,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
         }
@@ -669,11 +577,26 @@ app.get('/', (req, res) => {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
-            sliderTrack.classList.add('bar-pulsing', 'flashing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+            sliderTrack.classList.add('gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+            if (lastCollision !== (relativeY <= 0 ? 'top' : 'bottom')) {
+              lastCollision = relativeY <= 0 ? 'top' : 'bottom';
+              score += 1;
+              scoreElement.textContent = score;
+              if (score >= 60) {
+                applyFastThrob();
+                if (!topAssetInterval) {
+                  createTopAsset(); // Initial asset spawn
+                  topAssetInterval = setInterval(() => {
+                    if (score >= 60) createTopAsset();
+                  }, 10000); // Spawn every 10 seconds
+                }
+              }
+              setTimeout(() => { if (lastCollision === (relativeY <= 0 ? 'top' : 'bottom')) lastCollision = null; }, 200);
+            }
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching');
+            sliderTrack.classList.remove('gelatin');
             lastCollision = null;
           }
         }
@@ -687,7 +610,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'flashing', 'pinching', 'bottom-gelatin');
+          sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
         }
