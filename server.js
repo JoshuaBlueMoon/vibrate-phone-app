@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); position: relative; z-index: 5;">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
     <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
   <style>
     @keyframes fadeOut {
       0% { opacity: 1; }
-      100% { opacity: 0; }
+      100% { opacity: 0; display: none; }
     }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
@@ -311,7 +311,7 @@ app.get('/', (req, res) => {
     let ws = null; // Initialize WebSocket after room number is set
     let isVibrating = false;
     let vibrationMode = 'pulse'; // Default mode
-����    let score = 0;
+    let score = 0;
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -340,57 +340,66 @@ app.get('/', (req, res) => {
     let currentHeartPosition = 'middle'; // Track heart position state
 
     function startGame() {
+      console.log('startGame called');
       const roomCode = roomInput.value.trim();
       if (roomCode) {
+        console.log('Room code valid:', roomCode);
         // Set room display value
         roomDisplay.value = roomCode;
+        // Initialize WebSocket connection
+        ws = new WebSocket('wss://' + window.location.host);
+        ws.onopen = () => console.log('Connected to server');
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.room === roomCode) {
+            if (data.command === 'startVibrate' && navigator.vibrate) {
+              const intensity = data.intensity || 3;
+              let pattern = [1000]; // Default for wave mode
+              if (data.mode === 'pulse') {
+                switch (intensity) {
+                  case 1: pattern = [50, 200]; break;
+                  case 2: pattern = [50, 100]; break;
+                  case 3: pattern = [50, 50]; break;
+                  case 4: pattern = [100, 50]; break;
+                  case 5: pattern = [200]; break;
+                  default: pattern = [50, 50];
+                }
+              }
+              navigator.vibrate(pattern);
+              console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
+              sliderTrack.classList.add('pulsing');
+              setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
+            } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+              navigator.vibrate(0);
+            }
+          }
+        };
         // Start fade-out animation
         startScreen.classList.add('fade-out');
         setTimeout(() => {
+          console.log('Hiding startScreen, showing gameContent');
           startScreen.style.display = 'none';
           gameContent.style.display = 'flex';
-          // Initialize WebSocket connection
-          ws = new WebSocket('wss://' + window.location.host);
-          ws.onopen = () => console.log('Connected to server');
-          ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.room === roomCode) {
-              if (data.command === 'startVibrate' && navigator.vibrate) {
-                const intensity = data.intensity || 3;
-                let pattern = [1000]; // Default for wave mode
-                if (data.mode === 'pulse') {
-                  switch (intensity) {
-                    case 1: pattern = [50, 200]; break;
-                    case 2: pattern = [50, 100]; break;
-                    case 3: pattern = [50, 50]; break;
-                    case 4: pattern = [100, 50]; break;
-                    case 5: pattern = [200]; break;
-                    default: pattern = [50, 50];
-                  }
-                }
-                navigator.vibrate(pattern);
-                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
-                sliderTrack.classList.add('pulsing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
-              } else if (data.command === 'stopVibrate' && navigator.vibrate) {
-                navigator.vibrate(0);
-              }
-            }
-          };
         }, 1000); // Match fadeOut animation duration
       } else {
+        console.log('No room code entered');
         roomInput.placeholder = 'Please enter a room code';
+        roomInput.value = '';
       }
     }
 
     // Handle Enter key or Join button click
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        console.log('Enter key pressed');
         startGame();
       }
     });
 
-    joinButton.addEventListener('click', startGame);
+    joinButton.addEventListener('click', () => {
+      console.log('Join button clicked');
+      startGame();
+    });
 
     // Create glowing dots
     function createGlowDots() {
