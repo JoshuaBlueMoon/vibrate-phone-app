@@ -143,6 +143,9 @@ app.get('/', (req, res) => {
     .squished {
       transition: transform 0.2s ease-in-out;
     }
+    .heart-squished {
+      transition: transform 0.2s ease-in-out;
+    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -569,7 +572,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'heart-squished');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           isSquished = false;
@@ -594,7 +597,7 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'heart-squished');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           isSquished = false;
@@ -608,7 +611,7 @@ app.get('/', (req, res) => {
 
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      isDragging = true;
+      isDragging = true Ascent
       const bodyRect = document.body.getBoundingClientRect();
       startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
       startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
@@ -677,48 +680,52 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale only if position state changes
-        if (newHeartPosition !== currentHeartPosition) {
-          if (newHeartPosition === 'top') {
-            if (!isSquished || squishPosition !== 'top') {
-              sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-              sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-              sliderTrack.classList.remove('bottom-gelatin');
-              if (currentTime - lastGelatinTime >= 500) {
-                sliderTrack.classList.add('gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-                lastGelatinTime = currentTime;
-              }
-              isSquished = true;
-              squishPosition = 'top';
+        // Update scale and animations based on position
+        if (newHeartPosition === 'top') {
+          sliderTrack.classList.add('heart-squished');
+          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+          if (!isSquished || squishPosition !== 'top') {
+            sliderTrack.classList.remove('bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
             }
-          } else if (newHeartPosition === 'bottom') {
-            if (!isSquished || squishPosition !== 'bottom') {
-              sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-              sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-              sliderTrack.classList.remove('gelatin');
-              if (currentTime - lastBottomGelatinTime >= 500) {
-                sliderTrack.classList.add('bottom-gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-                lastBottomGelatinTime = currentTime;
-              }
-              isSquished = true;
-              squishPosition = 'bottom';
-            }
-          } else {
-            if (isSquished) {
-              sliderTrack.style.setProperty('--scale-x', 1); // Normal
-              sliderTrack.style.setProperty('--scale-y', 1); // Normal
-              sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-              if (currentTime - lastGelatinTime >= 500) {
-                sliderTrack.classList.add('gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-                lastGelatinTime = currentTime;
-              }
-              isSquished = false;
-              squishPosition = null;
-            }
+            isSquished = true;
+            squishPosition = 'top';
           }
+        } else if (newHeartPosition === 'bottom') {
+          sliderTrack.classList.add('heart-squished');
+          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+          if (!isSquished || squishPosition !== 'bottom') {
+            sliderTrack.classList.remove('gelatin');
+            if (currentTime - lastBottomGelatinTime >= 500) {
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+              lastBottomGelatinTime = currentTime;
+            }
+            isSquished = true;
+            squishPosition = 'bottom';
+          }
+        } else {
+          sliderTrack.classList.remove('heart-squished');
+          if (isSquished) {
+            sliderTrack.style.setProperty('--scale-x', 1); // Normal
+            sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
+            }
+            isSquished = false;
+            squishPosition = null;
+          }
+        }
+
+        if (newHeartPosition !== currentHeartPosition) {
           currentHeartPosition = newHeartPosition;
         }
 
