@@ -16,12 +16,12 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
-  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
+  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(40, 50, 100, 0.0), 40%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
-    <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
+    <button id="joinButton" style="margin-top: 20px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 10%), transparent 50%, rgba(32, 16, 38, 0.0), rgba(14, 64, 36, 0.0), transparent 25%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(40, 50, 100, 0.0), 40%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
     <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
   </div>
   <style>
     @keyframes fadeOut {
-      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); }
+      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(40, 50, 100, 0.0), 40%), linear-gradient(to bottom, #201026, #0e1124); }
       100% { opacity: 0; background: #0e1124; }
     }
     #startScreen.fade-out {
@@ -465,8 +465,8 @@ app.get('/', (req, res) => {
       scoreElement.textContent = score;
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
-        sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        sliderTrack.classList.add(side === 'top' ? 'gelatin' : 'bottom-gelatin');
+        setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 500);
         lastGelatinTime = currentTime;
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
@@ -480,7 +480,7 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble or squish
+          // Trigger pendulum wobble and squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
@@ -504,7 +504,7 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble or squish
+          // Trigger pendulum wobble and squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
@@ -530,7 +530,7 @@ app.get('/', (req, res) => {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', 1);
+          sliderTrack.style.setProperty('--scale-y', currentHeartPosition === 'top' ? 1.1 : currentHeartPosition === 'bottom' ? 0.9 : 1);
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
@@ -547,7 +547,7 @@ app.get('/', (req, res) => {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', 1);
+          sliderTrack.style.setProperty('--scale-y', currentHeartPosition === 'top' ? 1.1 : currentHeartPosition === 'bottom' ? 0.9 : 1);
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
@@ -559,7 +559,7 @@ app.get('/', (req, res) => {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', 1);
+        sliderTrack.style.setProperty('--scale-y', currentHeartPosition === 'top' ? 1.1 : currentHeartPosition === 'bottom' ? 0.9 : 1);
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
@@ -567,10 +567,13 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          currentHeartPosition = 'middle';
+          sliderTrack.classList.remove('bar-pulsing', 'pinching');
+          if (!isPressingBar) {
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            currentHeartPosition = 'middle';
+          }
         }
         isDragging = false;
         lastCollision = null;
@@ -582,7 +585,7 @@ app.get('/', (req, res) => {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', 1);
+        sliderTrack.style.setProperty('--scale-y', currentHeartPosition === 'top' ? 1.1 : currentHeartPosition === 'bottom' ? 0.9 : 1);
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
@@ -590,10 +593,13 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          currentHeartPosition = 'middle';
+          sliderTrack.classList.remove('bar-pulsing', 'pinching');
+          if (!isPressingBar) {
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            currentHeartPosition = 'middle';
+          }
         }
         isDragging = false;
         lastCollision = null;
@@ -603,9 +609,9 @@ app.get('/', (req, res) => {
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
-      const gameRect = gameContent.getBoundingClientRect();
-      startX = e.clientX - gameRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.clientY - gameRect.top - (vibrateButton.offsetHeight / 2);
+      const bodyRect = document.body.getBoundingClientRect();
+      startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+      startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -622,9 +628,9 @@ app.get('/', (req, res) => {
     vibrateButton.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isDragging = true;
-      const gameRect = gameContent.getBoundingClientRect();
-      startX = e.touches[0].clientX - gameRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.touches[0].clientY - gameRect.top - (vibrateButton.offsetHeight / 2);
+      const bodyRect = document.body.getBoundingClientRect();
+      startX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+      startY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -641,16 +647,16 @@ app.get('/', (req, res) => {
     function handleMovement(e, isTouch = false) {
       if (isDragging) {
         e.preventDefault();
-        const gameRect = gameContent.getBoundingClientRect();
+        const bodyRect = document.body.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        newX = newX - gameRect.left - (vibrateButton.offsetWidth / 2);
-        newY = newY - gameRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to gameContent bounds
+        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to body bounds
         if (newX < 0) newX = 0;
-        if (newX > gameRect.width - vibrateButton.offsetWidth) newX = gameRect.width - vibrateButton.offsetWidth;
+        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
-        if (newY > gameRect.height - vibrateButton.offsetHeight) newY = gameRect.height - vibrateButton.offsetHeight;
+        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
 
@@ -661,7 +667,6 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const topThreshold = maxPosition * 0.1; // Top 10% of track
-        const currentTime = Date.now();
 
         // Determine heart position state
         let newHeartPosition = 'middle';
@@ -671,35 +676,22 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale only if position state changes
-        if (newHeartPosition !== currentHeartPosition) {
+        // Update scale only if position state changes and not pressing bar
+        if (newHeartPosition !== currentHeartPosition && !isPressingBar) {
+          sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           if (newHeartPosition === 'top') {
             sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
             sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-            sliderTrack.classList.remove('bottom-gelatin');
-            if (currentTime - lastGelatinTime >= 500) {
-              sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-              lastGelatinTime = currentTime;
-            }
+            sliderTrack.classList.add('gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           } else if (newHeartPosition === 'bottom') {
             sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
             sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
-            sliderTrack.classList.remove('gelatin');
-            if (currentTime - lastBottomGelatinTime >= 500) {
-              sliderTrack.classList.add('bottom-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-              lastBottomGelatinTime = currentTime;
-            }
+            sliderTrack.classList.add('bottom-gelatin');
+            setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
           } else {
             sliderTrack.style.setProperty('--scale-x', 1); // Normal
             sliderTrack.style.setProperty('--scale-y', 1); // Normal
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-            if (currentHeartPosition !== 'middle' && currentTime - lastGelatinTime >= 500) {
-              sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-              lastGelatinTime = currentTime;
-            }
           }
           currentHeartPosition = newHeartPosition;
         }
