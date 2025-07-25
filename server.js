@@ -30,10 +30,9 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <button id="tabButton" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: none; border: none; cursor: pointer; z-index: 2; padding: 0;">
-      <img src="/images/tab-button.png" alt="Tab Button" style="width: 40px; height: 40px;">
+    <button id="tabButton" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 2;">
     </button>
-    <div id="tabPanel" style="position: absolute; left: -100px; top: 20%; width: 100px; height: 60%; max-height: 300px; background: url('/images/tab-background.png') no-repeat center center; background-size: cover; z-index: 2; transition: left 0.3s ease-in-out;">
+    <div id="tabPanel" style="position: absolute; left: -100px; top: 15%; width: 100px; height: 70%; max-height: 400px; background: url('/images/tab-panel.png') no-repeat center center; background-size: contain; transition: left 0.3s ease-in-out; z-index: 2;">
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
@@ -119,6 +118,11 @@ app.get('/', (req, res) => {
       50% { opacity: 0.7; transform: scale(1.2); }
       100% { opacity: 0.3; transform: scale(1); }
     }
+    @keyframes tabButtonPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -148,6 +152,9 @@ app.get('/', (req, res) => {
     .squished {
       transition: transform 0.2s ease-in-out;
     }
+    .tab-button-pulsing {
+      animation: tabButtonPulse 0.3s ease-in-out;
+    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -169,14 +176,8 @@ app.get('/', (req, res) => {
     #vibrateButton img:hover {
       transform: scale(1.1);
     }
-    #tabButton img {
-      transition: transform 0.2s ease-out;
-    }
-    #tabButton img:hover {
-      transform: scale(1.1);
-    }
-    #tabButton.subtle-pulsing img {
-      animation: subtlePulse 0.4s ease-in-out;
+    #tabButton:hover {
+      transform: scale(1.1) translateY(-50%);
     }
     input[type="range"] {
       -webkit-appearance: none;
@@ -257,18 +258,14 @@ app.get('/', (req, res) => {
         font-size: 10px;
       }
       #tabButton {
-        left: 5px;
         width: 36px;
         height: 36px;
-      }
-      #tabButton img {
-        width: 36px;
-        height: 36px;
+        left: 3px;
       }
       #tabPanel {
         width: 80px;
-        height: 40%;
-        max-height: 240px;
+        height: 60%;
+        max-height: 320px;
         left: -80px;
       }
       #tabPanel.open {
@@ -469,15 +466,19 @@ app.get('/', (req, res) => {
     // Subtle pulsation every 3-6 seconds
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
-      tabButton.classList.add('subtle-pulsing');
-      setTimeout(() => { 
-        sliderTrack.classList.remove('subtle-pulsing'); 
-        tabButton.classList.remove('subtle-pulsing');
-      }, 400);
+      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
       const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
+
+    // Toggle tab
+    tabButton.addEventListener('click', () => {
+      isTabOpen = !isTabOpen;
+      tabPanel.classList.toggle('open');
+      tabButton.classList.add('tab-button-pulsing');
+      setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
+    });
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -495,14 +496,6 @@ app.get('/', (req, res) => {
       vibrationMode = 'wave';
       waveToggle.classList.add('toggled');
       pulseToggle.classList.remove('toggled');
-    });
-
-    // Toggle tab panel
-    tabButton.addEventListener('click', () => {
-      isTabOpen = !isTabOpen;
-      tabPanel.style.left = isTabOpen ? '0' : '-100px';
-      tabButton.classList.add('pulsing');
-      setTimeout(() => { tabButton.classList.remove('pulsing'); }, 500);
     });
 
     function createParticle(x, y, side) {
