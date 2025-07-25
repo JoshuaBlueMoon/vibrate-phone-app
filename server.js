@@ -30,11 +30,25 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <button id="tabButton" style="position: absolute; left: 5px; top: 20%; width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;"></button>
-    <button id="smallButton1" style="position: absolute; left: 5px; top: calc(20% + 50px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
-    <button id="smallButton2" style="position: absolute; left: 5px; top: calc(20% + 90px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
-    <button id="smallButton3" style="position: absolute; left: 5px; top: calc(20% + 130px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
-    <button id="smallButton4" style="position: absolute; left: 5px; top: calc(20% + 170px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
+    <div id="leftControls" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+      <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
+        <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      </div>
+      <div id="subMenu" style="display: none; flex-direction: column; gap: 10px;">
+        <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
+          <img src="/images/sub-button1.png" alt="Sub Button 1" style="width: 32px; height: 32px;">
+        </div>
+        <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
+          <img src="/images/sub-button2.png" alt="Sub Button 2" style="width: 32px; height: 32px;">
+        </div>
+        <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
+          <img src="/images/sub-button3.png" alt="Sub Button 3" style="width: 32px; height: 32px;">
+        </div>
+        <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
+          <img src="/images/sub-button4.png" alt="Sub Button 4" style="width: 32px; height: 32px;">
+        </div>
+      </div>
+    </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -119,18 +133,9 @@ app.get('/', (req, res) => {
       50% { opacity: 0.7; transform: scale(1.2); }
       100% { opacity: 0.3; transform: scale(1); }
     }
-    @keyframes tabButtonPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
-    }
-    @keyframes scaleIn {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes scaleOut {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(0); opacity: 0; }
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -161,15 +166,6 @@ app.get('/', (req, res) => {
     .squished {
       transition: transform 0.2s ease-in-out;
     }
-    .tab-button-pulsing {
-      animation: tabButtonPulse 0.3s ease-in-out;
-    }
-    .small-button-appear {
-      animation: scaleIn 0.2s ease-out forwards;
-    }
-    .small-button-disappear {
-      animation: scaleOut 0.2s ease-out forwards;
-    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -188,10 +184,10 @@ app.get('/', (req, res) => {
       transform: scale(1.5);
       filter: brightness(1.2);
     }
-    #vibrateButton img:hover {
-      transform: scale(1.1);
+    .sub-menu-button.pop-in {
+      animation: popIn 0.3s ease-out forwards;
     }
-    #tabButton:hover, #smallButton1:hover, #smallButton2:hover, #smallButton3:hover, #smallButton4:hover {
+    #vibrateButton img:hover {
       transform: scale(1.1);
     }
     input[type="range"] {
@@ -272,28 +268,25 @@ app.get('/', (req, res) => {
         height: 18px;
         font-size: 10px;
       }
-      #tabButton {
+      #leftControls {
+        left: 10px;
+      }
+      #menuToggle {
+        width: 48px;
+        height: 48px;
+      }
+      #menuToggle img {
         width: 36px;
         height: 36px;
-        left: 3px;
       }
-      #smallButton1 {
-        top: calc(20% + 46px);
-        width: 28px;
-        height: 28px;
+      #subMenu {
+        gap: 8px;
       }
-      #smallButton2 {
-        top: calc(20% + 82px);
-        width: 28px;
-        height: 28px;
+      .sub-menu-button {
+        width: 36px;
+        height: 36px;
       }
-      #smallButton3 {
-        top: calc(20% + 118px);
-        width: 28px;
-        height: 28px;
-      }
-      #smallButton4 {
-        top: calc(20% + 154px);
+      .sub-menu-button img {
         width: 28px;
         height: 28px;
       }
@@ -367,11 +360,11 @@ app.get('/', (req, res) => {
     }
   </style>
   <script>
-    let ws = null;
+    let ws = null; // Initialize WebSocket after room number is set
     let isVibrating = false;
-    let vibrationMode = 'pulse';
+    let vibrationMode = 'pulse'; // Default mode
     let score = 0;
-    let isPressingBar = false;
+    let isPressingBar = false; // Track bar press state
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -387,13 +380,9 @@ app.get('/', (req, res) => {
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
-    const tabButton = document.getElementById('tabButton');
-    const smallButtons = [
-      document.getElementById('smallButton1'),
-      document.getElementById('smallButton2'),
-      document.getElementById('smallButton3'),
-      document.getElementById('smallButton4')
-    ];
+    const menuToggle = document.getElementById('menuToggle');
+    const subMenu = document.getElementById('subMenu');
+    const subMenuButtons = document.querySelectorAll('.sub-menu-button');
     let isDragging = false;
     let startX = 0;
     let startY = 0;
@@ -404,20 +393,23 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
-    let currentHeartPosition = 'middle';
-    let areSmallButtonsVisible = false;
+    let currentHeartPosition = 'middle'; // Track heart position state
+    let isSubMenuOpen = false;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
       if (roomCode) {
         console.log('Starting game with room code:', roomCode);
+        // Set room display value
         roomDisplay.value = roomCode;
+        // Start fade-out animation
         startScreen.classList.add('fade-out');
         setTimeout(() => {
           console.log('Fade-out complete, hiding startScreen');
-          startScreen.remove();
+          startScreen.remove(); // Remove from DOM
           gameContent.style.display = 'flex';
           console.log('gameContent displayed');
+          // Initialize WebSocket connection
           ws = new WebSocket('wss://' + window.location.host);
           ws.onopen = () => console.log('Connected to server');
           ws.onmessage = (event) => {
@@ -425,7 +417,7 @@ app.get('/', (req, res) => {
             if (data.room === roomCode) {
               if (data.command === 'startVibrate' && navigator.vibrate) {
                 const intensity = data.intensity || 3;
-                let pattern = [1000];
+                let pattern = [1000]; // Default for wave mode
                 if (data.mode === 'pulse') {
                   switch (intensity) {
                     case 1: pattern = [50, 200]; break;
@@ -445,7 +437,7 @@ app.get('/', (req, res) => {
               }
             }
           };
-        }, 1000);
+        }, 1000); // Match fadeOut animation duration
       } else {
         console.log('No room code entered');
         roomInput.placeholder = 'Please enter a room code';
@@ -453,6 +445,7 @@ app.get('/', (req, res) => {
       }
     }
 
+    // Handle Enter key or Join button click
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
@@ -465,12 +458,13 @@ app.get('/', (req, res) => {
       startGame();
     });
 
+    // Create glowing dots
     function createGlowDots() {
-      const dotCount = 20;
+      const dotCount = 20; // Number of dots
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * 3 + 3;
+        const size = Math.random() * 3 + 3; // Random size between 3-6px
         dot.style.width = size + 'px';
         dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
@@ -481,6 +475,7 @@ app.get('/', (req, res) => {
     }
     createGlowDots();
 
+    // Score reduction
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
@@ -488,46 +483,14 @@ app.get('/', (req, res) => {
       }
     }, 1000);
 
+    // Subtle pulsation every 3-6 seconds
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
       setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000;
+      const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
-
-    tabButton.addEventListener('click', () => {
-      console.log('Tab button clicked, areSmallButtonsVisible:', areSmallButtonsVisible);
-      areSmallButtonsVisible = !areSmallButtonsVisible;
-      if (areSmallButtonsVisible) {
-        smallButtons.forEach((button, index) => {
-          setTimeout(() => {
-            button.style.display = 'block';
-            button.classList.add('small-button-appear');
-            console.log(`Small button ${index + 1} displayed`);
-            setTimeout(() => button.classList.remove('small-button-appear'), 200);
-          }, index * 100);
-        });
-      } else {
-        smallButtons.forEach((button, index) => {
-          button.classList.add('small-button-disappear');
-          console.log(`Small button ${index + 1} hiding`);
-          setTimeout(() => {
-            button.style.display = 'none';
-            button.classList.remove('small-button-disappear');
-          }, 200);
-        });
-      }
-      tabButton.classList.add('tab-button-pulsing');
-      setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
-    });
-
-    const tabButtonImg = new Image();
-    tabButtonImg.src = '/images/tab-button.png';
-    tabButtonImg.onerror = () => console.error('Failed to load tab-button.png');
-    const smallButtonImg = new Image();
-    smallButtonImg.src = '/images/small-button.png';
-    smallButtonImg.onerror = () => console.error('Failed to load small-button.png');
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -547,6 +510,40 @@ app.get('/', (req, res) => {
       pulseToggle.classList.remove('toggled');
     });
 
+    // Menu toggle functionality
+    menuToggle.addEventListener('click', () => {
+      isSubMenuOpen = !isSubMenuOpen;
+      if (isSubMenuOpen) {
+        subMenu.style.display = 'flex';
+        subMenuButtons.forEach((button, index) => {
+          setTimeout(() => {
+            button.classList.add('pop-in');
+            button.style.opacity = '1';
+          }, index * 100); // Staggered animation
+        });
+        menuToggle.classList.add('toggled');
+      } else {
+        subMenuButtons.forEach((button, index) => {
+          setTimeout(() => {
+            button.classList.remove('pop-in');
+            button.style.opacity = '0';
+          }, index * 100);
+        });
+        setTimeout(() => {
+          subMenu.style.display = 'none';
+        }, subMenuButtons.length * 100);
+        menuToggle.classList.remove('toggled');
+      }
+    });
+
+    // Sub-menu button click handlers (placeholder for future functionality)
+    subMenuButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        // Add specific functionality here as needed
+      });
+    });
+
     function createParticle(x, y, side) {
       if (lastCollision === side) return;
       lastCollision = side;
@@ -562,19 +559,22 @@ app.get('/', (req, res) => {
     }
 
     sliderTrack.addEventListener('mousedown', (e) => {
+      // Only trigger if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
+          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -583,19 +583,22 @@ app.get('/', (req, res) => {
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
+      // Only trigger if not touching vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
+          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -609,6 +612,7 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
+          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -625,6 +629,7 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
+          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -727,6 +732,7 @@ app.get('/', (req, res) => {
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to body bounds
         if (newX < 0) newX = 0;
         if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
@@ -739,10 +745,11 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9;
-        const topThreshold = maxPosition * 0.1;
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
         const currentTime = Date.now();
 
+        // Determine heart position state
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -750,10 +757,11 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
+        // Update scale only if position state changes
         if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.8);
-            sliderTrack.style.setProperty('--scale-y', 1.1);
+            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
@@ -761,8 +769,8 @@ app.get('/', (req, res) => {
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.2);
-            sliderTrack.style.setProperty('--scale-y', 0.9);
+            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
@@ -770,8 +778,8 @@ app.get('/', (req, res) => {
               lastBottomGelatinTime = currentTime;
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', 1);
-            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.style.setProperty('--scale-x', 1); // Normal
+            sliderTrack.style.setProperty('--scale-y', 1); // Normal
             sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
