@@ -133,14 +133,13 @@ app.get('/', (req, res) => {
       50% { opacity: 0.7; transform: scale(1.2); }
       100% { opacity: 0.3; transform: scale(1); }
     }
+    @keyframes particleBurst {
+      0% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--move-x), var(--move-y)) scale(0.5); }
+    }
     @keyframes popIn {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes particleBurst {
-      0% { transform: translate(-50%, 0); opacity: 0.7; }
-      25% { transform: translate(calc(-50% + var(--offset-x, 0px)), -50px); opacity: 0.7; }
-      100% { transform: translate(calc(-50% + var(--offset-x, 0px)), 100px); opacity: 0; }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -181,13 +180,13 @@ app.get('/', (req, res) => {
       animation: glowPulse 3s ease-in-out infinite;
       pointer-events: none;
     }
-    .burst-particle {
+    .particle {
       position: absolute;
       width: 6px;
       height: 6px;
       background: url('/images/glow-dot.png') no-repeat center center;
       background-size: cover;
-      animation: particleBurst 1.5s ease-out forwards;
+      animation: particleBurst 1s ease-out forwards;
       pointer-events: none;
       z-index: 2;
     }
@@ -347,7 +346,7 @@ app.get('/', (req, res) => {
         width: 5px;
         height: 5px;
       }
-      .burst-particle {
+      .particle {
         width: 5px;
         height: 5px;
       }
@@ -388,8 +387,6 @@ app.get('/', (req, res) => {
     let vibrationMode = 'pulse'; // Default mode
     let score = 0;
     let isPressingBar = false; // Track bar press state
-    let interactionCount = 0; // Track vibration/heart interactions
-    let burstThreshold = Math.floor(Math.random() * 4) + 2; // Random threshold between 2-5
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -564,14 +561,14 @@ app.get('/', (req, res) => {
     // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
@@ -590,27 +587,37 @@ app.get('/', (req, res) => {
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         lastGelatinTime = currentTime;
       }
-      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
 
-      // Increment interaction counter and check for burst
-      interactionCount++;
-      if (interactionCount >= burstThreshold) {
-        // Create 6 particles
-        for (let i = 0; i < 6; i++) {
-          const particle = document.createElement('div');
-          particle.className = 'burst-particle';
-          const offsetX = (Math.random() - 0.5) * 40; // Random horizontal spread (-20px to +20px)
-          particle.style.left = '50%';
-          particle.style.top = '0';
-          particle.style.setProperty('--offset-x', `${offsetX}px`);
-          particle.style.animationDelay = `${Math.random() * 0.3}s`; // Random delay up to 0.3s
-          sliderTrack.appendChild(particle);
-          setTimeout(() => particle.remove(), 1500); // Remove after animation
-        }
-        // Reset counter and set new random threshold
-        interactionCount = 0;
-        burstThreshold = Math.floor(Math.random() * 4) + 2; // New threshold between 2-5
+      // Create a burst of 5 particles
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      const particleCount = 5;
+      const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
+      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2; // Center of sliderTrack
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const size = Math.random() * 3 + 3; // Random size between 3-6px
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = baseX + 'px';
+        particle.style.top = baseY + 'px';
+        // Random direction for particle movement
+        const angle = Math.random() * Math.PI * 2; // Random angle in radians
+        const distance = Math.random() * 50 + 20; // Random distance between 20-70px
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1); // Move up for top, down for bottom
+        particle.style.setProperty('--move-x', moveX + 'px');
+        particle.style.setProperty('--move-y', moveY + 'px');
+        glowDotsContainer.appendChild(particle);
+        // Remove particle after animation
+        setTimeout(() => {
+          particle.remove();
+        }, 1000); // Match particleBurst animation duration
       }
+
+      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
     sliderTrack.addEventListener('mousedown', (e) => {
