@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex~~~flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
+<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
   <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
@@ -30,9 +30,13 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
+    <button id="tabButton" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: none; border: none; cursor: pointer; z-index: 2; padding: 0;">
+      <img src="/images/tab-button.png" alt="Tab Button" style="width: 40px; height: 40px;">
+    </button>
+    <div id="tabPanel" style="position: absolute; left: -100px; top: 20%; width: 100px; height: 60%; max-height: 300px; background: url('/images/tab-background.png') no-repeat center center; background-size: cover; z-index: 2; transition: left 0.3s ease-in-out;">
+    </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
-      <div class="circle-asset" style="position: absolute; width: 120px; height: 120px; background: url('/images/circle-asset.png') no-repeat center center; background-size: contain; z-index: 2; display: none;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -42,10 +46,7 @@ app.get('/', (req, res) => {
       <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 14px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-      <div id="toggleContainer" style="display: flex; justify-content: space-between; gap: 2px; margin: 5px auto; width: 80%; max-width: 300px;">
-        <div id="circleToggle" class="toggle-button" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/circle-toggle.png" alt="Circle Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
-        </div>
+      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
         <div id="pulseToggle" class="toggle-button toggled" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
           <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
         </div>
@@ -66,7 +67,7 @@ app.get('/', (req, res) => {
     }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
-      pointer-events: none;
+      pointer-events: none; /* Prevent interaction during fade-out */
     }
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -147,12 +148,6 @@ app.get('/', (req, res) => {
     .squished {
       transition: transform 0.2s ease-in-out;
     }
-    .circle-asset {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -173,6 +168,15 @@ app.get('/', (req, res) => {
     }
     #vibrateButton img:hover {
       transform: scale(1.1);
+    }
+    #tabButton img {
+      transition: transform 0.2s ease-out;
+    }
+    #tabButton img:hover {
+      transform: scale(1.1);
+    }
+    #tabButton.subtle-pulsing img {
+      animation: subtlePulse 0.4s ease-in-out;
     }
     input[type="range"] {
       -webkit-appearance: none;
@@ -203,7 +207,7 @@ app.get('/', (req, res) => {
       cursor: pointer;
       border: none;
       transition: transform 0.2s ease-out;
-8    }
+    }
     input[type="range"]::-moz-range-thumb:hover {
       transform: scale(1.1);
     }
@@ -252,6 +256,24 @@ app.get('/', (req, res) => {
         height: 18px;
         font-size: 10px;
       }
+      #tabButton {
+        left: 5px;
+        width: 36px;
+        height: 36px;
+      }
+      #tabButton img {
+        width: 36px;
+        height: 36px;
+      }
+      #tabPanel {
+        width: 80px;
+        height: 40%;
+        max-height: 240px;
+        left: -80px;
+      }
+      #tabPanel.open {
+        left: 0;
+      }
       #sliderTrack {
         width: 120px;
         height: 40%;
@@ -262,20 +284,13 @@ app.get('/', (req, res) => {
         width: 120px;
         height: 100%;
       }
-      .circle-asset {
-        width: 120px;
-        height: 120px;
-      }
       #bottomControls {
         margin-top: 14px;
       }
       #toggleContainer {
         flex-direction: row;
-        justify-content: space-between;
         gap: 2px;
         margin: 5px auto;
-        width: 80%;
-        max-width: 300px;
       }
       #intensityContainer {
         width: 80%;
@@ -329,12 +344,11 @@ app.get('/', (req, res) => {
     }
   </style>
   <script>
-    let ws = null;
+    let ws = null; // Initialize WebSocket after room number is set
     let isVibrating = false;
-    let vibrationMode = 'pulse';
-    let circleMode = false;
+    let vibrationMode = 'pulse'; // Default mode
     let score = 0;
-    let isPressingBar = false;
+    let isPressingBar = false; // Track bar press state
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -344,14 +358,14 @@ app.get('/', (req, res) => {
     const intensityContainer = document.getElementById('intensityContainer');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
-    const circleAsset = document.querySelector('.circle-asset');
     const vibrateButton = document.getElementById('vibrateButton');
-    const circleToggle = document.getElementById('circleToggle');
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
+    const tabButton = document.getElementById('tabButton');
+    const tabPanel = document.getElementById('tabPanel');
     let isDragging = false;
     let startX = 0;
     let startY = 0;
@@ -362,36 +376,31 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
-    let currentHeartPosition = 'middle';
+    let currentHeartPosition = 'middle'; // Track heart position state
+    let isTabOpen = false;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
-      if (!roomCode) {
-        roomInput.style.border = '1px solid red';
-        roomInput.placeholder = 'Room code required';
-        roomInput.value = '';
-        console.log('No room code entered');
-        return;
-      }
-      roomInput.style.border = 'none';
-      roomDisplay.value = roomCode;
-      startScreen.classList.add('fade-out');
-      setTimeout(() => {
-        startScreen.style.display = 'none';
-        gameContent.style.display = 'flex';
-        console.log('Game started with room code:', roomCode);
-        // Use ws:// for local dev, wss:// for production
-        const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        ws = new WebSocket(protocol + window.location.host);
-        ws.onopen = () => console.log('Connected to server');
-        ws.onerror = (error) => console.error('WebSocket error:', error);
-        ws.onmessage = (event) => {
-          try {
+      if (roomCode) {
+        console.log('Starting game with room code:', roomCode);
+        // Set room display value
+        roomDisplay.value = roomCode;
+        // Start fade-out animation
+        startScreen.classList.add('fade-out');
+        setTimeout(() => {
+          console.log('Fade-out complete, hiding startScreen');
+          startScreen.remove(); // Remove from DOM
+          gameContent.style.display = 'flex';
+          console.log('gameContent displayed');
+          // Initialize WebSocket connection
+          ws = new WebSocket('wss://' + window.location.host);
+          ws.onopen = () => console.log('Connected to server');
+          ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.room === roomCode) {
               if (data.command === 'startVibrate' && navigator.vibrate) {
                 const intensity = data.intensity || 3;
-                let pattern = [1000];
+                let pattern = [1000]; // Default for wave mode
                 if (data.mode === 'pulse') {
                   switch (intensity) {
                     case 1: pattern = [50, 200]; break;
@@ -408,17 +417,18 @@ app.get('/', (req, res) => {
                 setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
               } else if (data.command === 'stopVibrate' && navigator.vibrate) {
                 navigator.vibrate(0);
-              } else if (data.command === 'placeCircle') {
-                createCircle(data.y);
               }
             }
-          } catch (e) {
-            console.error('WebSocket message error:', e);
-          }
-        };
-      }, 1000);
+          };
+        }, 1000); // Match fadeOut animation duration
+      } else {
+        console.log('No room code entered');
+        roomInput.placeholder = 'Please enter a room code';
+        roomInput.value = '';
+      }
     }
 
+    // Handle Enter key or Join button click
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
@@ -431,12 +441,13 @@ app.get('/', (req, res) => {
       startGame();
     });
 
+    // Create glowing dots
     function createGlowDots() {
-      const dotCount = 20;
+      const dotCount = 20; // Number of dots
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * 3 + 3;
+        const size = Math.random() * 3 + 3; // Random size between 3-6px
         dot.style.width = size + 'px';
         dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
@@ -447,6 +458,7 @@ app.get('/', (req, res) => {
     }
     createGlowDots();
 
+    // Score reduction
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
@@ -454,10 +466,15 @@ app.get('/', (req, res) => {
       }
     }, 1000);
 
+    // Subtle pulsation every 3-6 seconds
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
-      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000;
+      tabButton.classList.add('subtle-pulsing');
+      setTimeout(() => { 
+        sliderTrack.classList.remove('subtle-pulsing'); 
+        tabButton.classList.remove('subtle-pulsing');
+      }, 400);
+      const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
@@ -468,30 +485,24 @@ app.get('/', (req, res) => {
       setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
     };
 
-    circleToggle.addEventListener('click', () => {
-      circleMode = true;
-      vibrationMode = null;
-      circleToggle.classList.add('toggled');
-      pulseToggle.classList.remove('toggled');
-      waveToggle.classList.remove('toggled');
-    });
-
     pulseToggle.addEventListener('click', () => {
       vibrationMode = 'pulse';
-      circleMode = false;
       pulseToggle.classList.add('toggled');
       waveToggle.classList.remove('toggled');
-      circleToggle.classList.remove('toggled');
-      circleAsset.style.display = 'none';
     });
 
     waveToggle.addEventListener('click', () => {
       vibrationMode = 'wave';
-      circleMode = false;
       waveToggle.classList.add('toggled');
       pulseToggle.classList.remove('toggled');
-      circleToggle.classList.remove('toggled');
-      circleAsset.style.display = 'none';
+    });
+
+    // Toggle tab panel
+    tabButton.addEventListener('click', () => {
+      isTabOpen = !isTabOpen;
+      tabPanel.style.left = isTabOpen ? '0' : '-100px';
+      tabButton.classList.add('pulsing');
+      setTimeout(() => { tabButton.classList.remove('pulsing'); }, 500);
     });
 
     function createParticle(x, y, side) {
@@ -508,37 +519,23 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function createCircle(y) {
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const maxY = trackRect.height - 120;
-      const clampedY = Math.max(0, Math.min(y, maxY));
-      circleAsset.style.top = clampedY + 'px';
-      circleAsset.style.display = 'block';
-      circleAsset.classList.add('gelatin');
-      setTimeout(() => { circleAsset.classList.remove('gelatin'); }, 500);
-      console.log('Circle placed at:', clampedY);
-    }
-
     sliderTrack.addEventListener('mousedown', (e) => {
+      // Only trigger if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
-        if (circleMode) {
-          const room = roomDisplay.value;
-          if (room) {
-            createCircle(clickY - 60);
-            ws.send(JSON.stringify({ room: room, command: 'placeCircle', y: clickY - 60 }));
-          }
-        } else if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
+          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -547,25 +544,22 @@ app.get('/', (req, res) => {
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
+      // Only trigger if not touching vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
-        if (circleMode) {
-          const room = roomDisplay.value;
-          if (room) {
-            createCircle(touchY - 60);
-            ws.send(JSON.stringify({ room: room, command: 'placeCircle', y: touchY - 60 }));
-          }
-        } else if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
+          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
+          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -579,6 +573,7 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
+          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -595,6 +590,7 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
+          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -697,6 +693,7 @@ app.get('/', (req, res) => {
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to body bounds
         if (newX < 0) newX = 0;
         if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
@@ -709,10 +706,11 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9;
-        const topThreshold = maxPosition * 0.1;
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
+        const topThreshold = maxPosition * 0.1; // Top 10% of track
         const currentTime = Date.now();
 
+        // Determine heart position state
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -720,10 +718,11 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
+        // Update scale only if position state changes
         if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.8);
-            sliderTrack.style.setProperty('--scale-y', 1.1);
+            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
@@ -731,8 +730,8 @@ app.get('/', (req, res) => {
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.2);
-            sliderTrack.style.setProperty('--scale-y', 0.9);
+            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
@@ -740,14 +739,14 @@ app.get('/', (req, res) => {
               lastBottomGelatinTime = currentTime;
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', 1);
-            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.style.setProperty('--scale-x', 1); // Normal
+            sliderTrack.style.setProperty('--scale-y', 1); // Normal
             sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
 
-        if (room && vibrationMode) {
+        if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
@@ -768,6 +767,7 @@ app.get('/', (req, res) => {
   `);
 });
 
+// WebSocket connection
 let clients = [];
 wss.on('connection', (ws) => {
   clients.push(ws);
