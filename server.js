@@ -30,16 +30,11 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <button id="tabButton" style="position: absolute; left: 5px; top: 25%; width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;">
-    </button>
-    <button id="smallButton1" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 48px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
-    </button>
-    <button id="smallButton2" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 88px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
-    </button>
-    <button id="smallButton3" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 128px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
-    </button>
-    <button id="smallButton4" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 168px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
-    </button>
+    <button id="tabButton" style="position: absolute; left: 5px; top: 20%; width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;"></button>
+    <button id="smallButton1" style="position: absolute; left: 5px; top: calc(20% + 50px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
+    <button id="smallButton2" style="position: absolute; left: 5px; top: calc(20% + 90px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
+    <button id="smallButton3" style="position: absolute; left: 5px; top: calc(20% + 130px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
+    <button id="smallButton4" style="position: absolute; left: 5px; top: calc(20% + 170px); width: 30px; height: 30px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none; touch-action: none;"></button>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -129,12 +124,11 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.15); }
       100% { transform: scale(1); }
     }
-    @keyframes popIn {
+    @keyframes scaleIn {
       0% { transform: scale(0); opacity: 0; }
-      80% { transform: scale(1.1); opacity: 1; }
       100% { transform: scale(1); opacity: 1; }
     }
-    @keyframes popOut {
+    @keyframes scaleOut {
       0% { transform: scale(1); opacity: 1; }
       100% { transform: scale(0); opacity: 0; }
     }
@@ -170,11 +164,11 @@ app.get('/', (req, res) => {
     .tab-button-pulsing {
       animation: tabButtonPulse 0.3s ease-in-out;
     }
-    .small-button.pop-in {
-      animation: popIn 0.2s ease-out forwards;
+    .small-button-appear {
+      animation: scaleIn 0.2s ease-out forwards;
     }
-    .small-button.pop-out {
-      animation: popOut 0.2s ease-in forwards;
+    .small-button-disappear {
+      animation: scaleOut 0.2s ease-out forwards;
     }
     .glow-dot {
       position: absolute;
@@ -197,10 +191,7 @@ app.get('/', (req, res) => {
     #vibrateButton img:hover {
       transform: scale(1.1);
     }
-    #tabButton:hover {
-      transform: scale(1.1);
-    }
-    .small-button:hover {
+    #tabButton:hover, #smallButton1:hover, #smallButton2:hover, #smallButton3:hover, #smallButton4:hover {
       transform: scale(1.1);
     }
     input[type="range"] {
@@ -286,21 +277,25 @@ app.get('/', (req, res) => {
         height: 36px;
         left: 3px;
       }
-      .small-button {
+      #smallButton1 {
+        top: calc(20% + 46px);
         width: 28px;
         height: 28px;
       }
-      #smallButton1 {
-        top: calc(25% + 44px);
-      }
       #smallButton2 {
-        top: calc(25% + 80px);
+        top: calc(20% + 82px);
+        width: 28px;
+        height: 28px;
       }
       #smallButton3 {
-        top: calc(25% + 116px);
+        top: calc(20% + 118px);
+        width: 28px;
+        height: 28px;
       }
       #smallButton4 {
-        top: calc(25% + 152px);
+        top: calc(20% + 154px);
+        width: 28px;
+        height: 28px;
       }
       #sliderTrack {
         width: 120px;
@@ -504,27 +499,27 @@ app.get('/', (req, res) => {
     tabButton.addEventListener('click', () => {
       console.log('Tab button clicked, areSmallButtonsVisible:', areSmallButtonsVisible);
       areSmallButtonsVisible = !areSmallButtonsVisible;
-      tabButton.classList.add('tab-button-pulsing');
-      setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
       if (areSmallButtonsVisible) {
-        smallButtons.forEach((btn, index) => {
+        smallButtons.forEach((button, index) => {
           setTimeout(() => {
-            btn.style.display = 'block';
-            btn.classList.add('pop-in');
-            console.log(`Small button ${index + 1} shown`);
-            setTimeout(() => btn.classList.remove('pop-in'), 200);
+            button.style.display = 'block';
+            button.classList.add('small-button-appear');
+            console.log(`Small button ${index + 1} displayed`);
+            setTimeout(() => button.classList.remove('small-button-appear'), 200);
           }, index * 100);
         });
       } else {
-        smallButtons.forEach((btn, index) => {
-          btn.classList.add('pop-out');
-          console.log(`Small button ${index + 1} hidden`);
+        smallButtons.forEach((button, index) => {
+          button.classList.add('small-button-disappear');
+          console.log(`Small button ${index + 1} hiding`);
           setTimeout(() => {
-            btn.style.display = 'none';
-            btn.classList.remove('pop-out');
+            button.style.display = 'none';
+            button.classList.remove('small-button-disappear');
           }, 200);
         });
       }
+      tabButton.classList.add('tab-button-pulsing');
+      setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
     });
 
     const tabButtonImg = new Image();
