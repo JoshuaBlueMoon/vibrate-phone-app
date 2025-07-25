@@ -59,19 +59,19 @@ app.get('/', (req, res) => {
     <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
       <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
-    <div id="bottomControls" style="margin-top: 14px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 60px; height: 60px; transition: transform 0.2s;">
+        <div id="waveToggle" class="toggle-button" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
-      <div id="intensityContainer" style="width: 80%; max-width: 600px; padding: 12px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
-        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 24px; background: transparent; accent-color: transparent;">
+      <div id="intensityContainer" style="width: 80%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
+        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
-      <label for="intensity"><span id="intensityValue" style="font-size: 14px; color: #60a5fa;">3</span></label>
+      <label for="intensity"><span id="intensityValue" style="font-size: 10px; color: #60a5fa;">3</span></label>
     </div>
   </div>
   <style>
@@ -207,27 +207,27 @@ app.get('/', (req, res) => {
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
-      height: 24px;
+      height: 16px;
       background: url('/images/intensity-track.png') no-repeat center center;
       background-size: 100% 100%;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 48px;
-      height: 48px;
+      width: 32px;
+      height: 32px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
       background-size: contain;
       cursor: pointer;
-      margin-top: -12px;
+      margin-top: -8px;
       transition: transform 0.2s ease-out;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 48px;
-      height: 48px;
+      width: 32px;
+      height: 32px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
       background-size: contain;
       cursor: pointer;
@@ -238,11 +238,11 @@ app.get('/', (req, res) => {
       transform: scale(1.1);
     }
     input[type="range"]::-webkit-slider-runnable-track {
-      height: 24px;
+      height: 16px;
       background: transparent;
     }
     input[type="range"]::-moz-range-track {
-      height: 24px;
+      height: 16px;
       background: transparent;
     }
     @media (orientation: landscape) {
@@ -319,7 +319,7 @@ app.get('/', (req, res) => {
         will-change: background;
       }
       #bottomControls {
-        margin-top: 14px;
+        margin-top: 30px;
       }
       #toggleContainer {
         flex-direction: row;
@@ -328,11 +328,11 @@ app.get('/', (req, res) => {
       }
       #intensityContainer {
         width: 80%;
-        max-width: 560px;
-        padding: 10px;
+        max-width: 400px;
+        padding: 8px;
       }
       #intensityValue {
-        font-size: 12px;
+        font-size: 9px;
       }
       .pulse-symbol.top {
         top: -14px;
@@ -351,33 +351,33 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 80px;
-        height: 80px;
+        width: 54px;
+        height: 54px;
       }
       .toggle-button img {
-        width: 60px;
-        height: 60px;
+        width: 40px;
+        height: 40px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
       }
       input[type="range"] {
-        height: 22px;
+        height: 15px;
       }
       input[type="range"]::-webkit-slider-thumb {
-        width: 44px;
-        height: 44px;
-        margin-top: -11px;
+        width: 30px;
+        height: 30px;
+        margin-top: -7px;
       }
       input[type="range"]::-moz-range-thumb {
-        width: 44px;
-        height: 44px;
+        width: 30px;
+        height: 30px;
       }
       input[type="range"]::-webkit-slider-runnable-track {
-        height: 22px;
+        height: 15px;
       }
       input[type="range"]::-moz-range-track {
-        height: 22px;
+        height: 15px;
       }
     }
   </style>
@@ -572,7 +572,7 @@ app.get('/', (req, res) => {
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
-          '/images/bar-option32.png',
+          '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
         barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
