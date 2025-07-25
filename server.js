@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
-  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
+  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%), rgba(14, 34, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
@@ -144,6 +144,7 @@ app.get('/', (req, res) => {
       transition: transform 0.2s ease-in-out;
     }
     .heart-squished {
+      transform: scale(var(--scale-x, 1), var(--scale-y, 1));
       transition: transform 0.2s ease-in-out;
     }
     .glow-dot {
@@ -611,7 +612,7 @@ app.get('/', (req, res) => {
 
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      isDragging = true Ascent
+      isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
       startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
       startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
@@ -680,12 +681,11 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale and animations based on position
+        // Apply squish state
         if (newHeartPosition === 'top') {
-          sliderTrack.classList.add('heart-squished');
-          sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-          sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
           if (!isSquished || squishPosition !== 'top') {
+            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
+            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
@@ -695,11 +695,11 @@ app.get('/', (req, res) => {
             isSquished = true;
             squishPosition = 'top';
           }
-        } else if (newHeartPosition === 'bottom') {
           sliderTrack.classList.add('heart-squished');
-          sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-          sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+        } else if (newHeartPosition === 'bottom') {
           if (!isSquished || squishPosition !== 'bottom') {
+            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
@@ -709,12 +709,12 @@ app.get('/', (req, res) => {
             isSquished = true;
             squishPosition = 'bottom';
           }
+          sliderTrack.classList.add('heart-squished');
         } else {
-          sliderTrack.classList.remove('heart-squished');
           if (isSquished) {
             sliderTrack.style.setProperty('--scale-x', 1); // Normal
             sliderTrack.style.setProperty('--scale-y', 1); // Normal
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin', 'heart-squished');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
               setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
@@ -725,9 +725,8 @@ app.get('/', (req, res) => {
           }
         }
 
-        if (newHeartPosition !== currentHeartPosition) {
-          currentHeartPosition = newHeartPosition;
-        }
+        // Update heart position state
+        currentHeartPosition = newHeartPosition;
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
