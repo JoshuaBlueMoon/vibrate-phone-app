@@ -137,6 +137,11 @@ app.get('/', (req, res) => {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+    @keyframes particleBurst {
+      0% { transform: translate(-50%, 0); opacity: 0.7; }
+      25% { transform: translate(calc(-50% + var(--offset-x, 0px)), -50px); opacity: 0.7; }
+      100% { transform: translate(calc(-50% + var(--offset-x, 0px)), 100px); opacity: 0; }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -175,6 +180,16 @@ app.get('/', (req, res) => {
       opacity: 0.3;
       animation: glowPulse 3s ease-in-out infinite;
       pointer-events: none;
+    }
+    .burst-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: url('/images/glow-dot.png') no-repeat center center;
+      background-size: cover;
+      animation: particleBurst 1.5s ease-out forwards;
+      pointer-events: none;
+      z-index: 2;
     }
     .toggle-button {
       background: none;
@@ -276,10 +291,6 @@ app.get('/', (req, res) => {
         width: 48px;
         height: 48px;
       }
-      #menuToggle {
-        width: 48px;
-        height: 48px;
-      }
       #menuToggle img {
         width: 36px;
         height: 36px;
@@ -336,24 +347,20 @@ app.get('/', (req, res) => {
         width: 5px;
         height: 5px;
       }
-      .toggle-button {
-        width: 80px;
-        height: 80px;
+      .burst-particle {
+        width: 5px;
+        height: 5px;
       }
       .toggle-button {
         width: 80px;
         height: 80px;
-      }
-      .toggle-button {
-        width: 40px;
-        height: 40px;
       }
       .toggle-button img {
         width: 60px;
         height: 60px;
       }
       .toggle-button.toggled img {
-        transform: scale(1.1);
+        transform: scale(1.5);
       }
       input[type="range"] {
         height: 22px;
@@ -381,6 +388,8 @@ app.get('/', (req, res) => {
     let vibrationMode = 'pulse'; // Default mode
     let score = 0;
     let isPressingBar = false; // Track bar press state
+    let interactionCount = 0; // Track vibration/heart interactions
+    let burstThreshold = Math.floor(Math.random() * 4) + 2; // Random threshold between 2-5
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -555,14 +564,14 @@ app.get('/', (req, res) => {
     // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
@@ -582,6 +591,26 @@ app.get('/', (req, res) => {
         lastGelatinTime = currentTime;
       }
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
+
+      // Increment interaction counter and check for burst
+      interactionCount++;
+      if (interactionCount >= burstThreshold) {
+        // Create 6 particles
+        for (let i = 0; i < 6; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'burst-particle';
+          const offsetX = (Math.random() - 0.5) * 40; // Random horizontal spread (-20px to +20px)
+          particle.style.left = '50%';
+          particle.style.top = '0';
+          particle.style.setProperty('--offset-x', `${offsetX}px`);
+          particle.style.animationDelay = `${Math.random() * 0.3}s`; // Random delay up to 0.3s
+          sliderTrack.appendChild(particle);
+          setTimeout(() => particle.remove(), 1500); // Remove after animation
+        }
+        // Reset counter and set new random threshold
+        interactionCount = 0;
+        burstThreshold = Math.floor(Math.random() * 4) + 2; // New threshold between 2-5
+      }
     }
 
     sliderTrack.addEventListener('mousedown', (e) => {
