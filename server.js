@@ -572,7 +572,7 @@ app.get('/', (req, res) => {
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
-          '/images/bar-option3.png',
+          '/images/bar-option32.png',
           '/images/bar-option4.png'
         ];
         barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
