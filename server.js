@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <div id="leftControls" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -270,6 +270,7 @@ app.get('/', (req, res) => {
       }
       #leftControls {
         left: 10px;
+        top: 20%;
       }
       #menuToggle {
         width: 48px;
