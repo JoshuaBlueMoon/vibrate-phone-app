@@ -603,9 +603,9 @@ app.get('/', (req, res) => {
     vibrateButton.addEventListener('mousedown', (e) => {
       e.preventDefault();
       isDragging = true;
-      const bodyRect = document.body.getBoundingClientRect();
-      startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+      const gameRect = gameContent.getBoundingClientRect();
+      startX = e.clientX - gameRect.left - (vibrateButton.offsetWidth / 2);
+      startY = e.clientY - gameRect.top - (vibrateButton.offsetHeight / 2);
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -622,9 +622,9 @@ app.get('/', (req, res) => {
     vibrateButton.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isDragging = true;
-      const bodyRect = document.body.getBoundingClientRect();
-      startX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+      const gameRect = gameContent.getBoundingClientRect();
+      startX = e.touches[0].clientX - gameRect.left - (vibrateButton.offsetWidth / 2);
+      startY = e.touches[0].clientY - gameRect.top - (vibrateButton.offsetHeight / 2);
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -641,16 +641,16 @@ app.get('/', (req, res) => {
     function handleMovement(e, isTouch = false) {
       if (isDragging) {
         e.preventDefault();
-        const bodyRect = document.body.getBoundingClientRect();
+        const gameRect = gameContent.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
+        newX = newX - gameRect.left - (vibrateButton.offsetWidth / 2);
+        newY = newY - gameRect.top - (vibrateButton.offsetHeight / 2);
+        // Constrain to gameContent bounds
         if (newX < 0) newX = 0;
-        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+        if (newX > gameRect.width - vibrateButton.offsetWidth) newX = gameRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
-        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+        if (newY > gameRect.height - vibrateButton.offsetHeight) newY = gameRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = newX + 'px';
         vibrateButton.style.top = newY + 'px';
 
@@ -695,6 +695,11 @@ app.get('/', (req, res) => {
             sliderTrack.style.setProperty('--scale-x', 1); // Normal
             sliderTrack.style.setProperty('--scale-y', 1); // Normal
             sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            if (currentHeartPosition !== 'middle' && currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
+            }
           }
           currentHeartPosition = newHeartPosition;
         }
