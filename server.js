@@ -30,10 +30,16 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <button id="tabButton" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;">
+    <button id="tabButton" style="position: absolute; left: 5px; top: 25%; width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;">
     </button>
-    <div id="tabPanel" style="position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 100px; height: 70%; max-height: 400px; background: url('/images/tab-panel.png') no-repeat center center; background-size: contain; transition: left 0.3s ease-in-out; z-index: 3; outline: 1px solid red;">
-    </div>
+    <button id="smallButton1" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 48px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
+    </button>
+    <button id="smallButton2" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 88px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
+    </button>
+    <button id="smallButton3" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 128px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
+    </button>
+    <button id="smallButton4" class="small-button" style="position: absolute; left: 5px; top: calc(25% + 168px); width: 32px; height: 32px; background: url('/images/small-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; display: none;">
+    </button>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -66,7 +72,7 @@ app.get('/', (req, res) => {
     }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
-      pointer-events: none; /* Prevent interaction during fade-out */
+      pointer-events: none;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -123,6 +129,15 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.15); }
       100% { transform: scale(1); }
     }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes popOut {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0); opacity: 0; }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -155,8 +170,11 @@ app.get('/', (req, res) => {
     .tab-button-pulsing {
       animation: tabButtonPulse 0.3s ease-in-out;
     }
-    .tab-panel-open {
-      left: 0 !important;
+    .small-button.pop-in {
+      animation: popIn 0.2s ease-out forwards;
+    }
+    .small-button.pop-out {
+      animation: popOut 0.2s ease-in forwards;
     }
     .glow-dot {
       position: absolute;
@@ -180,7 +198,10 @@ app.get('/', (req, res) => {
       transform: scale(1.1);
     }
     #tabButton:hover {
-      transform: translateY(-50%) scale(1.1);
+      transform: scale(1.1);
+    }
+    .small-button:hover {
+      transform: scale(1.1);
     }
     input[type="range"] {
       -webkit-appearance: none;
@@ -265,14 +286,21 @@ app.get('/', (req, res) => {
         height: 36px;
         left: 3px;
       }
-      #tabPanel {
-        width: 80px;
-        height: 60%;
-        max-height: 320px;
-        left: -80px;
+      .small-button {
+        width: 28px;
+        height: 28px;
       }
-      #tabPanel.tab-panel-open {
-        left: 0;
+      #smallButton1 {
+        top: calc(25% + 44px);
+      }
+      #smallButton2 {
+        top: calc(25% + 80px);
+      }
+      #smallButton3 {
+        top: calc(25% + 116px);
+      }
+      #smallButton4 {
+        top: calc(25% + 152px);
       }
       #sliderTrack {
         width: 120px;
@@ -344,11 +372,11 @@ app.get('/', (req, res) => {
     }
   </style>
   <script>
-    let ws = null; // Initialize WebSocket after room number is set
+    let ws = null;
     let isVibrating = false;
-    let vibrationMode = 'pulse'; // Default mode
+    let vibrationMode = 'pulse';
     let score = 0;
-    let isPressingBar = false; // Track bar press state
+    let isPressingBar = false;
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -365,7 +393,12 @@ app.get('/', (req, res) => {
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
     const tabButton = document.getElementById('tabButton');
-    const tabPanel = document.getElementById('tabPanel');
+    const smallButtons = [
+      document.getElementById('smallButton1'),
+      document.getElementById('smallButton2'),
+      document.getElementById('smallButton3'),
+      document.getElementById('smallButton4')
+    ];
     let isDragging = false;
     let startX = 0;
     let startY = 0;
@@ -376,23 +409,20 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
-    let currentHeartPosition = 'middle'; // Track heart position state
-    let isTabOpen = false;
+    let currentHeartPosition = 'middle';
+    let areSmallButtonsVisible = false;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
       if (roomCode) {
         console.log('Starting game with room code:', roomCode);
-        // Set room display value
         roomDisplay.value = roomCode;
-        // Start fade-out animation
         startScreen.classList.add('fade-out');
         setTimeout(() => {
           console.log('Fade-out complete, hiding startScreen');
-          startScreen.remove(); // Remove from DOM
+          startScreen.remove();
           gameContent.style.display = 'flex';
           console.log('gameContent displayed');
-          // Initialize WebSocket connection
           ws = new WebSocket('wss://' + window.location.host);
           ws.onopen = () => console.log('Connected to server');
           ws.onmessage = (event) => {
@@ -400,7 +430,7 @@ app.get('/', (req, res) => {
             if (data.room === roomCode) {
               if (data.command === 'startVibrate' && navigator.vibrate) {
                 const intensity = data.intensity || 3;
-                let pattern = [1000]; // Default for wave mode
+                let pattern = [1000];
                 if (data.mode === 'pulse') {
                   switch (intensity) {
                     case 1: pattern = [50, 200]; break;
@@ -420,7 +450,7 @@ app.get('/', (req, res) => {
               }
             }
           };
-        }, 1000); // Match fadeOut animation duration
+        }, 1000);
       } else {
         console.log('No room code entered');
         roomInput.placeholder = 'Please enter a room code';
@@ -428,7 +458,6 @@ app.get('/', (req, res) => {
       }
     }
 
-    // Handle Enter key or Join button click
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
@@ -441,13 +470,12 @@ app.get('/', (req, res) => {
       startGame();
     });
 
-    // Create glowing dots
     function createGlowDots() {
-      const dotCount = 20; // Number of dots
+      const dotCount = 20;
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * 3 + 3; // Random size between 3-6px
+        const size = Math.random() * 3 + 3;
         dot.style.width = size + 'px';
         dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
@@ -458,7 +486,6 @@ app.get('/', (req, res) => {
     }
     createGlowDots();
 
-    // Score reduction
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
@@ -466,32 +493,46 @@ app.get('/', (req, res) => {
       }
     }, 1000);
 
-    // Subtle pulsation every 3-6 seconds
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
       setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
+      const nextPulse = Math.random() * 3000 + 3000;
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
 
-    // Toggle tab
     tabButton.addEventListener('click', () => {
-      console.log('Tab button clicked, isTabOpen:', isTabOpen);
-      isTabOpen = !isTabOpen;
-      tabPanel.classList.toggle('tab-panel-open');
+      console.log('Tab button clicked, areSmallButtonsVisible:', areSmallButtonsVisible);
+      areSmallButtonsVisible = !areSmallButtonsVisible;
       tabButton.classList.add('tab-button-pulsing');
-      console.log('Tab panel classList:', tabPanel.classList.toString());
       setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
+      if (areSmallButtonsVisible) {
+        smallButtons.forEach((btn, index) => {
+          setTimeout(() => {
+            btn.style.display = 'block';
+            btn.classList.add('pop-in');
+            console.log(`Small button ${index + 1} shown`);
+            setTimeout(() => btn.classList.remove('pop-in'), 200);
+          }, index * 100);
+        });
+      } else {
+        smallButtons.forEach((btn, index) => {
+          btn.classList.add('pop-out');
+          console.log(`Small button ${index + 1} hidden`);
+          setTimeout(() => {
+            btn.style.display = 'none';
+            btn.classList.remove('pop-out');
+          }, 200);
+        });
+      }
     });
 
-    // Debug image loading
     const tabButtonImg = new Image();
     tabButtonImg.src = '/images/tab-button.png';
     tabButtonImg.onerror = () => console.error('Failed to load tab-button.png');
-    const tabPanelImg = new Image();
-    tabPanelImg.src = '/images/tab-panel.png';
-    tabPanelImg.onerror = () => console.error('Failed to load tab-panel.png');
+    const smallButtonImg = new Image();
+    smallButtonImg.src = '/images/small-button.png';
+    smallButtonImg.onerror = () => console.error('Failed to load small-button.png');
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
@@ -526,22 +567,19 @@ app.get('/', (req, res) => {
     }
 
     sliderTrack.addEventListener('mousedown', (e) => {
-      // Only trigger if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -550,22 +588,19 @@ app.get('/', (req, res) => {
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
-      // Only trigger if not touching vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -579,7 +614,6 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
-          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -596,7 +630,6 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
-          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
@@ -699,7 +732,6 @@ app.get('/', (req, res) => {
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-        // Constrain to body bounds
         if (newX < 0) newX = 0;
         if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
@@ -712,11 +744,10 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const bottomThreshold = maxPosition * 0.9;
+        const topThreshold = maxPosition * 0.1;
         const currentTime = Date.now();
 
-        // Determine heart position state
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -724,11 +755,10 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale only if position state changes
         if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
-            sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
+            sliderTrack.style.setProperty('--scale-x', 0.8);
+            sliderTrack.style.setProperty('--scale-y', 1.1);
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
@@ -736,8 +766,8 @@ app.get('/', (req, res) => {
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
-            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
+            sliderTrack.style.setProperty('--scale-x', 1.2);
+            sliderTrack.style.setProperty('--scale-y', 0.9);
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
@@ -745,8 +775,8 @@ app.get('/', (req, res) => {
               lastBottomGelatinTime = currentTime;
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', 1); // Normal
-            sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
             sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
