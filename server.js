@@ -128,14 +128,10 @@ app.get('/', (req, res) => {
       75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes glowPulse {
-      0% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.2); }
-      100% { opacity: 0.3; transform: scale(1); }
-    }
-    @keyframes drift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(var(--drift-x), var(--drift-y)); }
+    @keyframes slowDrift {
+      0% { transform: translate(0, 0); opacity: 0.3; }
+      50% { opacity: 0.5; }
+      100% { transform: translate(var(--move-x), var(--move-y)); opacity: 0.3; }
     }
     @keyframes particleBurst {
       0% { opacity: 0.7; transform: translate(0, 0) scale(1); }
@@ -181,14 +177,14 @@ app.get('/', (req, res) => {
       background: url('/images/glow-dot.png') no-repeat center center;
       background-size: cover;
       opacity: 0.3;
-      animation: glowPulse 3s ease-in-out infinite, drift 15s linear infinite alternate;
+      animation: slowDrift 10s ease-in-out infinite;
       pointer-events: none;
     }
     .particle {
       position: absolute;
       width: 6px;
       height: 6px;
-      background: url('/images/glow-dot.png') no-repeat center center;
+      background: url('/images/particle-dot.png') no-repeat center center;
       background-size: cover;
       animation: particleBurst 1s ease-out forwards;
       pointer-events: none;
@@ -347,8 +343,8 @@ app.get('/', (req, res) => {
         font-size: 14px;
       }
       .glow-dot {
-        width: 5px;
-        height: 5px;
+        width: 6px;
+        height: 6px;
       }
       .particle {
         width: 5px;
@@ -490,19 +486,19 @@ app.get('/', (req, res) => {
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * 3 + 5; // Size between 5-8px
+        const size = Math.random() * 4 + 6; // Random size between 6-10px
         dot.style.width = size + 'px';
         dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
         dot.style.top = Math.random() * 100 + '%';
-        dot.style.animationDelay = Math.random() * 3 + 's';
-        // Random drift direction
-        const driftX = (Math.random() - 0.5) * 50; // Move up to 25px left or right
-        const driftY = (Math.random() - 0.5) * 50; // Move up to 25px up or down
-        dot.style.setProperty('--drift-x', driftX + 'px');
-        dot.style.setProperty('--drift-y', driftY + 'px');
-        // Random drift duration between 10-20 seconds
-        dot.style.animationDuration = (Math.random() * 10 + 10) + 's, 3s'; // drift, glowPulse
+        // Random direction for slow drift
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 50 + 50; // Move 50-100px
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance;
+        dot.style.setProperty('--move-x', moveX + 'px');
+        dot.style.setProperty('--move-y', moveY + 'px');
+        dot.style.animationDelay = Math.random() * 5 + 's';
         glowDotsContainer.appendChild(dot);
       }
     }
@@ -802,7 +798,7 @@ app.get('/', (req, res) => {
         e.preventDefault();
         const bodyRect = document.body.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
-        let newY = isTouch ? y e.touches[0].clientY : e.clientY;
+        let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
         // Constrain to body bounds
