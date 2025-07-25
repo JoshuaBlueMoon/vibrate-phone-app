@@ -1,3 +1,4 @@
+```javascript
 const express = require('express');
 const WebSocket = require('ws');
 const app = express();
@@ -30,9 +31,9 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <button id="tabButton" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 2;">
+    <button id="tabButton" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; background: url('/images/tab-button.png') no-repeat center center; background-size: contain; border: none; cursor: pointer; z-index: 3; touch-action: none;">
     </button>
-    <div id="tabPanel" style="position: absolute; left: -100px; top: 15%; width: 100px; height: 70%; max-height: 400px; background: url('/images/tab-panel.png') no-repeat center center; background-size: contain; transition: left 0.3s ease-in-out; z-index: 2;">
+    <div id="tabPanel" style="position: absolute; left: -100px; top: 50%; transform: translateY(-50%); width: 100px; height: 70%; max-height: 400px; background: url('/images/tab-panel.png') no-repeat center center; background-size: contain; transition: left 0.3s ease-in-out; z-index: 3; outline: 1px solid red;">
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; z-index: 1;"></div>
@@ -155,6 +156,9 @@ app.get('/', (req, res) => {
     .tab-button-pulsing {
       animation: tabButtonPulse 0.3s ease-in-out;
     }
+    .tab-panel-open {
+      left: 0 !important;
+    }
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -177,7 +181,7 @@ app.get('/', (req, res) => {
       transform: scale(1.1);
     }
     #tabButton:hover {
-      transform: scale(1.1) translateY(-50%);
+      transform: translateY(-50%) scale(1.1);
     }
     input[type="range"] {
       -webkit-appearance: none;
@@ -268,7 +272,7 @@ app.get('/', (req, res) => {
         max-height: 320px;
         left: -80px;
       }
-      #tabPanel.open {
+      #tabPanel.tab-panel-open {
         left: 0;
       }
       #sliderTrack {
@@ -474,11 +478,21 @@ app.get('/', (req, res) => {
 
     // Toggle tab
     tabButton.addEventListener('click', () => {
+      console.log('Tab button clicked, isTabOpen:', isTabOpen);
       isTabOpen = !isTabOpen;
-      tabPanel.classList.toggle('open');
+      tabPanel.classList.toggle('tab-panel-open');
       tabButton.classList.add('tab-button-pulsing');
+      console.log('Tab panel classList:', tabPanel.classList.toString());
       setTimeout(() => { tabButton.classList.remove('tab-button-pulsing'); }, 300);
     });
+
+    // Debug image loading
+    const tabButtonImg = new Image();
+    tabButtonImg.src = '/images/tab-button.png';
+    tabButtonImg.onerror = () => console.error('Failed to load tab-button.png');
+    const tabPanelImg = new Image();
+    tabPanelImg.src = '/images/tab-panel.png';
+    tabPanelImg.onerror = () => console.error('Failed to load tab-panel.png');
 
     intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
