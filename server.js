@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
           <img src="/images/sub-button1.png" alt="Sub Button 1" style="width: 32px; height: 32px;">
         </div>
-        <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
+        <div class="sub-menu-button" style="width: 40px; height: 40px; animation: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
           <img src="/images/sub-button2.png" alt="Sub Button 2" style="width: 32px; height: 32px;">
         </div>
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
@@ -537,11 +537,20 @@ app.get('/', (req, res) => {
       }
     });
 
-    // Sub-menu button click handlers (placeholder for future functionality)
+    // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         console.log(\`Sub-menu button \${index + 1} clicked\`);
-        // Add specific functionality here as needed
+        const barImages = [
+          '/images/custom-bar.png',
+          '/images/bar-option2.png',
+          '/images/bar-option3.png',
+          '/images/bar-option4.png'
+        ];
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.classList.add('gelatin');
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
     });
 
