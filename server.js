@@ -59,19 +59,19 @@ app.get('/', (req, res) => {
     <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
       <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
-    <div id="bottomControls" style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
           <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
           <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
-      <div id="intensityContainer" style="width: 80%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
+      <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
-      <label for="intensity"><span id="intensityValue" style="font-size: 10px; color: #60a5fa;">3</span></label>
+      <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
     </div>
   </div>
   <style>
@@ -319,7 +319,7 @@ app.get('/', (req, res) => {
         will-change: background;
       }
       #bottomControls {
-        margin-top: 30px;
+        margin-top: 28px;
       }
       #toggleContainer {
         flex-direction: row;
@@ -327,12 +327,12 @@ app.get('/', (req, res) => {
         margin: 5px auto;
       }
       #intensityContainer {
-        width: 80%;
-        max-width: 400px;
-        padding: 8px;
+        width: 53.33%;
+        max-width: 373px;
+        padding: 7px;
       }
       #intensityValue {
-        font-size: 9px;
+        font-size: 8px;
       }
       .pulse-symbol.top {
         top: -14px;
@@ -351,8 +351,8 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 54px;
-        height: 54px;
+        width: 53px;
+        height: 53px;
       }
       .toggle-button img {
         width: 40px;
@@ -365,13 +365,13 @@ app.get('/', (req, res) => {
         height: 15px;
       }
       input[type="range"]::-webkit-slider-thumb {
-        width: 30px;
-        height: 30px;
+        width: 29px;
+        height: 29px;
         margin-top: -7px;
       }
       input[type="range"]::-moz-range-thumb {
-        width: 30px;
-        height: 30px;
+        width: 29px;
+        height: 29px;
       }
       input[type="range"]::-webkit-slider-runnable-track {
         height: 15px;
