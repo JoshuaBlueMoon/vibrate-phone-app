@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, background; transform-origin: bottom center; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -141,6 +141,14 @@ app.get('/', (req, res) => {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+    @keyframes springBounce {
+      0% { transform: translateX(-50%) rotate(var(--rotate-deg, 0deg)); }
+      20% { transform: translateX(-50%) rotate(calc(var(--rotate-deg, 0deg) * -0.6)); }
+      40% { transform: translateX(-50%) rotate(calc(var(--rotate-deg, 0deg) * 0.3)); }
+      60% { transform: translateX(-50%) rotate(calc(var(--rotate-deg, 0deg) * -0.15)); }
+      80% { transform: translateX(-50%) rotate(calc(var(--rotate-deg, 0deg) * 0.05)); }
+      100% { transform: translateX(-50%) rotate(0deg); }
+    }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
@@ -169,6 +177,9 @@ app.get('/', (req, res) => {
     }
     .squished {
       transition: transform 0.2s ease-in-out;
+    }
+    .spring-bounce {
+      animation: springBounce 1s ease-in-out forwards;
     }
     .glow-dot {
       position: absolute;
@@ -316,7 +327,8 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
-        will-change: background;
+        will-change: transform, background;
+        transform-origin: bottom center;
       }
       #bottomControls {
         margin-top: 28px;
@@ -386,7 +398,9 @@ app.get('/', (req, res) => {
     let isVibrating = false;
     let vibrationMode = 'pulse'; // Default mode
     let score = 0;
-    let isPressingBar = false; // Track bar press state
+    let isPressingBar = false; // Track bar press state for squish/pendulum
+    let isRotatingBar = false; // Track bar rotation state
+    let startX = 0;
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -405,8 +419,7 @@ app.get('/', (req, res) => {
     const menuToggle = document.getElementById('menuToggle');
     const subMenu = document.getElementById('subMenu');
     const subMenuButtons = document.querySelectorAll('.sub-menu-button');
-    let isDragging = false;
-    let startX = 0;
+    let isDragging = false; // Track heart drag state
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
@@ -415,6 +428,7 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
+    let lastRotateTime = 0;
     let currentHeartPosition = 'middle'; // Track heart position state
     let isSubMenuOpen = false;
 
@@ -634,7 +648,12 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
-        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+        if (clickY <= topThreshold && currentTime - lastRotateTime >= 1000) {
+          // Initiate rotation drag
+          isRotatingBar = true;
+          startX = e.clientX;
+          e.preventDefault();
+        } else if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
@@ -658,7 +677,12 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
-        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+        if (touchY <= topThreshold && currentTime - lastRotateTime >= 1000) {
+          // Initiate rotation drag
+          isRotatingBar = true;
+          startX = e.touches[0].clientX;
+          e.preventDefault();
+        } else if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
@@ -676,7 +700,15 @@ app.get('/', (req, res) => {
     });
 
     document.addEventListener('mousemove', (e) => {
-      if (isPressingBar) {
+      if (isRotatingBar) {
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        const deltaX = e.clientX - centerX;
+        const maxDelta = 100; // Max drag distance for full rotation
+        let rotation = (deltaX / maxDelta) * 30; // Max ±30 degrees
+        rotation = Math.max(-30, Math.min(30, rotation)); // Clamp rotation
+        barGraphic.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+      } else if (isPressingBar) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
@@ -693,7 +725,15 @@ app.get('/', (req, res) => {
     });
 
     document.addEventListener('touchmove', (e) => {
-      if (isPressingBar) {
+      if (isRotatingBar) {
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        const deltaX = e.touches[0].clientX - centerX;
+        const maxDelta = 100; // Max drag distance for full rotation
+        let rotation = (deltaX / maxDelta) * 30; // Max ±30 degrees
+        rotation = Math.max(-30, Math.min(30, rotation)); // Clamp rotation
+        barGraphic.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+      } else if (isPressingBar) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
@@ -710,6 +750,23 @@ app.get('/', (req, res) => {
     });
 
     document.addEventListener('mouseup', () => {
+      if (isRotatingBar) {
+        const currentTime = Date.now();
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        const deltaX = startX - centerX;
+        const maxDelta = 100;
+        let rotation = (deltaX / maxDelta) * 30;
+        rotation = Math.max(-30, Math.min(30, rotation));
+        barGraphic.style.setProperty('--rotate-deg', `${rotation}deg`);
+        barGraphic.classList.add('spring-bounce');
+        setTimeout(() => {
+          barGraphic.classList.remove('spring-bounce');
+          barGraphic.style.transform = 'translateX(-50%) rotate(0deg)';
+        }, 1000); // Match springBounce duration
+        isRotatingBar = false;
+        lastRotateTime = currentTime;
+      }
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
@@ -733,6 +790,23 @@ app.get('/', (req, res) => {
     });
 
     document.addEventListener('touchend', () => {
+      if (isRotatingBar) {
+        const currentTime = Date.now();
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        const deltaX = startX - centerX;
+        const maxDelta = 100;
+        let rotation = (deltaX / maxDelta) * 30;
+        rotation = Math.max(-30, Math.min(30, rotation));
+        barGraphic.style.setProperty('--rotate-deg', `${rotation}deg`);
+        barGraphic.classList.add('spring-bounce');
+        setTimeout(() => {
+          barGraphic.classList.remove('spring-bounce');
+          barGraphic.style.transform = 'translateX(-50%) rotate(0deg)';
+        }, 1000); // Match springBounce duration
+        isRotatingBar = false;
+        lastRotateTime = currentTime;
+      }
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
