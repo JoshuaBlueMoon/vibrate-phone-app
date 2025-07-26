@@ -60,12 +60,19 @@ app.get('/', (req, res) => {
       <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      <div style="display: flex; align-items: center; justify-content: space-between; width: 53.33%; max-width: 400px; margin: 5px auto;">
+        <div id="leftToggleContainer" style="display: flex; justify-content: flex-start;">
+          <div id="randomToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+            <img src="/images/random-toggle.png" alt="Random Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+          </div>
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <div id="toggleContainer" style="display: flex; justify-content: flex-end; gap: 2px;">
+          <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+            <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+          </div>
+          <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+            <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+          </div>
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
@@ -332,10 +339,13 @@ app.get('/', (req, res) => {
       #bottomControls {
         margin-top: 28px;
       }
+      #leftToggleContainer {
+        justify-content: flex-start;
+      }
       #toggleContainer {
         flex-direction: row;
         gap: 2px;
-        margin: 5px auto;
+        justify-content: flex-end;
       }
       #intensityContainer {
         width: 53.33%;
@@ -413,6 +423,7 @@ app.get('/', (req, res) => {
     const vibrateButton = document.getElementById('vibrateButton');
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
+    const randomToggle = document.getElementById('randomToggle');
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
@@ -547,16 +558,26 @@ app.get('/', (req, res) => {
       setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
     };
 
+    // Toggle button handlers
     pulseToggle.addEventListener('click', () => {
       vibrationMode = 'pulse';
       pulseToggle.classList.add('toggled');
       waveToggle.classList.remove('toggled');
+      randomToggle.classList.remove('toggled');
     });
 
     waveToggle.addEventListener('click', () => {
       vibrationMode = 'wave';
       waveToggle.classList.add('toggled');
       pulseToggle.classList.remove('toggled');
+      randomToggle.classList.remove('toggled');
+    });
+
+    randomToggle.addEventListener('click', () => {
+      vibrationMode = 'random';
+      randomToggle.classList.add('toggled');
+      pulseToggle.classList.remove('toggled');
+      waveToggle.classList.remove('toggled');
     });
 
     // Menu toggle functionality
