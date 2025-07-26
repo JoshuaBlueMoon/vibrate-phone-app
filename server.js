@@ -152,11 +152,11 @@ app.get('/', (req, res) => {
       100% { opacity: 1; transform: translateY(0); }
     }
     @keyframes drip {
-      0% { transform: translate(var(--move-x, -50%), 0) scale(0.5, 0.5); opacity: 0.7; }
-      16% { transform: translate(var(--move-x, -50%), 20%) scale(1, 1); opacity: 0.7; }
-      40% { transform: translate(var(--move-x, -50%), 50%) scale(1, 1.3); opacity: 0.7; }
-      64% { transform: translate(var(--move-x, -50%), 100%) scale(1, 1); opacity: 0.7; }
-      100% { transform: translate(var(--move-x, -50%), 100%) scale(1, 1); opacity: 0; }
+      0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.7; }
+      20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.7; }
+      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.7; }
+      80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.7; }
+      100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -208,7 +208,7 @@ app.get('/', (req, res) => {
       z-index: 2;
     }
     .fluid-effect {
-      animation: drip 10s ease-out infinite;
+      animation: drip 6s ease-out infinite;
       pointer-events: none;
     }
     .toggle-button {
@@ -475,7 +475,6 @@ app.get('/', (req, res) => {
       '/images/fluid-sprite2.png',
       '/images/fluid-sprite3.png'
     ];
-    const fluidCurvatures = ['-60%', '-50%', '-40%'];
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -572,14 +571,7 @@ app.get('/', (req, res) => {
         const fillPercentage = Math.min(rectScore, 100);
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        if (rectScore >= 21) {
-          fluidEffect.style.display = 'block';
-          const randomCurvature = fluidCurvatures[Math.floor(Math.random() * fluidCurvatures.length)];
-          fluidEffect.style.setProperty('--move-x', randomCurvature);
-          console.log(`Fluid curvature set to: ${randomCurvature}`);
-        } else {
-          fluidEffect.style.display = 'none';
-        }
+        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
       } else {
         fluidEffect.style.display = 'none';
       }
@@ -734,6 +726,7 @@ app.get('/', (req, res) => {
       button.addEventListener('click', () => {
         console.log(\`Sub-menu button \${index + 1} clicked\`);
         if (index < 3) {
+          // Bar sprite change
           const barImages = [
             '/images/custom-bar.png',
             '/images/bar-option2.png',
@@ -745,6 +738,7 @@ app.get('/', (req, res) => {
           barGraphic.classList.add('gelatin');
           setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
         } else {
+          // Fluid sprite change
           currentFluidSpriteIndex = (currentFluidSpriteIndex + 1) % fluidSprites.length;
           fluidEffect.src = fluidSprites[currentFluidSpriteIndex];
           fluidEffect.classList.add('gelatin');
