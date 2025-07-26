@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
       <span id="score">0</span>
     </div>
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
-      <input id="room" type="text" placeholder="Type" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
+      <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
     <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform; z-index: 1;"></div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, background; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -125,22 +125,38 @@ app.get('/', (req, res) => {
     }
     @keyframes gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.2)) rotate(2deg); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.8)) rotate(-2deg); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)) rotate(1deg); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes bottom-gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 1.2), calc(var(--scale-y, 1) * 0.75)) rotate(-3deg); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 0.8), calc(var(--scale-y, 1) * 1.25)) rotate(3deg); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.85)) rotate(-1deg); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes fleshy-breathe {
-      0% { transform: scale(1, 1); }
-      50% { transform: scale(1.03, 0.97); }
-      100% { transform: scale(1, 1); }
+    @keyframes rectSqueezeBottom {
+      0% { transform: translateX(-50%) scale(var(--scale-x-bottom, 1), var(--scale-y-bottom, 1)); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x-bottom, 1) * 1.2), calc(var(--scale-y-bottom, 1) * 0.7)); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x-bottom, 1) * 1.3), calc(var(--scale-y-bottom, 1) * 0.65)); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x-bottom, 1) * 1.15), calc(var(--scale-y-bottom, 1) * 0.85)); }
+      100% { transform: translateX(-50%) scale(var(--scale-x-bottom, 1), var(--scale-y-bottom, 1)); }
+    }
+    @keyframes rectStretchTop {
+      0% { transform: translateX(-50%) scale(var(--scale-x-top, 1), var(--scale-y-top, 1)); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x-top, 1) * 0.8), calc(var(--scale-y-top, 1) * 1.3)); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x-top, 1) * 0.75), calc(var(--scale-y-top, 1) * 1.4)); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x-top, 1) * 0.9), calc(var(--scale-y-top, 1) * 1.1)); }
+      100% { transform: translateX(-50%) scale(var(--scale-x-top, 1), var(--scale-y-top, 1)); }
+    }
+    @keyframes wobbleGelatin {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      25% { transform: translateX(-50%) rotate(2deg); }
+      50% { transform: translateX(-50%) rotate(-2deg); }
+      75% { transform: translateX(-50%) rotate(1deg); }
+      100% { transform: translateX(-50%) rotate(0deg); }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -175,14 +191,23 @@ app.get('/', (req, res) => {
       animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
-      animation: gelatin 0.6s ease-in-out;
+      animation: gelatin 0.5s ease-in-out;
     }
     .bottom-gelatin {
-      animation: bottom-gelatin 0.6s ease-in-out;
+      animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .fleshy-breathe {
-      animation: fleshy-breathe 2s ease-in-out infinite;
+    .rect-squeeze-bottom {
+      animation: rectSqueezeBottom 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      transform-origin: bottom center;
+    }
+    .rect-stretch-top {
+      animation: rectStretchTop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      transform-origin: top center;
+    }
+    .wobble-gelatin {
+      animation: wobbleGelatin 0.8s ease-in-out;
+      transform-origin: center center;
     }
     .squished {
       transition: transform 0.2s ease-in-out;
@@ -346,7 +371,7 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
-        will-change: transform;
+        will-change: transform, background;
       }
       #bottomControls {
         margin-top: 28px;
@@ -488,15 +513,6 @@ app.get('/', (req, res) => {
                     case 5: pattern = [200]; break;
                     default: pattern = [50, 50];
                   }
-                } else if (data.mode === 'wave') {
-                  switch (intensity) {
-                    case 1: pattern = [100, 300]; break;
-                    case 2: pattern = [100, 200]; break;
-                    case 3: pattern = [100, 100]; break;
-                    case 4: pattern = [200, 100]; break;
-                    case 5: pattern = [300]; break;
-                    default: pattern = [100, 100];
-                  }
                 }
                 navigator.vibrate(pattern);
                 console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
@@ -621,20 +637,6 @@ app.get('/', (req, res) => {
       }
     }
 
-    pulseToggle.addEventListener('click', () => {
-      vibrationMode = 'pulse';
-      pulseToggle.classList.add('toggled');
-      waveToggle.classList.remove('toggled');
-      console.log('Vibration mode set to pulse');
-    });
-
-    waveToggle.addEventListener('click', () => {
-      vibrationMode = 'wave';
-      waveToggle.classList.add('toggled');
-      pulseToggle.classList.remove('toggled');
-      console.log('Vibration mode set to wave');
-    });
-
     heartToggle.addEventListener('click', () => {
       interactionMode = 'heart';
       heartToggle.classList.add('toggled');
@@ -650,9 +652,8 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
-      sliderTrack.classList.remove('fleshy-breathe', 'gelatin', 'bottom-gelatin');
-      sliderTrack.style.setProperty('--scale-x', 1);
-      sliderTrack.style.setProperty('--scale-y', 1);
+      barGraphic.style.transform = 'translateX(-50%) scale(1, 1)';
+      barGraphic.classList.remove('rect-squeeze-bottom', 'rect-stretch-top', 'wobble-gelatin');
     });
 
     rectToggle.addEventListener('click', () => {
@@ -672,7 +673,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
-      sliderTrack.classList.add('fleshy-breathe');
     });
 
     menuToggle.addEventListener('click', () => {
@@ -702,18 +702,18 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
-        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
     });
 
@@ -727,32 +727,41 @@ app.get('/', (req, res) => {
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (interactionMode === 'rect' && currentTime - lastGelatinTime >= 700) {
-        sliderTrack.classList.add(side === 'top' ? 'gelatin' : 'bottom-gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 600);
+      if (currentTime - lastGelatinTime >= 500) {
+        if (interactionMode === 'rect') {
+          barGraphic.classList.add('wobble-gelatin');
+          setTimeout(() => { barGraphic.classList.remove('wobble-gelatin'); }, 800);
+        } else {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        }
         lastGelatinTime = currentTime;
       }
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
-      const particleCount = 5;
+      const particleCount = interactionMode === 'rect' ? 8 : 5;
       const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
       const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        const size = Math.random() * 3 + 3;
+        const size = Math.random() * 4 + 3;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
         particle.style.left = baseX + 'px';
         particle.style.top = baseY + 'px';
         const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 50 + 20;
+        const distance = Math.random() * 60 + 20;
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
         particle.style.setProperty('--move-x', moveX + 'px');
         particle.style.setProperty('--move-y', moveY + 'px');
+        if (interactionMode === 'rect') {
+          const hue = side === 'top' ? 340 : 240;
+          particle.style.filter = `hue-rotate(${hue + Math.random() * 20 - 10}deg)`;
+        }
         glowDotsContainer.appendChild(particle);
         setTimeout(() => {
           particle.remove();
@@ -768,16 +777,16 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
-        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 700) {
+        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 700) {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -789,16 +798,16 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
-        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 700) {
+        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 700) {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -814,7 +823,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, false);
@@ -830,7 +839,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, true);
@@ -842,7 +851,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -850,11 +859,11 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          barGraphic.classList.remove('rect-squeeze-bottom', 'rect-stretch-top', 'wobble-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            sliderTrack.classList.add('fleshy-breathe');
-          }
+          barGraphic.style.transform = 'translateX(-50%) scale(1, 1)';
+          currentHeartPosition = 'middle';
         }
         isDragging = false;
         lastCollision = null;
@@ -867,7 +876,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -875,11 +884,11 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          barGraphic.classList.remove('rect-squeeze-bottom', 'rect-stretch-top', 'wobble-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            sliderTrack.classList.add('fleshy-breathe');
-          }
+          barGraphic.style.transform = 'translateX(-50%) scale(1, 1)';
+          currentHeartPosition = 'middle';
         }
         isDragging = false;
         lastCollision = null;
@@ -896,9 +905,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 600) {
+        if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -915,9 +924,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 600) {
+        if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -941,9 +950,6 @@ app.get('/', (req, res) => {
           if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
           vibrateButton.style.left = newX + 'px';
           vibrateButton.style.top = newY + 'px';
-          sliderTrack.classList.remove('fleshy-breathe', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
         } else {
           newX = trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2;
           if (newY < trackRect.top - bodyRect.top) newY = trackRect.top - bodyRect.top;
@@ -970,30 +976,70 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        if (interactionMode === 'rect' && newHeartPosition !== currentHeartPosition) {
-          if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.85);
-            sliderTrack.style.setProperty('--scale-y', 1.25);
-            sliderTrack.classList.remove('bottom-gelatin', 'fleshy-breathe');
-            if (currentTime - lastGelatinTime >= 700) {
-              sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
-              lastGelatinTime = currentTime;
-            }
-          } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.25);
-            sliderTrack.style.setProperty('--scale-y', 0.75);
-            sliderTrack.classList.remove('gelatin', 'fleshy-breathe');
-            if (currentTime - lastBottomGelatinTime >= 700) {
-              sliderTrack.classList.add('bottom-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 600);
-              lastBottomGelatinTime = currentTime;
+        if (newHeartPosition !== currentHeartPosition) {
+          if (interactionMode === 'heart') {
+            if (newHeartPosition === 'top') {
+              sliderTrack.style.setProperty('--scale-x', 0.8);
+              sliderTrack.style.setProperty('--scale-y', 1.1);
+              sliderTrack.classList.remove('bottom-gelatin');
+              if (currentTime - lastGelatinTime >= 500) {
+                sliderTrack.classList.add('gelatin');
+                setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+                lastGelatinTime = currentTime;
+              }
+            } else if (newHeartPosition === 'bottom') {
+              sliderTrack.style.setProperty('--scale-x', 1.2);
+              sliderTrack.style.setProperty('--scale-y', 0.9);
+              sliderTrack.classList.remove('gelatin');
+              if (currentTime - lastBottomGelatinTime >= 500) {
+                sliderTrack.classList.add('bottom-gelatin');
+                setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+                lastBottomGelatinTime = currentTime;
+              }
+            } else {
+              sliderTrack.style.setProperty('--scale-x', 1);
+              sliderTrack.style.setProperty('--scale-y', 1);
+              sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', 1);
-            sliderTrack.style.setProperty('--scale-y', 1);
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-            sliderTrack.classList.add('fleshy-breathe');
+            if (newHeartPosition === 'top') {
+              barGraphic.style.setProperty('--scale-x-top', 0.75);
+              barGraphic.style.setProperty('--scale-y-top', 1.4);
+              barGraphic.classList.remove('rect-squeeze-bottom', 'wobble-gelatin');
+              if (currentTime - lastGelatinTime >= 600) {
+                barGraphic.classList.add('rect-stretch-top', 'wobble-gelatin');
+                setTimeout(() => {
+                  barGraphic.classList.remove('rect-stretch-top');
+                  barGraphic.classList.add('wobble-gelatin');
+                  setTimeout(() => { barGraphic.classList.remove('wobble-gelatin'); }, 800);
+                }, 600);
+                lastGelatinTime = currentTime;
+              }
+            } else if (newHeartPosition === 'bottom') {
+              barGraphic.style.setProperty('--scale-x-bottom', 1.3);
+              barGraphic.style.setProperty('--scale-y-bottom', 0.65);
+              barGraphic.classList.remove('rect-stretch-top', 'wobble-gelatin');
+              if (currentTime - lastBottomGelatinTime >= 600) {
+                barGraphic.classList.add('rect-squeeze-bottom', 'wobble-gelatin');
+                setTimeout(() => {
+                  barGraphic.classList.remove('rect-squeeze-bottom');
+                  barGraphic.classList.add('wobble-gelatin');
+                  setTimeout(() => { barGraphic.classList.remove('wobble-gelatin'); }, 800);
+                }, 600);
+                lastBottomGelatinTime = currentTime;
+              }
+            } else {
+              barGraphic.style.setProperty('--scale-x-top', 1);
+              barGraphic.style.setProperty('--scale-y-top', 1);
+              barGraphic.style.setProperty('--scale-x-bottom', 1);
+              barGraphic.style.setProperty('--scale-y-bottom', 1);
+              barGraphic.classList.remove('rect-squeeze-bottom', 'rect-stretch-top');
+              if (currentTime - lastGelatinTime >= 800) {
+                barGraphic.classList.add('wobble-gelatin');
+                setTimeout(() => { barGraphic.classList.remove('wobble-gelatin'); }, 800);
+                lastGelatinTime = currentTime;
+              }
+            }
           }
           currentHeartPosition = newHeartPosition;
         }
