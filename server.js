@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: url('/images/fluid-droplet.png') no-repeat center center; background-size: contain; border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: url('/images/fluid.png') no-repeat center center; background-size: cover; border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -210,9 +210,6 @@ app.get('/', (req, res) => {
     .fluid-effect {
       animation: drip 6s ease-out infinite;
       pointer-events: none;
-    }
-    .bar-graphic {
-      transition: background 0.5s ease-in-out;
     }
     .toggle-button {
       background: none;
@@ -559,16 +556,8 @@ app.get('/', (req, res) => {
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        barGraphic.style.background = rectScore >= 21
-          ? `url('/images/bar-intensity2.png') no-repeat center center`
-          : `url('/images/custom-bar.png') no-repeat center center`;
-        barGraphic.style.backgroundSize = 'contain';
-        barGraphic.style.backgroundPosition = 'center center';
       } else {
         fluidEffect.style.display = 'none';
-        barGraphic.style.background = `url('/images/custom-bar.png') no-repeat center center`;
-        barGraphic.style.backgroundSize = 'contain';
-        barGraphic.style.backgroundPosition = 'center center';
       }
     }
 
@@ -605,9 +594,6 @@ app.get('/', (req, res) => {
         rectScoreInterval = null;
       }
       fluidEffect.style.display = 'none';
-      barGraphic.style.background = `url('/images/custom-bar.png') no-repeat center center`;
-      barGraphic.style.backgroundSize = 'contain';
-      barGraphic.style.backgroundPosition = 'center center';
     }
 
     function triggerSubtlePulse() {
@@ -633,19 +619,11 @@ app.get('/', (req, res) => {
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        barGraphic.style.background = rectScore >= 21
-          ? `url('/images/bar-intensity2.png') no-repeat center center`
-          : `url('/images/custom-bar.png') no-repeat center center`;
-        barGraphic.style.backgroundSize = 'contain';
-        barGraphic.style.backgroundPosition = 'center center';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
         fluidEffect.style.display = 'none';
-        barGraphic.style.background = `url('/images/custom-bar.png') no-repeat center center`;
-        barGraphic.style.backgroundSize = 'contain';
-        barGraphic.style.backgroundPosition = 'center center';
       }
     }
 
