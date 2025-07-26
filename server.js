@@ -560,7 +560,7 @@ app.get('/', (req, res) => {
             case 3: decrement = 0.5; break;
             case 4: decrement = 0.7; break;
             case 5: decrement = 0.9; break;
-            default: decrement = 0.1; // Fallback for rectScore = 0
+            default: decrement = 0.1;
           }
           rectScore = Math.max(0, rectScore - decrement);
           updateScoreDisplay();
@@ -897,9 +897,7 @@ app.get('/', (req, res) => {
 
         if (interactionMode === 'heart') {
           if (newX < 0) newX = 0;
-          if (newX > body
-
-Rect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+          if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
           if (newY < 0) newY = 0;
           if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
           vibrateButton.style.left = newX + 'px';
