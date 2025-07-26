@@ -439,73 +439,121 @@ app.get('/', (req, res) => {
     let burstSprite = null; // Store single burst sprite
 
     function startGame() {
-      const roomCode = roomInput.value.trim();
-      if (roomCode) {
-        console.log('Starting game with room code:', roomCode);
-        // Set room display value
+      const roomCode = roomInput?.value.trim();
+      if (!roomCode) {
+        console.log('No room code entered');
+        if (roomInput) {
+          roomInput.placeholder = 'Please enter a room code';
+          roomInput.value = '';
+        } else {
+          console.error('roomInput element not found');
+        }
+        return;
+      }
+      console.log('Starting game with room code:', roomCode);
+      // Set room display value
+      if (roomDisplay) {
         roomDisplay.value = roomCode;
-        // Start fade-out animation
+      } else {
+        console.error('roomDisplay element not found');
+      }
+      // Start fade-out animation
+      if (startScreen) {
         startScreen.classList.add('fade-out');
-        setTimeout(() => {
-          console.log('Fade-out complete, hiding startScreen');
+      } else {
+        console.error('startScreen element not found');
+      }
+      setTimeout(() => {
+        console.log('Fade-out complete, hiding startScreen');
+        if (startScreen && startScreen.parentNode) {
           startScreen.remove(); // Remove from DOM
+        } else {
+          console.error('startScreen not found or already removed');
+        }
+        if (gameContent) {
           gameContent.style.display = 'flex';
           console.log('gameContent displayed');
-          // Initialize WebSocket connection
-          ws = new WebSocket('wss://' + window.location.host);
-          ws.onopen = () => console.log('Connected to server');
+        } else {
+          console.error('gameContent element not found');
+          return;
+        }
+        // Initialize WebSocket connection
+        const wsUrl = window.location.host.includes('localhost') ? 'ws://localhost:3000' : 'wss://' + window.location.host;
+        try {
+          ws = new WebSocket(wsUrl);
+          ws.onopen = () => console.log('Connected to server at', wsUrl);
           ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.room === roomCode) {
-              if (data.command === 'startVibrate' && navigator.vibrate) {
-                const intensity = data.intensity || 3;
-                let pattern = [1000]; // Default for wave mode
-                if (data.mode === 'pulse') {
-                  switch (intensity) {
-                    case 1: pattern = [50, 200]; break;
-                    case 2: pattern = [50, 100]; break;
-                    case 3: pattern = [50, 50]; break;
-                    case 4: pattern = [100, 50]; break;
-                    case 5: pattern = [200]; break;
-                    default: pattern = [50, 50];
+            try {
+              const data = JSON.parse(event.data);
+              if (data.room === roomCode) {
+                if (data.command === 'startVibrate' && navigator.vibrate) {
+                  const intensity = data.intensity || 3;
+                  let pattern = [1000]; // Default for wave mode
+                  if (data.mode === 'pulse') {
+                    switch (intensity) {
+                      case 1: pattern = [50, 200]; break;
+                      case 2: pattern = [50, 100]; break;
+                      case 3: pattern = [50, 50]; break;
+                      case 4: pattern = [100, 50]; break;
+                      case 5: pattern = [200]; break;
+                      default: pattern = [50, 50];
+                    }
+                  }
+                  navigator.vibrate(pattern);
+                  console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
+                  sliderTrack.classList.add('pulsing');
+                  setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
+                } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+                  navigator.vibrate(0);
+                } else if (data.command === 'createBurstSprite' && burstMode) {
+                  createBurstSprite(data.x, data.y, false); // Create sprite without sending WebSocket message
+                } else if (data.command === 'removeBurstSprite') {
+                  if (burstSprite) {
+                    burstSprite.remove();
+                    burstSprite = null;
                   }
                 }
-                navigator.vibrate(pattern);
-                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
-                sliderTrack.classList.add('pulsing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
-              } else if (data.command === 'stopVibrate' && navigator.vibrate) {
-                navigator.vibrate(0);
-              } else if (data.command === 'createBurstSprite' && burstMode) {
-                createBurstSprite(data.x, data.y, false); // Create sprite without sending WebSocket message
-              } else if (data.command === 'removeBurstSprite') {
-                if (burstSprite) {
-                  burstSprite.remove();
-                  burstSprite = null;
-                }
               }
+            } catch (e) {
+              console.error('Error parsing WebSocket message:', e);
             }
           };
-        }, 1000); // Match fadeOut animation duration
-      } else {
-        console.log('No room code entered');
-        roomInput.placeholder = 'Please enter a room code';
-        roomInput.value = '';
-      }
+          ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+          };
+          ws.onclose = () => {
+            console.log('WebSocket connection closed');
+          };
+        } catch (e) {
+          console.error('Failed to initialize WebSocket:', e);
+          // Fallback to show game content even if WebSocket fails
+          if (gameContent) {
+            gameContent.style.display = 'flex';
+          }
+        }
+      }, 1000); // Match fadeOut animation duration
     }
 
     // Handle Enter key or Join button click
-    roomInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        console.log('Enter key pressed');
-        startGame();
-      }
-    });
+    if (roomInput) {
+      roomInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          console.log('Enter key pressed');
+          startGame();
+        }
+      });
+    } else {
+      console.error('roomInput element not found for keypress event');
+    }
 
-    joinButton.addEventListener('click', () => {
-      console.log('Join button clicked');
-      startGame();
-    });
+    if (joinButton) {
+      joinButton.addEventListener('click', () => {
+        console.log('Join button clicked');
+        startGame();
+      });
+    } else {
+      console.error('joinButton element not found');
+    }
 
     // Create glowing dots
     function createGlowDots() {
@@ -524,7 +572,7 @@ app.get('/', (req, res) => {
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance;
         dot.style.setProperty('--move-x', moveX + 'px');
-        dot.style.setProperty('--move-y', moveY + 'px';
+        dot.style.setProperty('--move-y', moveY + 'px');
         dot.style.animationDelay = Math.random() * 5 + 's';
         glowDotsContainer.appendChild(dot);
       }
@@ -613,14 +661,14 @@ app.get('/', (req, res) => {
     // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
