@@ -76,7 +76,8 @@ app.get('/', (req, res) => {
           <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
-      <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
+      <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
+        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;"></div>
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
@@ -253,6 +254,15 @@ app.get('/', (req, res) => {
       height: 16px;
       background: transparent;
     }
+    input[type="range"].disabled {
+      pointer-events: none;
+    }
+    input[type="range"].disabled::-webkit-slider-thumb {
+      opacity: 0;
+    }
+    input[type="range"].disabled::-moz-range-thumb {
+      opacity: 0;
+    }
     @media (orientation: landscape) {
       body {
         flex-direction: column;
@@ -343,6 +353,11 @@ app.get('/', (req, res) => {
         max-width: 373px;
         padding: 7px;
       }
+      #intensityFill {
+        top: 7px;
+        bottom: 7px;
+        left: 7px;
+      }
       #intensityValue {
         font-size: 8px;
       }
@@ -399,7 +414,7 @@ app.get('/', (req, res) => {
     let vibrationMode = 'pulse';
     let score = 0;
     let isPressingBar = false;
-    let interactionMode = 'heart'; // Default to heart mode
+    let interactionMode = 'heart';
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
@@ -407,6 +422,7 @@ app.get('/', (req, res) => {
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
+    const intensityFill = document.getElementById('intensityFill');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const vibrateButton = document.getElementById('vibrateButton');
@@ -514,10 +530,19 @@ app.get('/', (req, res) => {
     }
     createGlowDots();
 
+    function updateScoreDisplay() {
+      scoreElement.textContent = score;
+      if (interactionMode === 'rect') {
+        const fillPercentage = Math.min(score, 100);
+        intensityFill.style.width = fillPercentage + '%';
+        intensityDisplay.textContent = Math.ceil(score / 20); // Display intensity (1-5)
+      }
+    }
+
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
-        scoreElement.textContent = score;
+        updateScoreDisplay();
       }
     }, 1000);
 
@@ -530,9 +555,11 @@ app.get('/', (req, res) => {
     triggerSubtlePulse();
 
     intensitySlider.oninput = () => {
-      intensityDisplay.textContent = intensitySlider.value;
-      intensityContainer.classList.add('intensity-pulsing');
-      setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
+      if (interactionMode === 'heart') {
+        intensityDisplay.textContent = intensitySlider.value;
+        intensityContainer.classList.add('intensity-pulsing');
+        setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
+      }
     };
 
     pulseToggle.addEventListener('click', () => {
@@ -547,6 +574,19 @@ app.get('/', (req, res) => {
       pulseToggle.classList.remove('toggled');
     });
 
+    function updateIntensityBar() {
+      if (interactionMode === 'rect') {
+        intensitySlider.classList.add('disabled');
+        intensitySlider.value = Math.ceil(score / 20);
+        intensityFill.style.width = Math.min(score, 100) + '%';
+        intensityDisplay.textContent = Math.ceil(score / 20);
+      } else {
+        intensitySlider.classList.remove('disabled');
+        intensityFill.style.width = '0%';
+        intensityDisplay.textContent = intensitySlider.value;
+      }
+    }
+
     heartToggle.addEventListener('click', () => {
       interactionMode = 'heart';
       heartToggle.classList.add('toggled');
@@ -557,10 +597,10 @@ app.get('/', (req, res) => {
       vibrateButton.style.height = '56px';
       vibrateImage.style.width = '40px';
       vibrateImage.style.height = '40px';
-      // Reset position to center
       vibrateButton.style.left = '50%';
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
+      updateIntensityBar();
     });
 
     rectToggle.addEventListener('click', () => {
@@ -573,12 +613,12 @@ app.get('/', (req, res) => {
       vibrateButton.style.height = '20px';
       vibrateImage.style.width = '32px';
       vibrateImage.style.height = '16px';
-      // Snap to bar's horizontal center
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translateY(-50%)';
+      updateIntensityBar();
     });
 
     menuToggle.addEventListener('click', () => {
@@ -627,7 +667,7 @@ app.get('/', (req, res) => {
       if (lastCollision === side) return;
       lastCollision = side;
       score += 1;
-      scoreElement.textContent = score;
+      updateScoreDisplay();
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
         sliderTrack.classList.add('gelatin');
@@ -833,7 +873,6 @@ app.get('/', (req, res) => {
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
 
         if (interactionMode === 'heart') {
-          // Heart mode: free movement within body bounds
           if (newX < 0) newX = 0;
           if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
           if (newY < 0) newY = 0;
@@ -841,7 +880,6 @@ app.get('/', (req, res) => {
           vibrateButton.style.left = newX + 'px';
           vibrateButton.style.top = newY + 'px';
         } else {
-          // Rectangle mode: constrain to bar's horizontal center
           newX = trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2;
           if (newY < trackRect.top - bodyRect.top) newY = trackRect.top - bodyRect.top;
           if (newY > trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight) {
@@ -896,7 +934,7 @@ app.get('/', (req, res) => {
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = parseInt(intensitySlider.value);
+            const intensity = interactionMode === 'rect' ? Math.ceil(score / 20) : parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
