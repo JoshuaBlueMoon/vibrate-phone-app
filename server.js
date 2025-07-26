@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: url('/images/fluid.png') no-repeat center center; background-size: cover; border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: url('/images/fluid.png') no-repeat center center; background-size: contain; border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
