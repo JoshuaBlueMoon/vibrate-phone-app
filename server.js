@@ -53,7 +53,8 @@ app.get('/', (req, res) => {
       <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
-      <div id="rectToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
+      <div id="rectToggle" class="toggle-button" style="width: 56px; height:  Ascending
+56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
@@ -667,14 +668,14 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
