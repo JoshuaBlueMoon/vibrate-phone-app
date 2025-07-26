@@ -58,12 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-container" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; z-index: 1;">
-        <div class="bar-segment bar-top" style="position: absolute; top: 0; height: 33%; width: 100%; background: url('/images/custom-bar.png') no-repeat center top; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
-        <div class="bar-segment bar-middle" style="position: absolute; top: 33%; height: 34%; width: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
-        <div class="bar-segment bar-bottom" style="position: absolute; top: 67%; height: 33%; width: 100%; background: url('/images/custom-bar.png') no-repeat center bottom; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
-        <div class="bar-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255, 100, 100, 0.2), rgba(100, 100, 255, 0.2)); pointer-events: none; z-index: 2;"></div>
-      </div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, filter; z-index: 1; filter: drop-shadow(0 0 5px rgba(96, 165, 250, 0.3));"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -129,45 +124,46 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes bottom-gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes squeeze-gelatin {
-      0% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
-      25% { clip-path: polygon(25% 0%, 75% 0%, 85% 100%, 15% 100%); }
-      50% { clip-path: polygon(20% 0%, 80% 0%, 90% 100%, 10% 100%); }
-      75% { clip-path: polygon(25% 0%, 75% 0%, 85% 100%, 15% 100%); }
-      100% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
+      0% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
+      20% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.85), calc(var(--scale-y, 1) * 0.9)); }
+      40% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)); }
+      60% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.05)); }
+      80% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
+      100% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
     }
     @keyframes stretch-gelatin {
-      0% { clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%); }
-      25% { clip-path: polygon(35% 0%, 65% 0%, 75% 100%, 25% 100%); }
-      50% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
-      75% { clip-path: polygon(35% 0%, 65% 0%, 75% 100%, 25% 100%); }
-      100% { clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%); }
+      0% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
+      20% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.8), calc(var(--scale-y, 1) * 1.2)); }
+      40% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      60% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.1)); }
+      80% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
+      100% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes springy-wobble {
+    @keyframes organic-pulse {
+      0% { transform: translateX(-50%) scale(var(--scale-mid-x, 1), var(--scale-y, 1)); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-mid-x, 1) * 1.03), calc(var(--scale-y, 1) * 1.02)); }
+      100% { transform: translateX(-50%) scale(var(--scale-mid-x, 1), var(--scale-y, 1)); }
+    }
+    @keyframes rect-squish {
       0% { transform: scale(1, 1); }
-      20% { transform: scale(1.05, 0.95); }
-      40% { transform: scale(0.95, 1.05); }
-      60% { transform: scale(1.02, 0.98); }
-      80% { transform: scale(0.98, 1.02); }
+      25% { transform: scale(1.2, 0.8); }
+      50% { transform: scale(0.9, 1.1); }
+      75% { transform: scale(1.05, 0.95); }
       100% { transform: scale(1, 1); }
-    }
-    @keyframes organic-ripple {
-      0% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.2); opacity: 0.3; }
-      100% { transform: scale(1.5); opacity: 0; }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -189,7 +185,7 @@ app.get('/', (req, res) => {
       animation: barPulse 0.4s ease-in-out infinite;
     }
     .subtle-pulsing {
-      animation: subtlePulse 0.4s ease-in-out;
+      animation: organic-pulse 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     }
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
@@ -208,43 +204,17 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .squeeze-gelatin-top {
-      animation: squeeze-gelatin 0.6s ease-in-out;
-      clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%);
+    .squeeze-gelatin {
+      animation: squeeze-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-    .squeeze-gelatin-middle {
-      animation: squeeze-gelatin 0.6s ease-in-out 0.1s;
-      clip-path: polygon(20% 0%, 80% 0%, 90% 100%, 10% 100%);
+    .stretch-gelatin {
+      animation: stretch-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-    .squeeze-gelatin-bottom {
-      animation: squeeze-gelatin 0.6s ease-in-out 0.2s;
-      clip-path: polygon(15% 0%, 85% 0%, 95% 100%, 5% 100%);
-    }
-    .stretch-gelatin-top {
-      animation: stretch-gelatin 0.6s ease-in-out;
-      clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%);
-    }
-    .stretch-gelatin-middle {
-      animation: stretch-gelatin 0.6s ease-in-out 0.1s;
-      clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%);
-    }
-    .stretch-gelatin-bottom {
-      animation: stretch-gelatin 0.6s ease-in-out 0.2s;
-      clip-path: polygon(50% 0%, 50% 0%, 60% 100%, 40% 100%);
-    }
-    .springy-wobble {
-      animation: springy-wobble 0.8s ease-in-out;
-    }
-    .organic-ripple {
-      animation: organic-ripple 0.5s ease-out forwards;
+    .rect-squish {
+      animation: rect-squish 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
     .squished {
       transition: transform 0.2s ease-in-out;
-    }
-    .bar-segment {
-      filter: blur(1px);
-      box-shadow: 0 0 10px rgba(255, 100, 100, 0.3);
-      will-change: clip-path, transform;
     }
     .glow-dot {
       position: absolute;
@@ -263,15 +233,6 @@ app.get('/', (req, res) => {
       background: url('/images/particle-dot.png') no-repeat center center;
       background-size: cover;
       animation: particleBurst 1s ease-out forwards;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .organic-particle {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: radial-gradient(circle, rgba(255, 100, 100, 0.8), transparent);
-      border-radius: 50%;
       pointer-events: none;
       z-index: 2;
     }
@@ -344,7 +305,7 @@ app.get('/', (req, res) => {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 5px;
+        padding: 5 SOCIETYpx;
         margin: 0 auto;
         width: 100%;
         max-width: 414px;
@@ -409,12 +370,12 @@ app.get('/', (req, res) => {
         max-height: 240px;
         margin: 5px auto 15px auto;
       }
-      .bar-container {
+      .bar-graphic {
         width: 120px;
         height: 100%;
-      }
-      .bar-segment {
-        background-size: 120px 300%;
+        background-position: center center;
+        background-size: contain;
+        will-change: transform, filter;
       }
       #bottomControls {
         margin-top: 28px;
@@ -449,7 +410,7 @@ app.get('/', (req, res) => {
         width: 6px;
         height: 6px;
       }
-      .particle, .organic-particle {
+      .particle {
         width: 5px;
         height: 5px;
       }
@@ -501,10 +462,7 @@ app.get('/', (req, res) => {
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
     const sliderTrack = document.getElementById('sliderTrack');
-    const barContainer = document.querySelector('.bar-container');
-    const barTop = document.querySelector('.bar-top');
-    const barMiddle = document.querySelector('.bar-middle');
-    const barBottom = document.querySelector('.bar-bottom');
+    const barGraphic = document.querySelector('.bar-graphic');
     const vibrateButton = document.getElementById('vibrateButton');
     const vibrateImage = document.getElementById('vibrateImage');
     const pulseToggle = document.getElementById('pulseToggle');
@@ -655,10 +613,17 @@ app.get('/', (req, res) => {
     }
 
     function triggerSubtlePulse() {
-      sliderTrack.classList.add('subtle-pulsing');
-      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000;
-      setTimeout(triggerSubtlePulse, nextPulse);
+      if (interactionMode === 'rect') {
+        sliderTrack.classList.add('subtle-pulsing');
+        setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 2000);
+        const nextPulse = Math.random() * 3000 + 3000;
+        setTimeout(triggerSubtlePulse, nextPulse);
+      } else {
+        sliderTrack.classList.add('subtle-pulsing');
+        setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
+        const nextPulse = Math.random() * 3000 + 3000;
+        setTimeout(triggerSubtlePulse, nextPulse);
+      }
     }
     triggerSubtlePulse();
 
@@ -676,10 +641,12 @@ app.get('/', (req, res) => {
         intensitySlider.value = Math.ceil(rectScore / 20);
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
+        sliderTrack.classList.add('subtle-pulsing');
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
+        sliderTrack.classList.remove('subtle-pulsing');
       }
     }
 
@@ -697,13 +664,13 @@ app.get('/', (req, res) => {
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
-      barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top', 'springy-wobble');
-      barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle', 'springy-wobble');
-      barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom', 'springy-wobble');
-      barTop.style.clipPath = '';
-      barMiddle.style.clipPath = '';
-      barBottom.style.clipPath = '';
       updateIntensityBar();
+      barGraphic.style.transition = 'transform 0.2s ease-in-out';
+      barGraphic.style.setProperty('--scale-top-x', 1);
+      barGraphic.style.setProperty('--scale-mid-x', 1);
+      barGraphic.style.setProperty('--scale-bottom-x', 1);
+      barGraphic.style.setProperty('--scale-y', 1);
+      sliderTrack.classList.remove('squeeze-gelatin', 'stretch-gelatin');
     });
 
     rectToggle.addEventListener('click', () => {
@@ -723,6 +690,7 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
+      barGraphic.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     });
 
     menuToggle.addEventListener('click', () => {
@@ -752,21 +720,18 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barTop.style.background = \`url('\${barImages[index]}') no-repeat center top\`;
-        barMiddle.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-        barBottom.style.background = \`url('\${barImages[index]}') no-repeat center bottom\`;
-        barTop.style.backgroundSize = '120px 300%';
-        barMiddle.style.backgroundSize = '120px 300%';
-        barBottom.style.backgroundSize = '120px 300%';
-        barContainer.classList.add('gelatin');
-        setTimeout(() => { barContainer.classList.remove('gelatin'); }, 500);
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundPosition = 'center center';
+        barGraphic.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+        setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
       });
     });
 
@@ -777,47 +742,45 @@ app.get('/', (req, res) => {
         score += 1;
       } else {
         rectScore = Math.min(rectScore + 1, 100);
+        vibrateButton.classList.add('rect-squish');
+        setTimeout(() => { vibrateButton.classList.remove('rect-squish'); }, 400);
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 500) {
-        if (interactionMode === 'heart') {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-        } else {
-          barContainer.classList.add('springy-wobble');
-          setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
-        }
+      if (currentTime - lastGelatinTime >= 600 && interactionMode === 'rect') {
+        barGraphic.classList.add(side === 'top' ? 'stretch-gelatin' : 'squeeze-gelatin');
+        setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin', 'stretch-gelatin'); }, 600);
+        lastGelatinTime = currentTime;
+      } else if (currentTime - lastGelatinTime >= 500 && interactionMode === 'heart') {
+        sliderTrack.classList.add('gelatin');
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         lastGelatinTime = currentTime;
       }
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
-      const particleCount = 5;
+      const particleCount = 8;
       const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
       const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        particle.className = interactionMode === 'rect' ? 'organic-particle' : 'particle';
-        const size = Math.random() * 3 + (interactionMode === 'rect' ? 5 : 3);
+        particle.className = 'particle';
+        const size = Math.random() * 4 + 4;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
-        particle.style.left = baseX + 'px';
-        particle.style.top = baseY + 'px';
+        particle.style.left = baseX + (Math.random() - 0.5) * 10 + 'px';
+        particle.style.top = baseY + (Math.random() - 0.5) * 10 + 'px';
         const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 50 + 20;
+        const distance = Math.random() * 60 + 30;
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
         particle.style.setProperty('--move-x', moveX + 'px');
         particle.style.setProperty('--move-y', moveY + 'px');
-        if (interactionMode === 'rect') {
-          particle.classList.add('organic-ripple');
-        }
         glowDotsContainer.appendChild(particle);
         setTimeout(() => {
           particle.remove();
-        }, interactionMode === 'rect' ? 500 : 1000);
+        }, 1200);
       }
 
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
@@ -833,12 +796,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          barContainer.classList.add('pendulum-wobble');
-          setTimeout(() => { barContainer.classList.remove('pendulum-wobble'); }, 600);
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -854,12 +817,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          barContainer.classList.add('pendulum-wobble');
-          setTimeout(() => { barContainer.classList.remove('pendulum-wobble'); }, 600);
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -873,9 +836,9 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gelatin');
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
         }
       }
       handleMovement(e, false);
@@ -889,9 +852,9 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gelatin');
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
         }
       }
       handleMovement(e, true);
@@ -901,28 +864,20 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gelatin');
+        sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin');
+          sliderTrack.style.setProperty('--scale-top-x', 1);
+          sliderTrack.style.setProperty('--scale-mid-x', 1);
+          sliderTrack.style.setProperty('--scale-bottom-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
-            barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
-            barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
-            barTop.style.clipPath = '';
-            barMiddle.style.clipPath = '';
-            barBottom.style.clipPath = '';
-            barContainer.classList.add('springy-wobble');
-            setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
-          }
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -934,28 +889,20 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gelatin');
+        sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin');
+          sliderTrack.style.setProperty('--scale-top-x', 1);
+          sliderTrack.style.setProperty('--scale-mid-x', 1);
+          sliderTrack.style.setProperty('--scale-bottom-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
-            barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
-            barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
-            barTop.style.clipPath = '';
-            barMiddle.style.clipPath = '';
-            barBottom.style.clipPath = '';
-            barContainer.classList.add('springy-wobble');
-            setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
-          }
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -974,8 +921,8 @@ app.get('/', (req, res) => {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-squish' : 'gelatin');
+          set夏Time(() => { vibrateButton.classList.remove('rect-squish', 'gelatin'); }, interactionMode === 'rect' ? 400 : 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -993,8 +940,8 @@ app.get('/', (req, res) => {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-squish' : 'gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('rect-squish', 'gelatin'); }, interactionMode === 'rect' ? 400 : 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -1071,28 +1018,33 @@ app.get('/', (req, res) => {
             }
           } else {
             if (newHeartPosition === 'top') {
-              barTop.classList.remove('squeeze-gelatin-top', 'springy-wobble');
-              barMiddle.classList.remove('squeeze-gelatin-middle', 'springy-wobble');
-              barBottom.classList.remove('squeeze-gelatin-bottom', 'springy-wobble');
-              barTop.classList.add('stretch-gelatin-top');
-              barMiddle.classList.add('stretch-gelatin-middle');
-              barBottom.classList.add('stretch-gelatin-bottom');
+              barGraphic.style.setProperty('--scale-top-x', 0.8);
+              barGraphic.style.setProperty('--scale-mid-x', 1.1);
+              barGraphic.style.setProperty('--scale-bottom-x', 1.0);
+              barGraphic.style.setProperty('--scale-y', 1.15);
+              barGraphic.classList.remove('squeeze-gelatin');
+              if (currentTime - lastGelatinTime >= 600) {
+                barGraphic.classList.add('stretch-gelatin');
+                setTimeout(() => { barGraphic.classList.remove('stretch-gelatin'); }, 600);
+                lastGelatinTime = currentTime;
+              }
             } else if (newHeartPosition === 'bottom') {
-              barTop.classList.remove('stretch-gelatin-top', 'springy-wobble');
-              barMiddle.classList.remove('stretch-gelatin-middle', 'springy-wobble');
-              barBottom.classList.remove('stretch-gelatin-bottom', 'springy-wobble');
-              barTop.classList.add('squeeze-gelatin-top');
-              barMiddle.classList.add('squeeze-gelatin-middle');
-              barBottom.classList.add('squeeze-gelatin-bottom');
+              barGraphic.style.setProperty('--scale-top-x', 1.0);
+              barGraphic.style.setProperty('--scale-mid-x', 1.2);
+              barGraphic.style.setProperty('--scale-bottom-x', 0.85);
+              barGraphic.style.setProperty('--scale-y', 0.9);
+              barGraphic.classList.remove('stretch-gelatin');
+              if (currentTime - lastBottomGelatinTime >= 600) {
+                barGraphic.classList.add('squeeze-gelatin');
+                setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin'); }, 600);
+                lastBottomGelatinTime = currentTime;
+              }
             } else {
-              barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
-              barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
-              barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
-              barTop.style.clipPath = '';
-              barMiddle.style.clipPath = '';
-              barBottom.style.clipPath = '';
-              barContainer.classList.add('springy-wobble');
-              setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
+              barGraphic.style.setProperty('--scale-top-x', 1);
+              barGraphic.style.setProperty('--scale-mid-x', 1);
+              barGraphic.style.setProperty('--scale-bottom-x', 1);
+              barGraphic.style.setProperty('--scale-y', 1);
+              barGraphic.classList.remove('squeeze-gelatin', 'stretch-gelatin');
             }
           }
           currentHeartPosition = newHeartPosition;
