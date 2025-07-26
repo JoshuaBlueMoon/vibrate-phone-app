@@ -15,41 +15,41 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; box-sizing: border-box; font-family: Arial; color: white; padding-bottom: 10px;">
+<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
   <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: flex-end; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
-    <div id="scoreDisplay" style="position: absolute; top: 20px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
+    <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
       <span id="score">0</span>
     </div>
-    <div id="topContainer" style="position: absolute; top: 20px; right: 15px;">
+    <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <div id="leftControls" style="position: absolute; left: 15px; top: 35%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
       <div id="subMenu" style="display: none; flex-direction: column; gap: 10px;">
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
-          <img src="/images sub-button1.png" alt="Bar Sprite 1" style="width: 32px; height: 32px;">
+          <img src="/images/sub-button1.png" alt="Sub Button 1" style="width: 32px; height: 32px;">
         </div>
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
-          <img src="/images/sub-button2.png" alt="Bar Sprite 2" style="width: 32px; height: 32px;">
+          <img src="/images/sub-button2.png" alt="Sub Button 2" style="width: 32px; height: 32px;">
         </div>
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
-          <img src="/images/sub-button3.png" alt="Bar Sprite 3" style="width: 32px; height: 32px;">
+          <img src="/images/sub-button3.png" alt="Sub Button 3" style="width: 32px; height: 32px;">
         </div>
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
-          <img src="/images/fluid-button.png" alt="Fluid Sprite" style="width: 32px; height: 32px;">
+          <img src="/images/sub-button4.png" alt="Sub Button 4" style="width: 32px; height: 32px;">
         </div>
       </div>
     </div>
-    <div id="rightControls" style="position: absolute; right: 15px; top: 35%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -57,24 +57,24 @@ app.get('/', (req, res) => {
         <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
-    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 10px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
+    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <img class="fluid-effect" src="/images/fluid-sprite1.png" alt="Fluid Sprite" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; opacity: 0.7; z-index: 4; pointer-events: none;">
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, #60a5fa, #ff3333); border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
       <div class="pulse-symbol bottom" style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     </div>
-    <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
+    <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
       <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
-    <div id="bottomControls" style="margin-top: 2px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 36px; height: 36px; transition: transform 0.2s;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 36px; height: 36px; transition: transform 0.2s;">
+        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
@@ -278,13 +278,12 @@ app.get('/', (req, res) => {
     @media (orientation: landscape) {
       body {
         flex-direction: column;
-        justify-content: flex-end;
+        justify-content: center;
         align-items: center;
         padding: 5px;
         margin: 0 auto;
         width: 100%;
         max-width: 414px;
-        padding-bottom: 5px;
       }
       #startScreen {
         padding: 5px;
@@ -298,15 +297,14 @@ app.get('/', (req, res) => {
       }
       #gameContent {
         padding: 5px;
-        justify-content: flex-end;
       }
       #scoreDisplay {
         font-size: 10px;
-        top: 10px;
+        top: 5px;
         left: 10px;
       }
       #topContainer {
-        top: 10px;
+        top: 5px;
         right: 10px;
       }
       #room {
@@ -316,11 +314,11 @@ app.get('/', (req, res) => {
       }
       #leftControls {
         left: 10px;
-        top: 30%;
+        top: 20%;
       }
       #rightControls {
         right: 10px;
-        top: 30%;
+        top: 20%;
       }
       #menuToggle, #heartToggle, #rectToggle {
         width: 48px;
@@ -345,7 +343,7 @@ app.get('/', (req, res) => {
         width: 120px;
         height: 40%;
         max-height: 240px;
-        margin: 5px auto 5px auto;
+        margin: 5px auto 15px auto;
       }
       .bar-graphic {
         width: 120px;
@@ -358,32 +356,13 @@ app.get('/', (req, res) => {
         width: 18px;
         height: 9px;
       }
-      #vibrateButton {
-        width: 56px;
-        height: 56px;
-        top: 65%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      #vibrateImage {
-        width: 40px;
-        height: 40px;
-      }
       #bottomControls {
-        margin-top: 2px;
+        margin-top: 28px;
       }
       #toggleContainer {
         flex-direction: row;
         gap: 2px;
         margin: 5px auto;
-      }
-      #pulseToggle, #waveToggle {
-        width: 44px;
-        height: 44px;
-      }
-      #pulseToggle img, #waveToggle img {
-        width: 32px;
-        height: 32px;
       }
       #intensityContainer {
         width: 53.33%;
@@ -415,12 +394,12 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 44px;
-        height: 44px;
+        width: 53px;
+        height: 53px;
       }
       .toggle-button img {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
@@ -490,12 +469,6 @@ app.get('/', (req, res) => {
     let currentHeartPosition = 'middle';
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
-    let currentFluidSpriteIndex = 0;
-    const fluidSprites = [
-      '/images/fluid-sprite1.png',
-      '/images/fluid-sprite2.png',
-      '/images/fluid-sprite3.png'
-    ];
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -693,7 +666,7 @@ app.get('/', (req, res) => {
       vibrateImage.style.width = '40px';
       vibrateImage.style.height = '40px';
       vibrateButton.style.left = '50%';
-      vibrateButton.style.top = '70%';
+      vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
@@ -712,7 +685,7 @@ app.get('/', (req, res) => {
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
-      vibrateButton.style.top = '70%';
+      vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
@@ -746,26 +719,17 @@ app.get('/', (req, res) => {
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         console.log(\`Sub-menu button \${index + 1} clicked\`);
-        if (index < 3) {
-          // Bar sprite change
-          const barImages = [
-            '/images/custom-bar.png',
-            '/images/bar-option2.png',
-            '/images/bar-option3.png'
-          ];
-          barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-          barGraphic.style.backgroundSize = 'contain';
-          barGraphic.style.backgroundPosition = 'center center';
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-        } else {
-          // Fluid sprite change
-          currentFluidSpriteIndex = (currentFluidSpriteIndex + 1) % fluidSprites.length;
-          fluidEffect.src = fluidSprites[currentFluidSpriteIndex];
-          fluidEffect.classList.add('gelatin');
-          setTimeout(() => { fluidEffect.classList.remove('gelatin'); }, 500);
-          console.log(\`Fluid sprite changed to: \${fluidSprites[currentFluidSpriteIndex]}\`);
-        }
+        const barImages = [
+          '/images/custom-bar.png',
+          '/images/bar-option2.png',
+          '/images/bar-option3.png',
+          '/images/bar-option4.png'
+        ];
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundPosition = 'center center';
+        barGraphic.classList.add('gelatin');
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
     });
 
