@@ -2,7 +2,7 @@ const express = require('express');
 const WebSocket = require('ws');
 const app = express();
 const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket').Server({ server });
 
 // Serve static files from the public directory
 app.use(express.static('public'));
@@ -144,7 +144,7 @@ app.get('/', (req, res) => {
       100% { transform: translate(var(--move-x), var(--move-y)); opacity: 0.3; }
     }
     @keyframes particleBurst {
-      0% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+      0% { opacity: 0.7; transform: translate(0, 0); }
       100% { opacity: 0; transform: translate(var(--move-x), var(--move-y)) scale(0.5); }
     }
     @keyframes popIn {
@@ -194,7 +194,7 @@ app.get('/', (req, res) => {
       background: url('/images/glow-dot.png') no-repeat center center;
       background-size: cover;
       opacity: 0.3;
-      animation: slowDrift 10s ease-in-out infinite;
+      animation: slowDrift 10s ease-out infinite;
       pointer-events: none;
     }
     .particle {
@@ -365,7 +365,7 @@ app.get('/', (req, res) => {
         margin: 5px auto;
       }
       #intensityContainer {
-        width: 53.33%;
+        width: 53.3%;
         max-width: 373px;
         padding: 7px;
       }
@@ -479,14 +479,14 @@ app.get('/', (req, res) => {
     function startGame() {
       const roomCode = roomInput.value.trim();
       if (roomCode) {
-        console.log('Starting game with room code:', roomCode);
+        console.log('Starting game with room code: ' + roomCode);
         roomDisplay.value = roomCode;
         startScreen.classList.add('fade-out');
         setTimeout(() => {
           console.log('Fade-out complete, hiding startScreen');
           startScreen.remove();
           gameContent.style.display = 'flex';
-          console.log('gameContent displayed');
+          console.log('Game content displayed');
           ws = new WebSocket('wss://' + window.location.host);
           ws.onopen = () => console.log('Connected to server');
           ws.onmessage = (event) => {
@@ -504,8 +504,9 @@ app.get('/', (req, res) => {
                     case 5: pattern = [200]; break;
                     default: pattern = [50, 50];
                   }
-                } else if (data.mode === 'wave') {
-                  switch (intensity) {
+                } else {
+ if (data.mode === 'wave') {
+                  switch (data.intensity) {
                     case 1: pattern = [1000]; break;
                     case 2: pattern = [1500]; break;
                     case 3: pattern = [2000]; break;
@@ -515,15 +516,15 @@ app.get('/', (req, res) => {
                   }
                 }
                 navigator.vibrate(pattern);
-                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity, 'pattern:', pattern);
+                console.log('Vibrate started with mode: ' + data.mode + ', intensity: ' + intensity);
                 sliderTrack.classList.add('pulsing');
                 setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
-              } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+              } else {
+ if (data.command === 'stopVibrate' && navigator.vibrate) {
                 navigator.vibrate(0);
               }
             }
-          };
-        }, 1000);
+          }, 1000);
       } else {
         console.log('No room code entered');
         roomInput.placeholder = 'Please enter a room code';
@@ -562,7 +563,8 @@ app.get('/', (req, res) => {
         dot.style.animationDelay = Math.random() * 5 + 's';
         glowDotsContainer.appendChild(dot);
       }
-    }
+      }
+
     createGlowDots();
 
     function updateScoreDisplay() {
@@ -615,7 +617,7 @@ app.get('/', (req, res) => {
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
       setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 2000;
+      const nextPulse = Math.random() * 3000 + 3000;
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
@@ -715,16 +717,14 @@ app.get('/', (req, res) => {
             button.style.opacity = '0';
           }, index * 100);
         });
-        setTimeout(() => {
-          subMenu.style.display = 'none';
-        }, subMenuButtons.length * 100);
+        setTimeout(() => subMenu.style.display = 'none', subMenuButtons.length * 100);
         menuToggle.classList.remove('toggled');
       }
     });
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log('Sub-menu button ' + (index + 1) + ' clicked');
         if (index < 3) {
           // Bar sprite change
           const barImages = [
@@ -732,18 +732,18 @@ app.get('/', (req, res) => {
             '/images/bar-option2.png',
             '/images/bar-option3.png'
           ];
-          barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+          barGraphic.style.background = "url('" + barImages[index] + "') no-repeat center center";
           barGraphic.style.backgroundSize = 'contain';
           barGraphic.style.backgroundPosition = 'center center';
           barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
+          setTimeout(() => barGraphic.classList.remove('gelatin'), 500);
         } else {
           // Fluid sprite change
           currentFluidSpriteIndex = (currentFluidSpriteIndex + 1) % fluidSprites.length;
           fluidEffect.src = fluidSprites[currentFluidSpriteIndex];
           fluidEffect.classList.add('gelatin');
-          setTimeout(() => { fluidEffect.classList.remove('gelatin'); }, 500);
-          console.log(`Fluid sprite changed to: ${fluidSprites[currentFluidSpriteIndex]}`);
+          setTimeout(() => fluidEffect.classList.remove('gelatin'), 500);
+          console.log('Fluid sprite changed to: ' + fluidSprites[currentFluidSpriteIndex]);
         }
       });
     });
@@ -760,7 +760,7 @@ app.get('/', (req, res) => {
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
         sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
         lastGelatinTime = currentTime;
       }
 
@@ -785,9 +785,7 @@ app.get('/', (req, res) => {
         particle.style.setProperty('--move-x', moveX + 'px');
         particle.style.setProperty('--move-y', moveY + 'px');
         glowDotsContainer.appendChild(particle);
-        setTimeout(() => {
-          particle.remove();
-        }, 1000);
+        setTimeout(() => particle.remove(), 1000);
       }
 
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
@@ -804,11 +802,12 @@ app.get('/', (req, res) => {
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+          setTimeout(() => barGraphic.classList.remove('pendulum-wobble'), 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500) {
+        } else {
+ if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -825,11 +824,12 @@ app.get('/', (req, res) => {
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+          setTimeout(() => barGraphic.classList.remove('pendulum-wobble'), 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500) {
+        } else {
+ if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -845,7 +845,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
         }
       }
       handleMovement(e, false);
@@ -861,7 +861,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
         }
       }
       handleMovement(e, true);
@@ -873,7 +873,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -896,7 +896,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -925,7 +925,7 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          setTimeout(() => vibrateButton.classList.remove('gelatin'), 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -944,7 +944,7 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
+          setTimeout(() => vibrateButton.classList.remove('gelatin'), 500);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -990,8 +990,10 @@ app.get('/', (req, res) => {
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
-        } else if (relativeY >= bottomThreshold) {
-          newHeartPosition = 'bottom';
+        } else {
+if (relativeY >= bottomThreshold) {
+            newHeartPosition = 'bottom';
+          }
         }
 
         if (newHeartPosition !== currentHeartPosition) {
@@ -1001,16 +1003,17 @@ app.get('/', (req, res) => {
             sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
               lastGelatinTime = currentTime;
             }
-          } else if (newHeartPosition === 'bottom') {
+          } else {
+ if (newHeartPosition === 'bottom') {
             sliderTrack.style.setProperty('--scale-x', 1.2);
             sliderTrack.style.setProperty('--scale-y', 0.9);
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+              setTimeout(() => sliderTrack.classList.remove('bottom-gelatin'), 500);
               lastBottomGelatinTime = currentTime;
             }
           } else {
@@ -1034,7 +1037,8 @@ app.get('/', (req, res) => {
                 case 5: pattern = [200]; break;
                 default: pattern = [50, 50];
               }
-            } else if (vibrationMode === 'wave') {
+            } else {
+ if (vibrationMode === 'wave') {
               switch (intensity) {
                 case 1: pattern = [1000]; break;
                 case 2: pattern = [1500]; break;
@@ -1046,7 +1050,7 @@ app.get('/', (req, res) => {
             }
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'pinching');
