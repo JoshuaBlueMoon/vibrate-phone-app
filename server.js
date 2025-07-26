@@ -16,19 +16,19 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
-  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #0e1125, #0a0b14); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100;">
+  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
-    <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/80.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
+    <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #0e1125, #0a0b14);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
     <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
       <span id="score">0</span>
     </div>
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
-      <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/80.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
+      <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
     <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
@@ -58,8 +58,12 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic top-half" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 50%; background: url('/images/top-half.png') no-repeat center bottom; background-size: contain; will-change: transform, filter; z-index: 1;"></div>
-      <div class="bar-graphic bottom-half" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 50%; background: url('/images/bottom-half.png') no-repeat center top; background-size: contain; will-change: transform, filter; z-index: 1;"></div>
+      <div class="bar-container" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; z-index: 1;">
+        <div class="bar-segment bar-top" style="position: absolute; top: 0; height: 33%; width: 100%; background: url('/images/custom-bar.png') no-repeat center top; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
+        <div class="bar-segment bar-middle" style="position: absolute; top: 33%; height: 34%; width: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
+        <div class="bar-segment bar-bottom" style="position: absolute; top: 67%; height: 33%; width: 100%; background: url('/images/custom-bar.png') no-repeat center bottom; background-size: 120px 300%; transition: clip-path 0.2s ease-out;"></div>
+        <div class="bar-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255, 100, 100, 0.2), rgba(100, 100, 255, 0.2)); pointer-events: none; z-index: 2;"></div>
+      </div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -86,8 +90,8 @@ app.get('/', (req, res) => {
   </div>
   <style>
     @keyframes fadeOut {
-      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #0e1125, #0a0b14); }
-      100% { opacity: 0; background: #0a0b14; }
+      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); }
+      100% { opacity: 0; background: #0e1124; }
     }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
@@ -138,39 +142,32 @@ app.get('/', (req, res) => {
       75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes stretchOrganic {
-      0% { transform: translateX(-50%) scale(1, 1); filter: blur(0px); }
-      30% { transform: translateX(-50%) scale(0.95, 1.3) skew(5deg, 0); filter: blur(1px); }
-      60% { transform: translateX(-50%) scale(1.05, 1.2) skew(-3deg, 0); filter: blur(0.5px); }
-      100% { transform: translateX(-50%) scale(1, 1.1); filter: blur(0px); }
+    @keyframes squeeze-gelatin {
+      0% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
+      25% { clip-path: polygon(25% 0%, 75% 0%, 85% 100%, 15% 100%); }
+      50% { clip-path: polygon(20% 0%, 80% 0%, 90% 100%, 10% 100%); }
+      75% { clip-path: polygon(25% 0%, 75% 0%, 85% 100%, 15% 100%); }
+      100% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
     }
-    @keyframes stretchOrganicBottom {
-      0% { transform: translateX(-50%) scale(1, 1); }
-      30% { transform: translateX(-50%) scale(1.05, 0.9); }
-      60% { transform: translateX(-50%) scale(0.98, 1.05); }
-      100% { transform: translateX(-50%) scale(1, 1); }
+    @keyframes stretch-gelatin {
+      0% { clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%); }
+      25% { clip-path: polygon(35% 0%, 65% 0%, 75% 100%, 25% 100%); }
+      50% { clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%); }
+      75% { clip-path: polygon(35% 0%, 65% 0%, 75% 100%, 25% 100%); }
+      100% { clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%); }
     }
-    @keyframes squeezeOrganic {
-      0% { transform: translateX(-50%) scale(1, 1); filter: blur(0px); }
-      30% { transform: translateX(-50%) scale(1.2, 0.7) rotate(2deg); filter: blur(1px); }
-      60% { transform: translateX(-50%) scale(1.1, 0.85) rotate(-1deg); filter: blur(0.5px); }
-      100% { transform: translateX(-50%) scale(1.15, 0.9); filter: blur(0px); }
+    @keyframes springy-wobble {
+      0% { transform: scale(1, 1); }
+      20% { transform: scale(1.05, 0.95); }
+      40% { transform: scale(0.95, 1.05); }
+      60% { transform: scale(1.02, 0.98); }
+      80% { transform: scale(0.98, 1.02); }
+      100% { transform: scale(1, 1); }
     }
-    @keyframes squeezeOrganicTop {
-      0% { transform: translateX(-50%) scale(1, 1); }
-      30% { transform: translateX(-50%) scale(0.9, 1.1); }
-      60% { transform: translateX(-50%) scale(1.05, 0.95); }
-      100% { transform: translateX(-50%) scale(1, 1); }
-    }
-    @keyframes neutralOrganic {
-      0% { transform: translateX(-50%) scale(1, 1); }
-      50% { transform: translateX(-50%) scale(1.02, 0.98); }
-      100% { transform: translateX(-50%) scale(1, 1); }
-    }
-    @keyframes throb {
-      0% { filter: brightness(1); }
-      50% { filter: brightness(1.05); }
-      100% { filter: brightness(1); }
+    @keyframes organic-ripple {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.3; }
+      100% { transform: scale(1.5); opacity: 0; }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -211,38 +208,43 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .stretch-organic {
-      animation: stretchOrganic 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    .squeeze-gelatin-top {
+      animation: squeeze-gelatin 0.6s ease-in-out;
+      clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%);
     }
-    .stretch-organic-bottom {
-      animation: stretchOrganicBottom 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    .squeeze-gelatin-middle {
+      animation: squeeze-gelatin 0.6s ease-in-out 0.1s;
+      clip-path: polygon(20% 0%, 80% 0%, 90% 100%, 10% 100%);
     }
-    .squeeze-organic {
-      animation: squeezeOrganic 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    .squeeze-gelatin-bottom {
+      animation: squeeze-gelatin 0.6s ease-in-out 0.2s;
+      clip-path: polygon(15% 0%, 85% 0%, 95% 100%, 5% 100%);
     }
-    .squeeze-organic-top {
-      animation: squeezeOrganicTop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    .stretch-gelatin-top {
+      animation: stretch-gelatin 0.6s ease-in-out;
+      clip-path: polygon(30% 0%, 70% 0%, 80% 100%, 20% 100%);
     }
-    .neutral-organic {
-      animation: neutralOrganic 0.8s ease-in-out infinite;
+    .stretch-gelatin-middle {
+      animation: stretch-gelatin 0.6s ease-in-out 0.1s;
+      clip-path: polygon(40% 0%, 60% 0%, 70% 100%, 30% 100%);
     }
-    .throb {
-      animation: throb 2s ease-in-out infinite;
+    .stretch-gelatin-bottom {
+      animation: stretch-gelatin 0.6s ease-in-out 0.2s;
+      clip-path: polygon(50% 0%, 50% 0%, 60% 100%, 40% 100%);
+    }
+    .springy-wobble {
+      animation: springy-wobble 0.8s ease-in-out;
+    }
+    .organic-ripple {
+      animation: organic-ripple 0.5s ease-out forwards;
     }
     .squished {
       transition: transform 0.2s ease-in-out;
     }
-    .bar-graphic {
-      border-radius: 10px;
-      transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
-    }
-    .bar-graphic.top-half {
-      transform-origin: top center;
-      clip-path: polygon(0 0, 100% 0, 100% 80%, 0 80%);
-    }
-    .bar-graphic.bottom-half {
-      transform-origin: bottom center;
-      clip-path: polygon(0 20%, 100% 20%, 100% 100%, 0 100%);
+    .bar-segment {
+      filter: blur(1px);
+      box-shadow: 0 0 10px rgba(255, 100, 100, 0.3);
+      will-change: clip-path, transform;
     }
     .glow-dot {
       position: absolute;
@@ -261,6 +263,15 @@ app.get('/', (req, res) => {
       background: url('/images/particle-dot.png') no-repeat center center;
       background-size: cover;
       animation: particleBurst 1s ease-out forwards;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .organic-particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, rgba(255, 100, 100, 0.8), transparent);
+      border-radius: 50%;
       pointer-events: none;
       z-index: 2;
     }
@@ -398,9 +409,12 @@ app.get('/', (req, res) => {
         max-height: 240px;
         margin: 5px auto 15px auto;
       }
-      .bar-graphic {
+      .bar-container {
         width: 120px;
-        height: 50%;
+        height: 100%;
+      }
+      .bar-segment {
+        background-size: 120px 300%;
       }
       #bottomControls {
         margin-top: 28px;
@@ -435,7 +449,7 @@ app.get('/', (req, res) => {
         width: 6px;
         height: 6px;
       }
-      .particle {
+      .particle, .organic-particle {
         width: 5px;
         height: 5px;
       }
@@ -487,8 +501,10 @@ app.get('/', (req, res) => {
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
     const sliderTrack = document.getElementById('sliderTrack');
-    const topHalf = document.querySelector('.bar-graphic.top-half');
-    const bottomHalf = document.querySelector('.bar-graphic.bottom-half');
+    const barContainer = document.querySelector('.bar-container');
+    const barTop = document.querySelector('.bar-top');
+    const barMiddle = document.querySelector('.bar-middle');
+    const barBottom = document.querySelector('.bar-bottom');
     const vibrateButton = document.getElementById('vibrateButton');
     const vibrateImage = document.getElementById('vibrateImage');
     const pulseToggle = document.getElementById('pulseToggle');
@@ -511,7 +527,6 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
-    let lastAnimationTime = 0;
     let currentHeartPosition = 'middle';
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
@@ -661,14 +676,10 @@ app.get('/', (req, res) => {
         intensitySlider.value = Math.ceil(rectScore / 20);
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        topHalf.classList.add('throb');
-        bottomHalf.classList.add('throb');
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
-        topHalf.classList.remove('throb', 'stretch-organic', 'squeeze-organic', 'neutral-organic');
-        bottomHalf.classList.remove('throb', 'stretch-organic-bottom', 'squeeze-organic-bottom', 'neutral-organic');
       }
     }
 
@@ -686,8 +697,12 @@ app.get('/', (req, res) => {
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
-      topHalf.classList.remove('throb', 'stretch-organic', 'squeeze-organic', 'neutral-organic');
-      bottomHalf.classList.remove('throb', 'stretch-organic-bottom', 'squeeze-organic-bottom', 'neutral-organic');
+      barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top', 'springy-wobble');
+      barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle', 'springy-wobble');
+      barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom', 'springy-wobble');
+      barTop.style.clipPath = '';
+      barMiddle.style.clipPath = '';
+      barBottom.style.clipPath = '';
       updateIntensityBar();
     });
 
@@ -707,8 +722,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
-      topHalf.classList.add('neutral-organic');
-      bottomHalf.classList.add('neutral-organic');
       updateIntensityBar();
     });
 
@@ -740,28 +753,20 @@ app.get('/', (req, res) => {
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
         console.log(\`Sub-menu button \${index + 1} clicked\`);
-        const topImages = [
-          '/images/top-half.png',
-          '/images/top-option2.png',
-          '/images/top-option3.png',
-          '/images/top-option4.png'
+        const barImages = [
+          '/images/custom-bar.png',
+          '/images/bar-option2.png',
+          '/images/bar-option3.png',
+          '/images/bar-option4.png'
         ];
-        const bottomImages = [
-          '/images/bottom-half.png',
-          '/images/bottom-option2.png',
-          '/images/bottom-option3.png',
-          '/images/bottom-option4.png'
-        ];
-        topHalf.style.background = \`url('\${topImages[index]}') no-repeat center bottom\`;
-        bottomHalf.style.background = \`url('\${bottomImages[index]}') no-repeat center top\`;
-        topHalf.style.backgroundSize = 'contain';
-        bottomHalf.style.backgroundSize = 'contain';
-        topHalf.classList.add('gelatin');
-        bottomHalf.classList.add('gelatin');
-        setTimeout(() => {
-          topHalf.classList.remove('gelatin');
-          bottomHalf.classList.remove('gelatin');
-        }, 500);
+        barTop.style.background = \`url('\${barImages[index]}') no-repeat center top\`;
+        barMiddle.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barBottom.style.background = \`url('\${barImages[index]}') no-repeat center bottom\`;
+        barTop.style.backgroundSize = '120px 300%';
+        barMiddle.style.backgroundSize = '120px 300%';
+        barBottom.style.backgroundSize = '120px 300%';
+        barContainer.classList.add('gelatin');
+        setTimeout(() => { barContainer.classList.remove('gelatin'); }, 500);
       });
     });
 
@@ -775,9 +780,14 @@ app.get('/', (req, res) => {
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 500 && interactionMode === 'heart') {
-        sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+      if (currentTime - lastGelatinTime >= 500) {
+        if (interactionMode === 'heart') {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        } else {
+          barContainer.classList.add('springy-wobble');
+          setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
+        }
         lastGelatinTime = currentTime;
       }
 
@@ -789,8 +799,8 @@ app.get('/', (req, res) => {
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        particle.className = 'particle';
-        const size = Math.random() * 3 + 3;
+        particle.className = interactionMode === 'rect' ? 'organic-particle' : 'particle';
+        const size = Math.random() * 3 + (interactionMode === 'rect' ? 5 : 3);
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
         particle.style.left = baseX + 'px';
@@ -801,10 +811,13 @@ app.get('/', (req, res) => {
         const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
         particle.style.setProperty('--move-x', moveX + 'px');
         particle.style.setProperty('--move-y', moveY + 'px');
+        if (interactionMode === 'rect') {
+          particle.classList.add('organic-ripple');
+        }
         glowDotsContainer.appendChild(particle);
         setTimeout(() => {
           particle.remove();
-        }, 1000);
+        }, interactionMode === 'rect' ? 500 : 1000);
       }
 
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
@@ -820,16 +833,10 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          if (interactionMode === 'heart') {
-            topHalf.classList.add('pendulum-wobble');
-            bottomHalf.classList.add('pendulum-wobble');
-          }
-          setTimeout(() => {
-            topHalf.classList.remove('pendulum-wobble');
-            bottomHalf.classList.remove('pendulum-wobble');
-          }, 600);
+          barContainer.classList.add('pendulum-wobble');
+          setTimeout(() => { barContainer.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500 && interactionMode === 'heart') {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -847,16 +854,10 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          if (interactionMode === 'heart') {
-            topHalf.classList.add('pendulum-wobble');
-            bottomHalf.classList.add('pendulum-wobble');
-          }
-          setTimeout(() => {
-            topHalf.classList.remove('pendulum-wobble');
-            bottomHalf.classList.remove('pendulum-wobble');
-          }, 600);
+          barContainer.classList.add('pendulum-wobble');
+          setTimeout(() => { barContainer.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500 && interactionMode === 'heart') {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -872,11 +873,9 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          if (interactionMode === 'heart') {
-            sliderTrack.classList.add('gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, false);
@@ -890,11 +889,9 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          if (interactionMode === 'heart') {
-            sliderTrack.classList.add('gelatin');
-            setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, true);
@@ -904,11 +901,9 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        if (interactionMode === 'heart') {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-        }
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -919,10 +914,14 @@ app.get('/', (req, res) => {
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           if (interactionMode === 'rect') {
-            topHalf.classList.remove('stretch-organic', 'squeeze-organic');
-            bottomHalf.classList.remove('stretch-organic-bottom', 'squeeze-organic-bottom');
-            topHalf.classList.add('neutral-organic');
-            bottomHalf.classList.add('neutral-organic');
+            barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
+            barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
+            barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
+            barTop.style.clipPath = '';
+            barMiddle.style.clipPath = '';
+            barBottom.style.clipPath = '';
+            barContainer.classList.add('springy-wobble');
+            setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
           }
           currentHeartPosition = 'middle';
         }
@@ -935,11 +934,9 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        if (interactionMode === 'heart') {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-        }
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -950,10 +947,14 @@ app.get('/', (req, res) => {
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           if (interactionMode === 'rect') {
-            topHalf.classList.remove('stretch-organic', 'squeeze-organic');
-            bottomHalf.classList.remove('stretch-organic-bottom', 'squeeze-organic-bottom');
-            topHalf.classList.add('neutral-organic');
-            bottomHalf.classList.add('neutral-organic');
+            barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
+            barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
+            barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
+            barTop.style.clipPath = '';
+            barMiddle.style.clipPath = '';
+            barBottom.style.clipPath = '';
+            barContainer.classList.add('springy-wobble');
+            setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
           }
           currentHeartPosition = 'middle';
         }
@@ -1033,7 +1034,7 @@ app.get('/', (req, res) => {
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9;
-        const topThreshold = 0;
+        const topThreshold = maxPosition * 0.1;
         const currentTime = Date.now();
 
         let newHeartPosition = 'middle';
@@ -1043,7 +1044,7 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        if (newHeartPosition !== currentHeartPosition && currentTime - lastAnimationTime >= 600) {
+        if (newHeartPosition !== currentHeartPosition) {
           if (interactionMode === 'heart') {
             if (newHeartPosition === 'top') {
               sliderTrack.style.setProperty('--scale-x', 0.8);
@@ -1070,24 +1071,31 @@ app.get('/', (req, res) => {
             }
           } else {
             if (newHeartPosition === 'top') {
-              topHalf.classList.remove('squeeze-organic', 'neutral-organic');
-              bottomHalf.classList.remove('squeeze-organic-bottom', 'neutral-organic');
-              topHalf.classList.add('stretch-organic');
-              bottomHalf.classList.add('stretch-organic-bottom');
+              barTop.classList.remove('squeeze-gelatin-top', 'springy-wobble');
+              barMiddle.classList.remove('squeeze-gelatin-middle', 'springy-wobble');
+              barBottom.classList.remove('squeeze-gelatin-bottom', 'springy-wobble');
+              barTop.classList.add('stretch-gelatin-top');
+              barMiddle.classList.add('stretch-gelatin-middle');
+              barBottom.classList.add('stretch-gelatin-bottom');
             } else if (newHeartPosition === 'bottom') {
-              topHalf.classList.remove('stretch-organic', 'neutral-organic');
-              bottomHalf.classList.remove('stretch-organic-bottom', 'neutral-organic');
-              topHalf.classList.add('squeeze-organic-bottom');
-              bottomHalf.classList.add('squeeze-organic');
+              barTop.classList.remove('stretch-gelatin-top', 'springy-wobble');
+              barMiddle.classList.remove('stretch-gelatin-middle', 'springy-wobble');
+              barBottom.classList.remove('stretch-gelatin-bottom', 'springy-wobble');
+              barTop.classList.add('squeeze-gelatin-top');
+              barMiddle.classList.add('squeeze-gelatin-middle');
+              barBottom.classList.add('squeeze-gelatin-bottom');
             } else {
-              topHalf.classList.remove('stretch-organic', 'squeeze-organic-bottom');
-              bottomHalf.classList.remove('stretch-organic-bottom', 'squeeze-organic');
-              topHalf.classList.add('neutral-organic');
-              bottomHalf.classList.add('neutral-organic');
+              barTop.classList.remove('squeeze-gelatin-top', 'stretch-gelatin-top');
+              barMiddle.classList.remove('squeeze-gelatin-middle', 'stretch-gelatin-middle');
+              barBottom.classList.remove('squeeze-gelatin-bottom', 'stretch-gelatin-bottom');
+              barTop.style.clipPath = '';
+              barMiddle.style.clipPath = '';
+              barBottom.style.clipPath = '';
+              barContainer.classList.add('springy-wobble');
+              setTimeout(() => { barContainer.classList.remove('springy-wobble'); }, 800);
             }
           }
           currentHeartPosition = newHeartPosition;
-          lastAnimationTime = currentTime;
         }
 
         if (room) {
@@ -1111,22 +1119,22 @@ app.get('/', (req, res) => {
   `);
 });
 
-let clients = new Map();
+let clients = [];
 wss.on('connection', (ws) => {
-  clients.set(ws, ws);
+  clients.push(ws);
   ws.on('close', () => {
-    clients.delete(ws);
+    clients = clients.filter(client => client !== ws);
   });
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      clients.forEach((client) => {
+      clients.forEach(client => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(data));
         }
       });
-    } catch (err) {
-      console.error('Error parsing message:', err);
+    } catch (e) {
+      console.error('Error parsing message:', e);
     }
   });
 });
