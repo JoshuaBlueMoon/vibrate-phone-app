@@ -439,36 +439,34 @@ app.get('/', (req, res) => {
     let burstSprite = null; // Store single burst sprite
 
     function startGame() {
-      const roomCode = roomInput?.value.trim();
+      const roomCode = roomInput.value.trim();
+      console.log('Attempting to start game with room code:', roomCode);
       if (!roomCode) {
         console.log('No room code entered');
-        if (roomInput) {
-          roomInput.placeholder = 'Please enter a room code';
-          roomInput.value = '';
-        } else {
-          console.error('roomInput element not found');
-        }
+        roomInput.placeholder = 'Please enter a room code';
+        roomInput.value = '';
+        roomInput.focus();
         return;
       }
-      console.log('Starting game with room code:', roomCode);
+
       // Set room display value
-      if (roomDisplay) {
-        roomDisplay.value = roomCode;
-      } else {
-        console.error('roomDisplay element not found');
-      }
+      roomDisplay.value = roomCode;
+      console.log('Room code set in display:', roomCode);
+
       // Start fade-out animation
       if (startScreen) {
         startScreen.classList.add('fade-out');
+        console.log('Fade-out animation started');
       } else {
         console.error('startScreen element not found');
+        return;
       }
+
       setTimeout(() => {
-        console.log('Fade-out complete, hiding startScreen');
-        if (startScreen && startScreen.parentNode) {
-          startScreen.remove(); // Remove from DOM
-        } else {
-          console.error('startScreen not found or already removed');
+        console.log('Fade-out complete, processing transition');
+        if (startScreen) {
+          startScreen.style.display = 'none'; // Hide instead of remove to avoid DOM issues
+          console.log('startScreen hidden');
         }
         if (gameContent) {
           gameContent.style.display = 'flex';
@@ -477,11 +475,17 @@ app.get('/', (req, res) => {
           console.error('gameContent element not found');
           return;
         }
+
         // Initialize WebSocket connection
-        const wsUrl = window.location.host.includes('localhost') ? 'ws://localhost:3000' : 'wss://' + window.location.host;
         try {
+          const wsUrl = window.location.protocol === 'https:' ? 'wss://' : 'ws://' + window.location.host;
+          console.log('Attempting WebSocket connection to:', wsUrl);
           ws = new WebSocket(wsUrl);
-          ws.onopen = () => console.log('Connected to server at', wsUrl);
+          
+          ws.onopen = () => {
+            console.log('WebSocket connected to server');
+          };
+
           ws.onmessage = (event) => {
             try {
               const data = JSON.parse(event.data);
@@ -505,9 +509,12 @@ app.get('/', (req, res) => {
                   setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
                 } else if (data.command === 'stopVibrate' && navigator.vibrate) {
                   navigator.vibrate(0);
+                  console.log('Vibrate stopped');
                 } else if (data.command === 'createBurstSprite' && burstMode) {
+                  console.log('Received createBurstSprite command:', data.x, data.y);
                   createBurstSprite(data.x, data.y, false); // Create sprite without sending WebSocket message
                 } else if (data.command === 'removeBurstSprite') {
+                  console.log('Received removeBurstSprite command');
                   if (burstSprite) {
                     burstSprite.remove();
                     burstSprite = null;
@@ -518,18 +525,16 @@ app.get('/', (req, res) => {
               console.error('Error parsing WebSocket message:', e);
             }
           };
+
           ws.onerror = (error) => {
             console.error('WebSocket error:', error);
           };
+
           ws.onclose = () => {
             console.log('WebSocket connection closed');
           };
         } catch (e) {
-          console.error('Failed to initialize WebSocket:', e);
-          // Fallback to show game content even if WebSocket fails
-          if (gameContent) {
-            gameContent.style.display = 'flex';
-          }
+          console.error('Error initializing WebSocket:', e);
         }
       }, 1000); // Match fadeOut animation duration
     }
@@ -543,7 +548,7 @@ app.get('/', (req, res) => {
         }
       });
     } else {
-      console.error('roomInput element not found for keypress event');
+      console.error('roomInput element not found');
     }
 
     if (joinButton) {
@@ -617,6 +622,7 @@ app.get('/', (req, res) => {
     burstToggle.addEventListener('click', () => {
       burstMode = !burstMode;
       const room = roomDisplay.value;
+      console.log('Burst mode toggled:', burstMode);
       if (burstMode) {
         burstToggle.classList.add('toggled');
       } else {
@@ -626,8 +632,9 @@ app.get('/', (req, res) => {
           burstSprite.remove();
           burstSprite = null;
         }
-        if (room && ws) {
+        if (room && ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ room: room, command: 'removeBurstSprite' }));
+          console.log('Sent removeBurstSprite command');
         }
       }
     });
@@ -737,11 +744,13 @@ app.get('/', (req, res) => {
       sprite.style.top = spriteY + 'px';
       glowDotsContainer.appendChild(sprite);
       burstSprite = sprite; // Store single sprite
+      console.log('Created burst sprite at:', spriteX, spriteY);
       // Send WebSocket message to other clients
-      if (sendMessage && ws && burstMode) {
+      if (sendMessage && ws && ws.readyState === WebSocket.OPEN && burstMode) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'createBurstSprite', x: x, y: y }));
+          console.log('Sent createBurstSprite command:', x, y);
         }
       }
     }
@@ -979,7 +988,7 @@ app.get('/', (req, res) => {
           currentHeartPosition = newHeartPosition;
         }
 
-        if (room) {
+        if (room && ws && ws.readyState === WebSocket.OPEN) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
@@ -1006,6 +1015,7 @@ wss.on('connection', (ws) => {
   clients.push(ws);
   ws.on('close', () => {
     clients = clients.filter(client => client !== ws);
+    console.log('Client disconnected, remaining clients:', clients.length);
   });
   ws.on('message', (message) => {
     try {
@@ -1021,4 +1031,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
+server.listen(process.env.PORT || 3000, () => console.log('Server running on port', process.env.PORT || 3000));
