@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: flex-end; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
     <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <div id="leftControls" style="position: absolute; left: 15px; top: 30%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
         </div>
       </div>
     </div>
-    <div id="rightControls" style="position: absolute; right: 15px; top: 30%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -57,9 +57,9 @@ app.get('/', (req, res) => {
         <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
-    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 40px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
+    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: url('/images/fluid.png') no-repeat center center, linear-gradient(to bottom, #60a5fa, #ff3333); background-size: contain; border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, #60a5fa, #ff3333); border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -68,7 +68,7 @@ app.get('/', (req, res) => {
     <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
       <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
-    <div id="bottomControls" style="margin-top: 40px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
         <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
           <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
@@ -106,7 +106,7 @@ app.get('/', (req, res) => {
     @keyframes subtlePulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.02); }
-      100% { transform: scale(1.0); }
+      100% { transform: scale(1); }
     }
     @keyframes intensityPulse {
       0% { transform: scale(1); }
@@ -153,10 +153,10 @@ app.get('/', (req, res) => {
     }
     @keyframes drip {
       0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.7; }
-      20% { transform: translate(-50%, 20%) scale(1, 1); opacity: 0.7; }
-      50% { transform: translate(-50%, 50%) scale(1, 1.3); opacity: 0.7; }
-      80% { transform: translate(-50%, 100%) scale(1, 1); opacity: 0.7; }
-      100% { transform: translate(-50%, 100%) scale(1, 1); opacity: 0; }
+      20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.7; }
+      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.7; }
+      80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.7; }
+      100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -314,11 +314,11 @@ app.get('/', (req, res) => {
       }
       #leftControls {
         left: 10px;
-        top: 25%;
+        top: 20%;
       }
       #rightControls {
         right: 10px;
-        top: 25%;
+        top: 20%;
       }
       #menuToggle, #heartToggle, #rectToggle {
         width: 48px;
@@ -343,7 +343,7 @@ app.get('/', (req, res) => {
         width: 120px;
         height: 40%;
         max-height: 240px;
-        margin: 30px auto 15px auto;
+        margin: 5px auto 15px auto;
       }
       .bar-graphic {
         width: 120px;
@@ -357,7 +357,7 @@ app.get('/', (req, res) => {
         height: 9px;
       }
       #bottomControls {
-        margin-top: 30px;
+        margin-top: 28px;
       }
       #toggleContainer {
         flex-direction: row;
