@@ -202,7 +202,7 @@ app.get('/', (req, res) => {
       background: url('/images/burst-sprite.png') no-repeat center center;
       background-size: contain;
       pointer-events: none;
-      z-index: 5;
+      z-index: 2;
     }
     .toggle-button {
       background: none;
@@ -436,7 +436,7 @@ app.get('/', (req, res) => {
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle'; // Track heart position state
     let isSubMenuOpen = false;
-    let burstSprites = []; // Store active sprites
+    let burstSprites = []; // Store burst sprites
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -467,7 +467,7 @@ app.get('/', (req, res) => {
                     case 3: pattern = [50, 50]; break;
                     case 4: pattern = [100, 50]; break;
                     case 5: pattern = [200]; break;
-                    default: pattern = '';
+                    default: pattern = [50, 50];
                   }
                 }
                 navigator.vibrate(pattern);
@@ -488,7 +488,7 @@ app.get('/', (req, res) => {
     }
 
     // Handle Enter key or Join button click
-    roomInput.addEventListener('keydown', (e) => {
+    roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
         startGame();
@@ -497,8 +497,7 @@ app.get('/', (req, res) => {
 
     joinButton.addEventListener('click', () => {
       console.log('Join button clicked');
-      ws.log('Starting game');
-      ws.startGame();
+      startGame();
     });
 
     // Create glowing dots
@@ -507,245 +506,221 @@ app.get('/', (req, res) => {
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * size + 4; // Random size between 4 and 10px
+        const size = Math.random() * 4 + 6; // Random size between 6-10px
         dot.style.width = size + 'px';
-        dot.style.height = size + px';
+        dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
-        dot.style.top = Math.random() * top + 100;
+        dot.style.top = Math.random() * 100 + '%';
         // Random direction for slow drift
-        top = Math.random() * Math.PI * 2;
-        const distance = Math.random() * distance + 50; // Move 50-100px
-        const moveX = top * (angle); Math.cos(angleX);
-        const moveY = Math.sin(angle);
-        const distance = sinX;
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 50 + 50; // Move 50-100px
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance;
         dot.style.setProperty('--move-x', moveX + 'px');
         dot.style.setProperty('--move-y', moveY + 'px');
-        dot.style.animationDelay = Math.random() * style + 0.5s;
-        setTimeout(() => {
-          dot.style.animationDelay = dot + Math.random() * 5;
-        });
-        glowDotsContainer.appendChild(dot));
+        dot.style.animationDelay = Math.random() * 5 + 's';
+        glowDotsContainer.appendChild(dot);
       }
     }
     createGlowDots();
 
     // Score reduction
-score = setInterval(() => {
+    setInterval(() => {
       if (score > 0) {
-        score = Math.max(score, 0, score - 2);
+        score = Math.max(0, score - 2);
         scoreElement.textContent = score;
       }
-    });
+    }, 1000);
 
-    // Subtle pulse every 3-6 seconds
-    function triggerPulse() {
-      subtlePulse.classList.add('pulseTrack');
-      setTimeout(() => subtlePulse.classList.remove('pulse'), 400);
-      const nextPulse = Math.random() * 3000 + pulse; // Random interval between 3 and 6 seconds
-      const pulse = setTimeout(() => triggerPulse(), 1000);
-      pulseTrigger = nextPulse;
+    // Subtle pulsation every 3-6 seconds
+    function triggerSubtlePulse() {
+      sliderTrack.classList.add('subtle-pulsing');
+      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
+      const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
+      setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
 
-    pulseSlider.on('input', () => {
-      intensityDisplay.innerText = pulseSlider.value;
-      intensityContainer.classList.add('pulse-style');
-      setTimeout(() => intensityContainer.classList.remove('pulse-intensity'), 300);
-      pulseTrigger.classList.remove('pulse');
-    });
+    intensitySlider.oninput = () => {
+      intensityDisplay.textContent = intensitySlider.value;
+      intensityContainer.classList.add('intensity-pulsing');
+      setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
+    };
 
     pulseToggle.addEventListener('click', () => {
       vibrationMode = 'pulse';
-      pulseToggle.classList.add('pulse-button');
-      waveToggle.classList.toggle('pulse');
-      pulseTrigger.classList.toggle('pulse');
+      pulseToggle.classList.add('toggled');
+      waveToggle.classList.remove('toggled');
     });
 
     waveToggle.addEventListener('click', () => {
-      vibrationMode.classList.add('wave');
-      waveToggle.classList.toggle('pulse-button');
-      pulseToggle.classList.remove('pulse');
-    pulse.classList.remove('pulse');
+      vibrationMode = 'wave';
+      waveToggle.classList.add('toggled');
+      pulseToggle.classList.remove('toggled');
     });
 
     burstToggle.addEventListener('click', () => {
-      burstMode = !burstToggle;
+      burstMode = !burstMode;
       if (burstMode) {
         burstToggle.classList.add('toggled');
       } else {
         burstToggle.classList.remove('toggled');
-        // Clear all burst sprites
+        // Remove all burst sprites when toggled off
         burstSprites.forEach(sprite => sprite.remove());
-        sprite.removeSprites = [];
+        burstSprites = [];
       }
     });
 
     // Menu toggle functionality
-    menuToggle.addEventListener('toggle', () => {
-      menuOpen = !isSubMenuOpen;
+    menuToggle.addEventListener('click', () => {
+      isSubMenuOpen = !isSubMenuOpen;
       if (isSubMenuOpen) {
         subMenu.style.display = 'flex';
-        subMenuButtons.forEach(button, (index) => {
+        subMenuButtons.forEach((button, index) => {
           setTimeout(() => {
             button.classList.add('pop-in');
-            button.style.opacity = setOpacity('1');
-          }, index * 100); // Subtle animation
-          menuButtons.forEach(button => {
-            button.classList.add('pop-in');
-          });
+            button.style.opacity = '1';
+          }, index * 100); // Staggered animation
         });
         menuToggle.classList.add('toggled');
-      } else if {
-        subMenuButtons.forEach(button => {
+      } else {
+        subMenuButtons.forEach((button, index) => {
           setTimeout(() => {
             button.classList.remove('pop-in');
             button.style.opacity = '0';
           }, index * 100);
-          button.forEach(button => {
-            setTimeout(() => {
-              button.classList.remove('pop-in');
-            });
-          });
         });
-        setTimeout(() => subMenu.style.display = 'none', subMenuButtons.length * 100);
+        setTimeout(() => {
+          subMenu.style.display = 'none';
+        }, subMenuButtons.length * 100);
         menuToggle.classList.remove('toggled');
       }
     });
 
     // Sub-menu button click handlers
-    subMenuButtons.forEach(button, (index) => {
+    subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
-        const barImages = images.from([
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
-          '/images/bar-option4.png',
-        ]);
-        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
-        barGraphic.style.backgroundSize = 'cover';
+          '/images/bar-option4.png'
+        ];
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
-        setTimeout(() => {
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => barGraphic.classList.remove('gelatin'), 300);
-        }, 300);
+        barGraphic.classList.add('gelatin');
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
     });
 
-    function createParticle(x, y, side) => {
-      if (lastCollision === side) {
-        return;
-      }
+    function createParticle(x, y, side) {
+      if (lastCollision === side) return;
       lastCollision = side;
       score += 1;
       scoreElement.textContent = score;
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
         sliderTrack.classList.add('gelatin');
-        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         lastGelatinTime = currentTime;
       }
 
-      // Create burst of 5 particles
+      // Create a burst of 5 particles
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const particleCount = 5;
       const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
-      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
+      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2; // Center of sliderTrack
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        const size = Math.random() * size + 3; // Random size between 3 and 6px
+        const size = Math.random() * 3 + 3; // Random size between 3-6px
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
         particle.style.left = baseX + 'px';
-        particle.style.top = baseY;
+        particle.style.top = baseY + 'px';
         // Random direction for particle movement
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * distance + 20; // Random distance between 20 and 70px
-        particle.style.setProperty('--move-x', Math.cos(angle) * distance + 'px');
-        particle.style.setProperty('--move-y', Math.sin(angle) * distance * (side === 'top' ? -1 : 1 ) + 'px';
+        const angle = Math.random() * Math.PI * 2; // Random angle in radians
+        const distance = Math.random() * 50 + 20; // Random distance between 20-70px
+        const moveX = Math.cos(angle) * distance;
+        const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1); // Move up for top, down for bottom
+        particle.style.setProperty('--move-x', moveX + 'px');
+        particle.style.setProperty('--move-y', moveY + 'px');
         glowDotsContainer.appendChild(particle);
         // Remove particle after animation
         setTimeout(() => {
           particle.remove();
-          glowDotsContainer.removeChild(particle);
         }, 1000); // Match particleBurst animation duration
       }
 
-      setTimeout(() => {
-        if (lastCollision === side) {
-          lastCollision = null;
-        });
-      }, 200);
+      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function createBurstSprite(x, y) => {
+    function createBurstSprite(x, y) {
       const sprite = document.createElement('div');
-      sprite.classList.add('burstSprite-sprite');
+      sprite.className = 'burst-sprite';
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const spriteX = x - bodyRect.left - 16; // Center sprite (32px width/2)
       const spriteY = y - bodyRect.top - 16; // Center sprite (32px height/2)
-      sprite.style.left = `${spriteX}px`;
-      sprite.style.top = `${spriteY}px`;
-      sprite.setProperty('--sprite-x', 'center');
-      sprite.setProperty('--sprite-y', 'center');
+      sprite.style.left = spriteX + 'px';
+      sprite.style.top = spriteY + 'px';
       glowDotsContainer.appendChild(sprite);
-      burstSprites.append(sprite); // Store sprite to track it
+      burstSprites.push(sprite); // Store sprite for later removal
     }
-  }
 
     sliderTrack.addEventListener('mousedown', (e) => {
-      // Handle only if not clicking on vibrateButton
-      if (!e.target !== vibrateButton && !e.target.contains(vibrateButton)) {
+      // Only trigger if not clicking on vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.heightThreshold * 0.1; // Top 10%
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (burstMode) {
           createBurstSprite(e.clientX, e.clientY);
         }
-        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600 ) {
+        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => barGraphic.classList.remove('wobble-pendulum-wobble'), 600);
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500 ) {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
-      // Handle only if not touching vibrateButton
-      if (!e.target !== vibrateButton && !e.target.contains(vibrateButton)) {
+      // Only trigger if not touching vibrateButton
+      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
-        const touchY = e.touches[0].clientY - touchesRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10%
+        const touchY = e.touches[0].clientY - trackRect.top;
+        const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
         if (burstMode) {
           createBurstSprite(e.touches[0].clientX, e.touches[0].clientY);
         }
-        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600 ) {
+        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8); // Squish top Y
           barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => barGraphic.classList.remove('pendulum-wobble'), 600 );
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500 ) {
+        } else if (currentTime - lastTrackGelatinTime >= 500) {
           // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500 );
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -762,7 +737,7 @@ score = setInterval(() => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500 );
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, false);
@@ -779,7 +754,7 @@ score = setInterval(() => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => sliderTrack.classList.remove('gelatin'), 500 );
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, true);
@@ -791,7 +766,7 @@ score = setInterval(() => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500 );
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -814,7 +789,7 @@ score = setInterval(() => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => sliderTrack.classList.remove('gelatin'), 500 );
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -841,16 +816,16 @@ score = setInterval(() => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 500 ) {
+        if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => vibrateButton.classList.remove('gelatin'), 500 );
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
           lastHeartGelatinTime = currentTime;
         }
       }
       lastPosition = vibrateButton.offsetTop;
     });
 
-    vibrateButton.addEventListener('touchstart', (e) {
+    vibrateButton.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
@@ -860,13 +835,13 @@ score = setInterval(() => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 500 ) {
+        if (currentTime - lastHeartGelatinTime >= 500) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => vibrateButton.classList.remove('gelatin'), 500 );
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 500);
           lastHeartGelatinTime = currentTime;
         }
       }
-      lastPosition = vibrateButton.lastPosition;
+      lastPosition = vibrateButton.offsetTop;
     });
 
     function handleMovement(e, isTouch = false) {
@@ -875,23 +850,22 @@ score = setInterval(() => {
         const bodyRect = document.body.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        newX = newXnewX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
         newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
         // Constrain to body bounds
         if (newX < 0) newX = 0;
-        else if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
         if (newY < 0) newY = 0;
-        else if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+        if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
         vibrateButton.style.left = newX + 'px';
-        vibrateButton.style.top = newY;
-      }
+        vibrateButton.style.top = newY + 'px';
 
         const room = roomDisplay.value;
         const trackRect = sliderTrack.getBoundingClientRect();
         const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - relativeRect.top;
+        const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 90% of track
+        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
         const topThreshold = maxPosition * 0.1; // Top 10% of track
         const currentTime = Date.now();
 
@@ -900,50 +874,45 @@ score = setInterval(() => {
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
         } else if (relativeY >= bottomThreshold) {
-          newHeartPosition = bottomThreshold; // 'bottom'
+          newHeartPosition = 'bottom';
         }
 
         // Update scale only if position state changes
-        if (newHeartPosition !== currentHeartPosition ) {
+        if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0);
+            sliderTrack.style.setProperty('--scale-x', 0.8); // Thinner
             sliderTrack.style.setProperty('--scale-y', 1.1); // Squeezed
-            sliderTrack.classList.remove('gelatin-bottom-gelatin');
-            if (currentTime - lastGelatinTime >= 500 ) {
+            sliderTrack.classList.remove('bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
-              setTimeout(() => sliderTrack.classList.remove('gelatin'), 500);
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.setProperty('--scale-x', 1.2); // Thicker
-            sliderTrack.setProperty('--scale-y', 0.9); // y scale
+            sliderTrack.style.setProperty('--scale-x', 1.2); // Thicker
+            sliderTrack.style.setProperty('--scale-y', 0.9); // Shorter
             sliderTrack.classList.remove('gelatin');
-            if (lastTime - currentTime - lastBottomGelatinTime >= 500 ) {
+            if (currentTime - lastBottomGelatinTime >= 500) {
               sliderTrack.classList.add('bottom-gelatin');
-              setTimeout(() => sliderTrack.classList.remove('bottom-gelatin'), lastBottomGelatinTime);
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
               lastBottomGelatinTime = currentTime;
             }
           } else {
             sliderTrack.style.setProperty('--scale-x', 1); // Normal
-            sliderTrack.setProperty('--scale-y', 1); // Normal
-            sliderTrack.classList.remove('gelatin', 'gelatin-bottom-gelatin');
-            sliderTrack.classList.remove('gelatin');
+            sliderTrack.style.setProperty('--scale-y', 1); // Normal
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
 
         if (room) {
-          if (relativeY <= 0 || relativeY >= maxPosition ) {
+          if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + intensity, 'relativePosition');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
-            ws.send(JSON.stringify({
-              room: room,
-              command: 'stopVibrate',
-              mode: 'pulse',
-            }));
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'pinching');
             lastCollision = null;
           }
@@ -952,32 +921,28 @@ score = setInterval(() => {
       }
     }
   </script>
+</body>
+</html>
+  `);
 });
 
 // WebSocket connection
 let clients = [];
-wss.on('connection', (ws => {
-  clients.push(ws));
+wss.on('connection', (ws) => {
+  clients.push(ws);
   ws.on('close', () => {
     clients = clients.filter(client => client !== ws);
-    client.forEach(client => {
-      if (client !== ws) {
-        clients.push(client);
-      }
-    });
   });
-});
-  ws.on('message', (message => {
+  ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      ws.clients.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN ) {
+      clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(data));
         }
       });
-    });
-    } catch ( ws e) {
-      console.error('ws:Error parsing message:', ws.message);
+    } catch (e) {
+      console.error('Error parsing message:', e);
     }
   });
 });
