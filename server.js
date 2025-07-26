@@ -552,7 +552,17 @@ app.get('/', (req, res) => {
       if (rectScoreInterval) clearInterval(rectScoreInterval);
       rectScoreInterval = setInterval(() => {
         if (rectScore > 0 && interactionMode === 'rect') {
-          rectScore = Math.max(0, rectScore - 1);
+          const intensity = Math.ceil(rectScore / 20);
+          let decrement;
+          switch (intensity) {
+            case 1: decrement = 0.1; break;
+            case 2: decrement = 0.3; break;
+            case 3: decrement = 0.5; break;
+            case 4: decrement = 0.7; break;
+            case 5: decrement = 0.9; break;
+            default: decrement = 0.1; // Fallback for rectScore = 0
+          }
+          rectScore = Math.max(0, rectScore - decrement);
           updateScoreDisplay();
         }
       }, 1000);
@@ -887,7 +897,9 @@ app.get('/', (req, res) => {
 
         if (interactionMode === 'heart') {
           if (newX < 0) newX = 0;
-          if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+          if (newX > body
+
+Rect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
           if (newY < 0) newY = 0;
           if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
           vibrateButton.style.left = newX + 'px';
