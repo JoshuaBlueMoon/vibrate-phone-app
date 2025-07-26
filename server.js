@@ -202,7 +202,7 @@ app.get('/', (req, res) => {
       background: url('/images/burst-sprite.png') no-repeat center center;
       background-size: contain;
       pointer-events: none;
-      z-index: 2;
+      z-index: 5;
     }
     .toggle-button {
       background: none;
@@ -436,7 +436,7 @@ app.get('/', (req, res) => {
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle'; // Track heart position state
     let isSubMenuOpen = false;
-    let burstSprites = []; // Store burst sprites
+    let burstSprite = null; // Store single burst sprite
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -476,6 +476,13 @@ app.get('/', (req, res) => {
                 setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
               } else if (data.command === 'stopVibrate' && navigator.vibrate) {
                 navigator.vibrate(0);
+              } else if (data.command === 'createBurstSprite' && burstMode) {
+                createBurstSprite(data.x, data.y, false); // Create sprite without sending WebSocket message
+              } else if (data.command === 'removeBurstSprite') {
+                if (burstSprite) {
+                  burstSprite.remove();
+                  burstSprite = null;
+                }
               }
             }
           };
@@ -517,7 +524,7 @@ app.get('/', (req, res) => {
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance;
         dot.style.setProperty('--move-x', moveX + 'px');
-        dot.style.setProperty('--move-y', moveY + 'px');
+        dot.style.setProperty('--move-y', moveY + 'px';
         dot.style.animationDelay = Math.random() * 5 + 's';
         glowDotsContainer.appendChild(dot);
       }
@@ -561,13 +568,19 @@ app.get('/', (req, res) => {
 
     burstToggle.addEventListener('click', () => {
       burstMode = !burstMode;
+      const room = roomDisplay.value;
       if (burstMode) {
         burstToggle.classList.add('toggled');
       } else {
         burstToggle.classList.remove('toggled');
-        // Remove all burst sprites when toggled off
-        burstSprites.forEach(sprite => sprite.remove());
-        burstSprites = [];
+        // Remove burst sprite for all clients
+        if (burstSprite) {
+          burstSprite.remove();
+          burstSprite = null;
+        }
+        if (room && ws) {
+          ws.send(JSON.stringify({ room: room, command: 'removeBurstSprite' }));
+        }
       }
     });
 
@@ -659,7 +672,13 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function createBurstSprite(x, y) {
+    function createBurstSprite(x, y, sendMessage = true) {
+      // Remove existing sprite
+      if (burstSprite) {
+        burstSprite.remove();
+        burstSprite = null;
+      }
+      // Create new sprite
       const sprite = document.createElement('div');
       sprite.className = 'burst-sprite';
       const trackRect = sliderTrack.getBoundingClientRect();
@@ -669,7 +688,14 @@ app.get('/', (req, res) => {
       sprite.style.left = spriteX + 'px';
       sprite.style.top = spriteY + 'px';
       glowDotsContainer.appendChild(sprite);
-      burstSprites.push(sprite); // Store sprite for later removal
+      burstSprite = sprite; // Store single sprite
+      // Send WebSocket message to other clients
+      if (sendMessage && ws && burstMode) {
+        const room = roomDisplay.value;
+        if (room) {
+          ws.send(JSON.stringify({ room: room, command: 'createBurstSprite', x: x, y: y }));
+        }
+      }
     }
 
     sliderTrack.addEventListener('mousedown', (e) => {
