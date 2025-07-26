@@ -15,22 +15,22 @@ app.get('/', (req, res) => {
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
+<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; box-sizing: border-box; font-family: Arial; color: white; padding-bottom: 10px;">
   <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: flex-end; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
-    <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
+    <div id="scoreDisplay" style="position: absolute; top: 20px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
       <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
       <span id="score">0</span>
     </div>
-    <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
+    <div id="topContainer" style="position: absolute; top: 20px; right: 15px;">
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
-    <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="leftControls" style="position: absolute; left: 15px; top: 35%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
         </div>
       </div>
     </div>
-    <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+    <div id="rightControls" style="position: absolute; right: 15px; top: 35%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
         <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
-    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
+    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 10px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
       <img class="fluid-effect" src="/images/fluid-sprite1.png" alt="Fluid Sprite" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; opacity: 0.7; z-index: 4; pointer-events: none;">
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -65,10 +65,10 @@ app.get('/', (req, res) => {
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
       <div class="pulse-symbol bottom" style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     </div>
-    <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
+    <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
       <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
-    <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div id="bottomControls" style="margin-top: 5px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
         <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
           <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
@@ -86,7 +86,7 @@ app.get('/', (req, res) => {
   </div>
   <style>
     @keyframes fadeOut {
-      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to-bottom, #201026, #0e1124); }
+      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); }
       100% { opacity: 0; background: #0e1124; }
     }
     #startScreen.fade-out {
@@ -278,12 +278,13 @@ app.get('/', (req, res) => {
     @media (orientation: landscape) {
       body {
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
         padding: 5px;
         margin: 0 auto;
         width: 100%;
         max-width: 414px;
+        padding-bottom: 5px;
       }
       #startScreen {
         padding: 5px;
@@ -297,14 +298,15 @@ app.get('/', (req, res) => {
       }
       #gameContent {
         padding: 5px;
+        justify-content: flex-end;
       }
       #scoreDisplay {
         font-size: 10px;
-        top: 5px;
+        top: 10px;
         left: 10px;
       }
       #topContainer {
-        top: 5px;
+        top: 10px;
         right: 10px;
       }
       #room {
@@ -314,11 +316,11 @@ app.get('/', (req, res) => {
       }
       #leftControls {
         left: 10px;
-        top: 20%;
+        top: 30%;
       }
       #rightControls {
         right: 10px;
-        top: 20%;
+        top: 30%;
       }
       #menuToggle, #heartToggle, #rectToggle {
         width: 48px;
@@ -343,7 +345,7 @@ app.get('/', (req, res) => {
         width: 120px;
         height: 40%;
         max-height: 240px;
-        margin: 5px auto 15px auto;
+        margin: 5px auto 5px auto;
       }
       .bar-graphic {
         width: 120px;
@@ -356,8 +358,19 @@ app.get('/', (req, res) => {
         width: 18px;
         height: 9px;
       }
+      #vibrateButton {
+        width: 56px;
+        height: 56px;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #vibrateImage {
+        width: 40px;
+        height: 40px;
+      }
       #bottomControls {
-        margin-top: 28px;
+        margin-top: 5px;
       }
       #toggleContainer {
         flex-direction: row;
@@ -470,7 +483,6 @@ app.get('/', (req, res) => {
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
     let currentFluidSpriteIndex = 0;
-    let lastBarSprite = '/images/custom-bar.png';
     const fluidSprites = [
       '/images/fluid-sprite1.png',
       '/images/fluid-sprite2.png',
@@ -573,33 +585,8 @@ app.get('/', (req, res) => {
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        // Change bar sprite based on intensity
-        const currentIntensity = Math.ceil(rectScore / 20);
-        const currentBackground = barGraphic.style.background.match(/url\(['"]?([^'"]+)['"]?\)/)?.[1] || '/images/custom-bar.png';
-        if (currentIntensity >= 2 && currentBackground !== '/images/custom-bar-intensity2.png') {
-          barGraphic.style.background = `url('/images/custom-bar-intensity2.png') no-repeat center center`;
-          barGraphic.style.backgroundSize = 'contain';
-          barGraphic.style.backgroundPosition = 'center center';
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          console.log('Bar sprite changed to /images/custom-bar-intensity2.png');
-        } else if (currentIntensity < 2 && currentBackground === '/images/custom-bar-intensity2.png') {
-          barGraphic.style.background = `url('${lastBarSprite}') no-repeat center center`;
-          barGraphic.style.backgroundSize = 'contain';
-          barGraphic.style.backgroundPosition = 'center center';
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          console.log(`Bar sprite reverted to ${lastBarSprite}`);
-        }
       } else {
         fluidEffect.style.display = 'none';
-        // Revert to last selected bar sprite in heart mode
-        const currentBackground = barGraphic.style.background.match(/url\(['"]?([^'"]+)['"]?\)/)?.[1] || '/images/custom-bar.png';
-        if (currentBackground !== lastBarSprite) {
-          barGraphic.style.background = `url('${lastBarSprite}') no-repeat center center`;
-          barGraphic.style.backgroundSize = 'contain';
-          barGraphic.style.backgroundPosition = 'center center';
-        }
       }
     }
 
@@ -698,11 +685,10 @@ app.get('/', (req, res) => {
       vibrateImage.style.width = '40px';
       vibrateImage.style.height = '40px';
       vibrateButton.style.left = '50%';
-      vibrateButton.style.top = '50%';
+      vibrateButton.style.top = '70%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
-      updateScoreDisplay();
     });
 
     rectToggle.addEventListener('click', () => {
@@ -718,11 +704,10 @@ app.get('/', (req, res) => {
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
-      vibrateButton.style.top = '50%';
+      vibrateButton.style.top = '70%';
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
-      updateScoreDisplay();
     });
 
     menuToggle.addEventListener('click', () => {
@@ -752,7 +737,7 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         if (index < 3) {
           // Bar sprite change
           const barImages = [
@@ -760,8 +745,7 @@ app.get('/', (req, res) => {
             '/images/bar-option2.png',
             '/images/bar-option3.png'
           ];
-          lastBarSprite = barImages[index];
-          barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+          barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
           barGraphic.style.backgroundSize = 'contain';
           barGraphic.style.backgroundPosition = 'center center';
           barGraphic.classList.add('gelatin');
@@ -772,7 +756,7 @@ app.get('/', (req, res) => {
           fluidEffect.src = fluidSprites[currentFluidSpriteIndex];
           fluidEffect.classList.add('gelatin');
           setTimeout(() => { fluidEffect.classList.remove('gelatin'); }, 500);
-          console.log(`Fluid sprite changed to: ${fluidSprites[currentFluidSpriteIndex]}`);
+          console.log(\`Fluid sprite changed to: \${fluidSprites[currentFluidSpriteIndex]}\`);
         }
       });
     });
