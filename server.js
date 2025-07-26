@@ -154,7 +154,7 @@ app.get('/', (req, res) => {
     @keyframes drip {
       0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.7; }
       20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.7; }
-      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.7; }
+      50% { transform: translate(-60%, 50%) scale(1, 2.5); opacity: 0.7; }
       80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.7; }
       100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
     }
@@ -208,7 +208,7 @@ app.get('/', (req, res) => {
       z-index: 2;
     }
     .fluid-effect {
-      animation: drip 6s ease-out infinite;
+      animation: drip 10s ease-out infinite;
       pointer-events: none;
     }
     .toggle-button {
@@ -615,7 +615,7 @@ app.get('/', (req, res) => {
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
       setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000;
+      const nextPulse = Math.random() * 3000 + 2000;
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
@@ -724,7 +724,7 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         if (index < 3) {
           // Bar sprite change
           const barImages = [
@@ -732,7 +732,7 @@ app.get('/', (req, res) => {
             '/images/bar-option2.png',
             '/images/bar-option3.png'
           ];
-          barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+          barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
           barGraphic.style.backgroundSize = 'contain';
           barGraphic.style.backgroundPosition = 'center center';
           barGraphic.classList.add('gelatin');
@@ -743,7 +743,7 @@ app.get('/', (req, res) => {
           fluidEffect.src = fluidSprites[currentFluidSpriteIndex];
           fluidEffect.classList.add('gelatin');
           setTimeout(() => { fluidEffect.classList.remove('gelatin'); }, 500);
-          console.log(\`Fluid sprite changed to: \${fluidSprites[currentFluidSpriteIndex]}\`);
+          console.log(`Fluid sprite changed to: ${fluidSprites[currentFluidSpriteIndex]}`);
         }
       });
     });
