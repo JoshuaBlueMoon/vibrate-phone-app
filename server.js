@@ -16,15 +16,15 @@ app.get('/', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 <body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
-  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 18, 0.5) 25%, transparent 50%), radial-gradient(circle at 50%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 18, 0.8) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1122); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
+  <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
-    <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer;">View</button>
+    <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
   </div>
-  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.8) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.8) 20%, transparent 40%), radial-gradient(to bottom, #201026, #0e1122);">
+  <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
     <div id="scoreDisplay" style="position: absolute; top: 10px; left: 15px; font-size: 12px; color: #60a5fa; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); display: flex; align-items: center;">
-      <img src="/images/log.png" alt="Score Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
+      <img src="/images/custom-fire.png" alt="Fire Icon" style="width: 16px; height: 16px; margin-right: 5px; filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.7));">
       <span id="score">0</span>
     </div>
     <div id="topContainer" style="position: absolute; top: 10px; right: 15px;">
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
     </div>
     <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
-        <img src="/images/menu-toggle.png" alt="Image" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
       <div id="subMenu" style="display: none; flex-direction: column; gap: 10px;">
         <div class="sub-menu-button" style="width: 40px; height: 40px; background: none; border: none; cursor: pointer; opacity: 0; transition: opacity 0.3s ease;">
@@ -51,23 +51,21 @@ app.get('/', (req, res) => {
     </div>
     <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
-        <img src="/images/heart-toggle.png" alt="Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
       <div id="rectToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
-        <img src="/images/rect-toggle.png" alt="Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, background; border-radius: 10px;">
-        <div class="bar-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)); border-radius: 10px;"></div>
-      </div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
       <div class="pulse-symbol bottom" style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     </div>
     <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
-      <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Icon" style="width: 40px; height: 40px;">
+      <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
@@ -87,8 +85,8 @@ app.get('/', (req, res) => {
   </div>
   <style>
     @keyframes fadeOut {
-      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.8) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.8) 20%, transparent 40%), linear-gradient(to bottom, #201026, #0e1122); }
-      100% { opacity: 0; background: #0e1122; }
+      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); }
+      100% { opacity: 0; background: #0e1124; }
     }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
@@ -126,47 +124,23 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.2)) rotate(2deg); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.8)) rotate(-2deg); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)) rotate(1deg); }
+      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
     }
     @keyframes bottom-gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.2), calc(var(--scale-y, 1) * 0.75)) rotate(-3deg); }
+      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.8), calc(var(--scale-y, 1) * 1.25)) rotate(3deg); }
+      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.85)) rotate(-1deg); }
+      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
     }
-    @keyframes rect-stretch {
-      0% { transform: scaleY(1.2) scaleX(0.85) skewY(5deg); top: -5%; }
-      30% { transform: scaleY(1.3) scaleX(0.8) skewY(-3deg); top: -7%; }
-      60% { transform: scaleY(1.25) scaleX(0.83) skewY(2deg); top: -6%; }
-      100% { transform: scaleY(1.2) scaleX(0.85) skewY(0deg); top: -5%; }
-    }
-    @keyframes rect-squeeze {
-      0% { transform: scaleY(0.8) scaleX(1.2) skewY(-5deg); top: 5%; }
-      30% { transform: scaleY(0.75) scaleX(1.3) skewY(3deg); top: 7%; }
-      60% { transform: scaleY(0.78) scaleX(1.25) skewY(-2deg); top: 6%; }
-      100% { transform: scaleY(0.8) scaleX(1.2) skewY(0deg); top: 5%; }
-    }
-    @keyframes rect-wobble {
-      0% { transform: scaleY(1) scaleX(1) skewY(0deg); }
-      25% { transform: scaleY(1.05) scaleX(0.95) skewY(2deg); }
-      50% { transform: scaleY(0.95) scaleX(1.05) skewY(-2deg); }
-      75% { transform: scaleY(1.02) scaleX(0.98) skewY(1deg); }
-      100% { transform: scaleY(1) scaleX(1) skewY(0deg); }
-    }
-    @keyframes rect-pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-      100% { transform: scale(1); }
-    }
-    @keyframes rect-squash {
-      0% { transform: scaleX(1.2) scaleY(0.8); }
-      50% { transform: scaleX(0.8) scaleY(1.2); }
-      100% { transform: scaleX(1) scaleY(1); }
+    @keyframes fleshy-breathe {
+      0% { transform: translateX(-50%) scale(1, 1); }
+      50% { transform: translateX(-50%) scale(1.03, 0.97); }
+      100% { transform: translateX(-50%) scale(1, 1); }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -201,31 +175,14 @@ app.get('/', (req, res) => {
       animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
-      animation: gelatin 0.5s ease-in-out;
+      animation: gelatin 0.6s ease-in-out;
     }
     .bottom-gelatin {
-      animation: bottom-gelatin 0.5s ease-in-out;
+      animation: bottom-gelatin 0.6s ease-in-out;
       transform-origin: bottom;
     }
-    .rect-stretch {
-      animation: rect-stretch 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      transform-origin: top center;
-      box-shadow: 0 4px 10px rgba(255, 51, 51, 0.3);
-    }
-    .rect-squeeze {
-      animation: rect-squeeze 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      transform-origin: bottom center;
-      box-shadow: 0 -4px 10px rgba(255, 51, 51, 0.3);
-    }
-    .rect-wobble {
-      animation: rect-wobble 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      transform-origin: center center;
-    }
-    .rect-pulse {
-      animation: rect-pulse 0.3s ease-in-out;
-    }
-    .rect-squash {
-      animation: rect-squash 0.4s ease-in-out;
+    .fleshy-breathe {
+      animation: fleshy-breathe 2s ease-in-out infinite;
     }
     .squished {
       transition: transform 0.2s ease-in-out;
@@ -389,7 +346,7 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
-        will-change: transform, background;
+        will-change: transform;
       }
       #bottomControls {
         margin-top: 28px;
@@ -660,7 +617,7 @@ app.get('/', (req, res) => {
       heartToggle.classList.add('toggled');
       rectToggle.classList.remove('toggled');
       vibrateImage.src = '/images/custom-heart.png';
-      vibrateImage.alt = 'Custom Icon';
+      vibrateImage.alt = 'Custom Heart';
       vibrateButton.style.width = '56px';
       vibrateButton.style.height = '56px';
       vibrateImage.style.width = '40px';
@@ -668,10 +625,12 @@ app.get('/', (req, res) => {
       vibrateButton.style.left = '50%';
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translate(-50%, -50%)';
-      barGraphic.classList.remove('rect-stretch', 'rect-squeeze', 'rect-wobble');
-      barGraphic.style.top = '0';
       stopRectScoreInterval();
       updateIntensityBar();
+      sliderTrack.classList.remove('fleshy-breathe', 'gelatin', 'bottom-gelatin');
+      sliderTrack.style.setProperty('--scale-x', 1);
+      sliderTrack.style.setProperty('--scale-y', 1);
+      barGraphic.style.transform = 'translateX(-50%)';
     });
 
     rectToggle.addEventListener('click', () => {
@@ -689,9 +648,9 @@ app.get('/', (req, res) => {
       vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
       vibrateButton.style.top = '50%';
       vibrateButton.style.transform = 'translateY(-50%)';
-      barGraphic.classList.add('rect-wobble');
       startRectScoreInterval();
       updateIntensityBar();
+      sliderTrack.classList.add('fleshy-breathe');
     });
 
     menuToggle.addEventListener('click', () => {
@@ -731,10 +690,8 @@ app.get('/', (req, res) => {
         barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
-        barGraphic.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-        setTimeout(() => { 
-          barGraphic.classList.remove('rect-pulse', 'gelatin'); 
-        }, 300);
+        barGraphic.classList.add('gelatin');
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 600);
       });
     });
 
@@ -745,16 +702,12 @@ app.get('/', (req, res) => {
         score += 1;
       } else {
         rectScore = Math.min(rectScore + 1, 100);
-        vibrateButton.classList.add('rect-squash');
-        setTimeout(() => { vibrateButton.classList.remove('rect-squash'); }, 400);
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 500) {
-        sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-        setTimeout(() => { 
-          sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-        }, interactionMode === 'rect' ? 300 : 500);
+      if (currentTime - lastGelatinTime >= 600) {
+        sliderTrack.classList.add(side === 'top' ? 'gelatin' : 'bottom-gelatin');
+        setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 600);
         lastGelatinTime = currentTime;
       }
 
@@ -797,16 +750,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          barGraphic.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'pendulum-wobble');
-          setTimeout(() => { 
-            barGraphic.classList.remove('rect-pulse', 'pendulum-wobble'); 
-          }, interactionMode === 'rect' ? 300 : 600);
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-          setTimeout(() => { 
-            sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+        } else if (currentTime - lastTrackGelatinTime >= 600) {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -822,16 +771,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          barGraphic.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'pendulum-wobble');
-          setTimeout(() => { 
-            barGraphic.classList.remove('rect-pulse', 'pendulum-wobble'); 
-          }, interactionMode === 'rect' ? 300 : 600);
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-          setTimeout(() => { 
-            sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+        } else if (currentTime - lastTrackGelatinTime >= 600) {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -845,11 +790,9 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { 
-            sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
         }
       }
       handleMovement(e, false);
@@ -863,11 +806,9 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { 
-            sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
         }
       }
       handleMovement(e, true);
@@ -877,24 +818,22 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { 
-          sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-        }, interactionMode === 'rect' ? 300 : 500);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'rect-stretch', 'rect-squeeze', 'rect-wobble', 'gelatin', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          barGraphic.classList.remove('rect-stretch', 'rect-squeeze');
-          barGraphic.classList.add('rect-wobble');
-          barGraphic.style.top = '0';
-          currentHeartPosition = 'middle';
+          barGraphic.style.transform = 'translateX(-50%)';
+          if (interactionMode === 'rect') {
+            sliderTrack.classList.add('fleshy-breathe');
+          }
         }
         isDragging = false;
         lastCollision = null;
@@ -905,24 +844,22 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { 
-          sliderTrack.classList.remove('rect-pulse', 'gelatin'); 
-        }, interactionMode === 'rect' ? 300 : 500);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'rect-stretch', 'rect-squeeze', 'rect-wobble', 'gelatin', 'bottom-gelatin');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          barGraphic.classList.remove('rect-stretch', 'rect-squeeze');
-          barGraphic.classList.add('rect-wobble');
-          barGraphic.style.top = '0';
-          currentHeartPosition = 'middle';
+          barGraphic.style.transform = 'translateX(-50%)';
+          if (interactionMode === 'rect') {
+            sliderTrack.classList.add('fleshy-breathe');
+          }
         }
         isDragging = false;
         lastCollision = null;
@@ -939,11 +876,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-          setTimeout(() => { 
-            vibrateButton.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+        if (currentTime - lastHeartGelatinTime >= 600) {
+          vibrateButton.classList.add('gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -960,11 +895,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-pulse' : 'gelatin');
-          setTimeout(() => { 
-            vibrateButton.classList.remove('rect-pulse', 'gelatin'); 
-          }, interactionMode === 'rect' ? 300 : 500);
+        if (currentTime - lastHeartGelatinTime >= 600) {
+          vibrateButton.classList.add('gelatin');
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -1015,45 +948,30 @@ app.get('/', (req, res) => {
         }
 
         if (newHeartPosition !== currentHeartPosition) {
-          if (interactionMode === 'rect') {
-            barGraphic.classList.remove('rect-stretch', 'rect-squeeze', 'rect-wobble');
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-            if (newHeartPosition === 'top') {
-              barGraphic.classList.add('rect-stretch');
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-            } else if (newHeartPosition === 'bottom') {
-              barGraphic.classList.add('rect-squeeze');
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-            } else {
-              barGraphic.classList.add('rect-wobble');
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
+          if (newHeartPosition === 'top') {
+            sliderTrack.style.setProperty('--scale-x', 0.85);
+            sliderTrack.style.setProperty('--scale-y', 1.25);
+            sliderTrack.classList.remove('bottom-gelatin', 'fleshy-breathe');
+            if (currentTime - lastGelatinTime >= 600) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+              lastGelatinTime = currentTime;
+            }
+          } else if (newHeartPosition === 'bottom') {
+            sliderTrack.style.setProperty('--scale-x', 1.25);
+            sliderTrack.style.setProperty('--scale-y', 0.75);
+            sliderTrack.classList.remove('gelatin', 'fleshy-breathe');
+            if (currentTime - lastBottomGelatinTime >= 600) {
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 600);
+              lastBottomGelatinTime = currentTime;
             }
           } else {
-            if (newHeartPosition === 'top') {
-              sliderTrack.style.setProperty('--scale-x', 0.8);
-              sliderTrack.style.setProperty('--scale-y', 1.1);
-              sliderTrack.classList.remove('bottom-gelatin');
-              if (currentTime - lastGelatinTime >= 500) {
-                sliderTrack.classList.add('gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
-                lastGelatinTime = currentTime;
-              }
-            } else if (newHeartPosition === 'bottom') {
-              sliderTrack.style.setProperty('--scale-x', 1.2);
-              sliderTrack.style.setProperty('--scale-y', 0.9);
-              sliderTrack.classList.remove('gelatin');
-              if (currentTime - lastBottomGelatinTime >= 500) {
-                sliderTrack.classList.add('bottom-gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
-                lastBottomGelatinTime = currentTime;
-              }
-            } else {
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-              sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+            if (interactionMode === 'rect') {
+              sliderTrack.classList.add('fleshy-breathe');
             }
           }
           currentHeartPosition = newHeartPosition;
