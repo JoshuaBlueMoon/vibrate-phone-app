@@ -403,6 +403,7 @@ app.get('/', (req, res) => {
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
+        filter: brightness(1.2);
       }
       input[type="range"] {
         height: 15px;
@@ -487,7 +488,7 @@ app.get('/', (req, res) => {
             if (data.room === roomCode) {
               if (data.command === 'startVibrate' && navigator.vibrate) {
                 const intensity = data.intensity || 3;
-                let pattern = [1000];
+                let pattern;
                 if (data.mode === 'pulse') {
                   switch (intensity) {
                     case 1: pattern = [50, 200]; break;
@@ -497,9 +498,18 @@ app.get('/', (req, res) => {
                     case 5: pattern = [200]; break;
                     default: pattern = [50, 50];
                   }
+                } else if (data.mode === 'wave') {
+                  switch (intensity) {
+                    case 1: pattern = [1000]; break;
+                    case 2: pattern = [1500]; break;
+                    case 3: pattern = [2000]; break;
+                    case 4: pattern = [2500]; break;
+                    case 5: pattern = [3000]; break;
+                    default: pattern = [2000];
+                  }
                 }
                 navigator.vibrate(pattern);
-                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
+                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity, 'pattern:', pattern);
                 sliderTrack.classList.add('pulsing');
                 setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
               } else if (data.command === 'stopVibrate' && navigator.vibrate) {
@@ -626,6 +636,24 @@ app.get('/', (req, res) => {
         fluidEffect.style.display = 'none';
       }
     }
+
+    pulseToggle.addEventListener('click', () => {
+      if (vibrationMode !== 'pulse') {
+        vibrationMode = 'pulse';
+        pulseToggle.classList.add('toggled');
+        waveToggle.classList.remove('toggled');
+        console.log('Switched to pulse mode');
+      }
+    });
+
+    waveToggle.addEventListener('click', () => {
+      if (vibrationMode !== 'wave') {
+        vibrationMode = 'wave';
+        waveToggle.classList.add('toggled');
+        pulseToggle.classList.remove('toggled');
+        console.log('Switched to wave mode');
+      }
+    });
 
     heartToggle.addEventListener('click', () => {
       interactionMode = 'heart';
@@ -981,7 +1009,27 @@ app.get('/', (req, res) => {
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = interactionMode === 'rect' ? Math.ceil(rectScore / 20) : parseInt(intensitySlider.value);
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
+            let pattern;
+            if (vibrationMode === 'pulse') {
+              switch (intensity) {
+                case 1: pattern = [50, 200]; break;
+                case 2: pattern = [50, 100]; break;
+                case 3: pattern = [50, 50]; break;
+                case 4: pattern = [100, 50]; break;
+                case 5: pattern = [200]; break;
+                default: pattern = [50, 50];
+              }
+            } else if (vibrationMode === 'wave') {
+              switch (intensity) {
+                case 1: pattern = [1000]; break;
+                case 2: pattern = [1500]; break;
+                case 3: pattern = [2000]; break;
+                case 4: pattern = [2500]; break;
+                case 5: pattern = [3000]; break;
+                default: pattern = [2000];
+              }
+            }
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
