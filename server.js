@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, filter; z-index: 1; filter: drop-shadow(0 0 5px rgba(96, 165, 250, 0.3));"></div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background, transform; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -124,46 +124,59 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
-      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes bottom-gelatin {
-      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      75% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
+      50% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
+      75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes squeeze-gelatin {
-      0% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
-      20% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.85), calc(var(--scale-y, 1) * 0.9)); }
-      40% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)); }
-      60% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.05)); }
-      80% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      100% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
+    @keyframes fleshySqueeze {
+      0% { transform: scale(1.15, 0.85) translateY(5%); }
+      30% { transform: scale(1.2, 0.8) translateY(8%); }
+      60% { transform: scale(1.18, 0.82) translateY(6%); }
+      100% { transform: scale(1, 1) translateY(0); }
     }
-    @keyframes stretch-gelatin {
-      0% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
-      20% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.8), calc(var(--scale-y, 1) * 1.2)); }
-      40% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)); }
-      60% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.1)); }
-      80% { transform: translateX(-50%) scale(calc(var(--scale-top-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      100% { transform: translateX(-50%) scale(var(--scale-top-x, 1), var(--scale-y, 1)); }
+    @keyframes fleshyStretch {
+      0% { transform: scale(0.85, 1.15) translateY(-5%); }
+      30% { transform: scale(0.8, 1.2) translateY(-8%); }
+      60% { transform: scale(0.82, 1.18) translateY(-6%); }
+      100% { transform: scale(1, 1) translateY(0); }
     }
-    @keyframes organic-pulse {
-      0% { transform: translateX(-50%) scale(var(--scale-mid-x, 1), var(--scale-y, 1)); }
-      50% { transform: translateX(-50%) scale(calc(var(--scale-mid-x, 1) * 1.03), calc(var(--scale-y, 1) * 1.02)); }
-      100% { transform: translateX(-50%) scale(var(--scale-mid-x, 1), var(--scale-y, 1)); }
-    }
-    @keyframes rect-squish {
-      0% { transform: scale(1, 1); }
-      25% { transform: scale(1.2, 0.8); }
-      50% { transform: scale(0.9, 1.1); }
-      75% { transform: scale(1.05, 0.95); }
+    @keyframes topFleshySqueeze {
+      0% { transform: scale(0.95, 1.05); }
+      30% { transform: scale(0.9, 1.1); }
+      60% { transform: scale(0.92, 1.08); }
       100% { transform: scale(1, 1); }
+    }
+    @keyframes topFleshyStretch {
+      0% { transform: scale(0.8, 1.2); }
+      30% { transform: scale(0.75, 1.25); }
+      60% { transform: scale(0.78, 1.22); }
+      100% { transform: scale(1, 1); }
+    }
+    @keyframes bottomFleshySqueeze {
+      0% { transform: scale(1.25, 0.8); }
+      30% { transform: scale(1.3, 0.75); }
+      60% { transform: scale(1.27, 0.78); }
+      100% { transform: scale(1, 1); }
+    }
+    @keyframes bottomFleshyStretch {
+      0% { transform: scale(1.05, 0.95); }
+      30% { transform: scale(1.1, 0.9); }
+      60% { transform: scale(1.08, 0.92); }
+      100% { transform: scale(1, 1); }
+    }
+    @keyframes fleshyPulse {
+      0% { background-position: center center; }
+      50% { background-position: center 55%; }
+      100% { background-position: center center; }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -185,7 +198,7 @@ app.get('/', (req, res) => {
       animation: barPulse 0.4s ease-in-out infinite;
     }
     .subtle-pulsing {
-      animation: organic-pulse 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      animation: subtlePulse 0.4s ease-in-out;
     }
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
@@ -204,14 +217,26 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .squeeze-gelatin {
-      animation: squeeze-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    .fleshy-squeeze {
+      animation: fleshySqueeze 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-    .stretch-gelatin {
-      animation: stretch-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    .fleshy-stretch {
+      animation: fleshyStretch 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
-    .rect-squish {
-      animation: rect-squish 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    .top-fleshy-squeeze {
+      animation: topFleshySqueeze 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .top-fleshy-stretch {
+      animation: topFleshyStretch 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .bottom-fleshy-squeeze {
+      animation: bottomFleshySqueeze 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .bottom-fleshy-stretch {
+      animation: bottomFleshyStretch 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .fleshy-pulse {
+      animation: fleshyPulse 2s ease-in-out infinite;
     }
     .squished {
       transition: transform 0.2s ease-in-out;
@@ -300,12 +325,36 @@ app.get('/', (req, res) => {
     input[type="range"].disabled::-moz-range-thumb {
       opacity: 0;
     }
+    #sliderTrack::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 33%;
+      background: inherit;
+      z-index: 1;
+      will-change: transform;
+    }
+    #sliderTrack::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 33%;
+      background: inherit;
+      z-index: 1;
+      will-change: transform;
+    }
     @media (orientation: landscape) {
       body {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 5 SOCIETYpx;
+        padding: 5px;
         margin: 0 auto;
         width: 100%;
         max-width: 414px;
@@ -375,7 +424,7 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
-        will-change: transform, filter;
+        will-change: background, transform;
       }
       #bottomControls {
         margin-top: 28px;
@@ -442,6 +491,10 @@ app.get('/', (req, res) => {
       }
       input[type="range"]::-moz-range-track {
         height: 15px;
+      }
+      #sliderTrack::before, #sliderTrack::after {
+        width: 100%;
+        height: 33%;
       }
     }
   </style>
@@ -613,17 +666,10 @@ app.get('/', (req, res) => {
     }
 
     function triggerSubtlePulse() {
-      if (interactionMode === 'rect') {
-        sliderTrack.classList.add('subtle-pulsing');
-        setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 2000);
-        const nextPulse = Math.random() * 3000 + 3000;
-        setTimeout(triggerSubtlePulse, nextPulse);
-      } else {
-        sliderTrack.classList.add('subtle-pulsing');
-        setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-        const nextPulse = Math.random() * 3000 + 3000;
-        setTimeout(triggerSubtlePulse, nextPulse);
-      }
+      sliderTrack.classList.add('subtle-pulsing');
+      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
+      const nextPulse = Math.random() * 3000 + 3000;
+      setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
 
@@ -641,12 +687,12 @@ app.get('/', (req, res) => {
         intensitySlider.value = Math.ceil(rectScore / 20);
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        sliderTrack.classList.add('subtle-pulsing');
+        barGraphic.classList.add('fleshy-pulse');
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
-        sliderTrack.classList.remove('subtle-pulsing');
+        barGraphic.classList.remove('fleshy-pulse');
       }
     }
 
@@ -665,12 +711,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
-      barGraphic.style.transition = 'transform 0.2s ease-in-out';
-      barGraphic.style.setProperty('--scale-top-x', 1);
-      barGraphic.style.setProperty('--scale-mid-x', 1);
-      barGraphic.style.setProperty('--scale-bottom-x', 1);
-      barGraphic.style.setProperty('--scale-y', 1);
-      sliderTrack.classList.remove('squeeze-gelatin', 'stretch-gelatin');
     });
 
     rectToggle.addEventListener('click', () => {
@@ -690,7 +730,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
-      barGraphic.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     });
 
     menuToggle.addEventListener('click', () => {
@@ -730,8 +769,8 @@ app.get('/', (req, res) => {
         barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
-        barGraphic.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
-        setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+        barGraphic.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
+        setTimeout(() => { barGraphic.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
       });
     });
 
@@ -742,37 +781,42 @@ app.get('/', (req, res) => {
         score += 1;
       } else {
         rectScore = Math.min(rectScore + 1, 100);
-        vibrateButton.classList.add('rect-squish');
-        setTimeout(() => { vibrateButton.classList.remove('rect-squish'); }, 400);
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 600 && interactionMode === 'rect') {
-        barGraphic.classList.add(side === 'top' ? 'stretch-gelatin' : 'squeeze-gelatin');
-        setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin', 'stretch-gelatin'); }, 600);
-        lastGelatinTime = currentTime;
-      } else if (currentTime - lastGelatinTime >= 500 && interactionMode === 'heart') {
-        sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+      if (currentTime - lastGelatinTime >= 600) {
+        if (interactionMode === 'rect') {
+          barGraphic.classList.add(side === 'top' ? 'fleshy-stretch' : 'fleshy-squeeze');
+          sliderTrack.classList.add(side === 'top' ? 'top-fleshy-stretch' : 'bottom-fleshy-squeeze');
+          sliderTrack.querySelector('.bar-graphic').classList.add(side === 'top' ? 'top-fleshy-stretch' : 'bottom-fleshy-squeeze');
+          setTimeout(() => {
+            barGraphic.classList.remove('fleshy-stretch', 'fleshy-squeeze');
+            sliderTrack.classList.remove('top-fleshy-stretch', 'bottom-fleshy-squeeze');
+            sliderTrack.querySelector('.bar-graphic').classList.remove('top-fleshy-stretch', 'bottom-fleshy-squeeze');
+          }, 600);
+        } else {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+        }
         lastGelatinTime = currentTime;
       }
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
-      const particleCount = 8;
+      const particleCount = 5;
       const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
       const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        const size = Math.random() * 4 + 4;
+        const size = Math.random() * 3 + 3;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
-        particle.style.left = baseX + (Math.random() - 0.5) * 10 + 'px';
-        particle.style.top = baseY + (Math.random() - 0.5) * 10 + 'px';
+        particle.style.left = baseX + 'px';
+        particle.style.top = baseY + 'px';
         const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 60 + 30;
+        const distance = Math.random() * 50 + 20;
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
         particle.style.setProperty('--move-x', moveX + 'px');
@@ -780,7 +824,7 @@ app.get('/', (req, res) => {
         glowDotsContainer.appendChild(particle);
         setTimeout(() => {
           particle.remove();
-        }, 1200);
+        }, 1000);
       }
 
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
@@ -800,8 +844,8 @@ app.get('/', (req, res) => {
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
+          setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -821,8 +865,8 @@ app.get('/', (req, res) => {
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
+          setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -836,9 +880,9 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
         }
       }
       handleMovement(e, false);
@@ -852,9 +896,9 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+          sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
         }
       }
       handleMovement(e, true);
@@ -864,19 +908,17 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+        sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin');
-          sliderTrack.style.setProperty('--scale-top-x', 1);
-          sliderTrack.style.setProperty('--scale-mid-x', 1);
-          sliderTrack.style.setProperty('--scale-bottom-x', 1);
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'fleshy-squeeze', 'fleshy-stretch', 'top-fleshy-squeeze', 'top-fleshy-stretch', 'bottom-fleshy-squeeze', 'bottom-fleshy-stretch');
+          sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
@@ -889,19 +931,17 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add(interactionMode === 'rect' ? 'squeeze-gelatin' : 'gelatin');
+        sliderTrack.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin', 'gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin');
-          sliderTrack.style.setProperty('--scale-top-x', 1);
-          sliderTrack.style.setProperty('--scale-mid-x', 1);
-          sliderTrack.style.setProperty('--scale-bottom-x', 1);
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'fleshy-squeeze', 'fleshy-stretch', 'top-fleshy-squeeze', 'top-fleshy-stretch', 'bottom-fleshy-squeeze', 'bottom-fleshy-stretch');
+          sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
@@ -921,8 +961,8 @@ app.get('/', (req, res) => {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-squish' : 'gelatin');
-          set夏Time(() => { vibrateButton.classList.remove('rect-squish', 'gelatin'); }, interactionMode === 'rect' ? 400 : 500);
+          vibrateButton.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
+          setTimeout(() => { vibrateButton.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -940,8 +980,8 @@ app.get('/', (req, res) => {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
         if (currentTime - lastHeartGelatinTime >= 500) {
-          vibrateButton.classList.add(interactionMode === 'rect' ? 'rect-squish' : 'gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('rect-squish', 'gelatin'); }, interactionMode === 'rect' ? 400 : 500);
+          vibrateButton.classList.add(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin');
+          setTimeout(() => { vibrateButton.classList.remove(interactionMode === 'rect' ? 'fleshy-squeeze' : 'gelatin'); }, 600);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -992,7 +1032,36 @@ app.get('/', (req, res) => {
         }
 
         if (newHeartPosition !== currentHeartPosition) {
-          if (interactionMode === 'heart') {
+          if (interactionMode === 'rect') {
+            if (newHeartPosition === 'top') {
+              sliderTrack.classList.remove('fleshy-squeeze', 'bottom-fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-gelatin');
+              barGraphic.classList.remove('fleshy-squeeze', 'bottom-fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-gelatin');
+              sliderTrack.classList.add('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch');
+              barGraphic.classList.add('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch');
+              if (currentTime - lastGelatinTime >= 600) {
+                setTimeout(() => {
+                  sliderTrack.classList.remove('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch');
+                  barGraphic.classList.remove('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch');
+                }, 600);
+                lastGelatinTime = currentTime;
+              }
+            } else if (newHeartPosition === 'bottom') {
+              sliderTrack.classList.remove('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch', 'gelatin');
+              barGraphic.classList.remove('fleshy-stretch', 'top-fleshy-stretch', 'bottom-fleshy-stretch', 'gelatin');
+              sliderTrack.classList.add('fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-fleshy-squeeze');
+              barGraphic.classList.add('fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-fleshy-squeeze');
+              if (currentTime - lastGelatinTime >= 600) {
+                setTimeout(() => {
+                  sliderTrack.classList.remove('fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-fleshy-squeeze');
+                  barGraphic.classList.remove('fleshy-squeeze', 'top-fleshy-squeeze', 'bottom-fleshy-squeeze');
+                }, 600);
+                lastGelatinTime = currentTime;
+              }
+            } else {
+              sliderTrack.classList.remove('fleshy-squeeze', 'fleshy-stretch', 'top-fleshy-squeeze', 'top-fleshy-stretch', 'bottom-fleshy-squeeze', 'bottom-fleshy-stretch');
+              barGraphic.classList.remove('fleshy-squeeze', 'fleshy-stretch', 'top-fleshy-squeeze', 'top-fleshy-stretch', 'bottom-fleshy-squeeze', 'bottom-fleshy-stretch');
+            }
+          } else {
             if (newHeartPosition === 'top') {
               sliderTrack.style.setProperty('--scale-x', 0.8);
               sliderTrack.style.setProperty('--scale-y', 1.1);
@@ -1015,36 +1084,6 @@ app.get('/', (req, res) => {
               sliderTrack.style.setProperty('--scale-x', 1);
               sliderTrack.style.setProperty('--scale-y', 1);
               sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-            }
-          } else {
-            if (newHeartPosition === 'top') {
-              barGraphic.style.setProperty('--scale-top-x', 0.8);
-              barGraphic.style.setProperty('--scale-mid-x', 1.1);
-              barGraphic.style.setProperty('--scale-bottom-x', 1.0);
-              barGraphic.style.setProperty('--scale-y', 1.15);
-              barGraphic.classList.remove('squeeze-gelatin');
-              if (currentTime - lastGelatinTime >= 600) {
-                barGraphic.classList.add('stretch-gelatin');
-                setTimeout(() => { barGraphic.classList.remove('stretch-gelatin'); }, 600);
-                lastGelatinTime = currentTime;
-              }
-            } else if (newHeartPosition === 'bottom') {
-              barGraphic.style.setProperty('--scale-top-x', 1.0);
-              barGraphic.style.setProperty('--scale-mid-x', 1.2);
-              barGraphic.style.setProperty('--scale-bottom-x', 0.85);
-              barGraphic.style.setProperty('--scale-y', 0.9);
-              barGraphic.classList.remove('stretch-gelatin');
-              if (currentTime - lastBottomGelatinTime >= 600) {
-                barGraphic.classList.add('squeeze-gelatin');
-                setTimeout(() => { barGraphic.classList.remove('squeeze-gelatin'); }, 600);
-                lastBottomGelatinTime = currentTime;
-              }
-            } else {
-              barGraphic.style.setProperty('--scale-top-x', 1);
-              barGraphic.style.setProperty('--scale-mid-x', 1);
-              barGraphic.style.setProperty('--scale-bottom-x', 1);
-              barGraphic.style.setProperty('--scale-y', 1);
-              barGraphic.classList.remove('squeeze-gelatin', 'stretch-gelatin');
             }
           }
           currentHeartPosition = newHeartPosition;
