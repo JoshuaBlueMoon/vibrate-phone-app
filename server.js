@@ -20,7 +20,6 @@ app.get('/', (req, res) => {
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
     <button id="joinButton" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #60a5fa; border: none; color: white; cursor: pointer; border-radius: 5px;">Join</button>
-    <p id="errorMessage" style="color: #ff3333; font-size: 10px; margin-top: 10px; display: none;"></p>
   </div>
   <div id="gameContent" style="display: none; width: 100%; height: 100%; padding: 10px; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124);">
     <div id="glowDotsContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div>
@@ -32,7 +31,7 @@ app.get('/', (req, res) => {
       <input id="room" type="text" placeholder="Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;" readonly>
     </div>
     <div id="leftControls" style="position: absolute; left: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
-      <div id="toggleMenu" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
+      <div id="menuToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
         <img src="/images/menu-toggle.png" alt="Menu Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
       </div>
       <div id="subMenu" style="display: none; flex-direction: column; gap: 10px;">
@@ -50,26 +49,31 @@ app.get('/', (req, res) => {
         </div>
       </div>
     </div>
+    <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
+      <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
+        <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      </div>
+      <div id="rectToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
+        <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      </div>
+    </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar-img.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="wave-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰</div>
-      <div class="wave-symbol bottom" style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰</div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
+      <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
+      <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
+      <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
+      <div class="pulse-symbol bottom" style="position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
     </div>
     <div id="vibrateButton" style="padding: 0; background: none; border: none; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer; touch-action: none; z-index: 3;">
-      <img src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
+      <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-      <div id="toggleContainer" style="display: flex; justify-content: space-between; align-items: center; width: 53.33%; max-width: 400px; margin: 5px auto; position: relative;">
-        <div id="burstToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/burst-toggle.png" alt="Burst Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
-        <div style="display: flex; justify-content: center; gap: 2px;">
-          <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-            <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
-          </div>
-          <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-            <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
-          </div>
+        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto;">
@@ -194,15 +198,6 @@ app.get('/', (req, res) => {
       pointer-events: none;
       z-index: 2;
     }
-    .burst-sprite {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      background: url('/images/burst-sprite.png') no-repeat center center;
-      background-size: contain;
-      pointer-events: none;
-      z-index: 5;
-    }
     .toggle-button {
       background: none;
       color: white;
@@ -299,11 +294,15 @@ app.get('/', (req, res) => {
         left: 10px;
         top: 20%;
       }
-      #toggleMenu {
+      #rightControls {
+        right: 10px;
+        top: 20%;
+      }
+      #menuToggle, #heartToggle, #rectToggle {
         width: 48px;
         height: 48px;
       }
-      #toggleMenu img {
+      #menuToggle img, #heartToggle img, #rectToggle img {
         width: 36px;
         height: 36px;
       }
@@ -335,8 +334,9 @@ app.get('/', (req, res) => {
         margin-top: 28px;
       }
       #toggleContainer {
-        width: 53.33%;
-        max-width: 373px;
+        flex-direction: row;
+        gap: 2px;
+        margin: 5px auto;
       }
       #intensityContainer {
         width: 53.33%;
@@ -346,11 +346,11 @@ app.get('/', (req, res) => {
       #intensityValue {
         font-size: 8px;
       }
-      .wave-symbol.top {
+      .pulse-symbol.top {
         top: -14px;
         font-size: 14px;
       }
-      .wave-symbol.bottom {
+      .pulse-symbol.bottom {
         bottom: -14px;
         font-size: 14px;
       }
@@ -361,10 +361,6 @@ app.get('/', (req, res) => {
       .particle {
         width: 5px;
         height: 5px;
-      }
-      .burst-sprite {
-        width: 28px;
-        height: 28px;
       }
       .toggle-button {
         width: 53px;
@@ -398,16 +394,15 @@ app.get('/', (req, res) => {
     }
   </style>
   <script>
-    let ws = null; // Initialize WebSocket after room number is set
+    let ws = null;
     let isVibrating = false;
-    let vibrationMode = 'pulse'; // Default mode
-    let burstMode = false; // Independent toggle for sprite effect
+    let vibrationMode = 'pulse';
     let score = 0;
-    let isPressingBar = false; // Track bar press state
+    let isPressingBar = false;
+    let interactionMode = 'heart'; // Default to heart mode
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
-    const errorMessage = document.getElementById('errorMessage');
     const gameContent = document.getElementById('gameContent');
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
@@ -415,13 +410,15 @@ app.get('/', (req, res) => {
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const vibrateButton = document.getElementById('vibrateButton');
+    const vibrateImage = document.getElementById('vibrateImage');
     const pulseToggle = document.getElementById('pulseToggle');
     const waveToggle = document.getElementById('waveToggle');
-    const burstToggle = document.getElementById('burstToggle');
+    const heartToggle = document.getElementById('heartToggle');
+    const rectToggle = document.getElementById('rectToggle');
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
-    const menuToggle = document.getElementById('toggleMenu');
+    const menuToggle = document.getElementById('menuToggle');
     const subMenu = document.getElementById('subMenu');
     const subMenuButtons = document.querySelectorAll('.sub-menu-button');
     let isDragging = false;
@@ -434,96 +431,55 @@ app.get('/', (req, res) => {
     let lastTrackGelatinTime = 0;
     let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
-    let currentHeartPosition = 'middle'; // Track heart position state
+    let currentHeartPosition = 'middle';
     let isSubMenuOpen = false;
-    let burstSprite = null; // Store single burst sprite
 
     function startGame() {
       const roomCode = roomInput.value.trim();
-      if (!roomCode) {
-        console.log('No room code entered');
-        errorMessage.textContent = 'Please enter a room code';
-        errorMessage.style.display = 'block';
-        roomInput.value = '';
-        return;
-      }
-      console.log('Starting game with room code:', roomCode);
-      errorMessage.style.display = 'none';
-      roomDisplay.value = roomCode;
-
-      // Determine WebSocket URL based on environment
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.host || 'localhost:3000';
-      const wsUrl = `${wsProtocol}//${wsHost}`;
-
-      // Initialize WebSocket connection
-      try {
-        ws = new WebSocket(wsUrl);
-        ws.onopen = () => {
-          console.log('Connected to server');
-          // Start fade-out animation
-          startScreen.classList.add('fade-out');
-          setTimeout(() => {
-            console.log('Fade-out complete, hiding startScreen');
-            startScreen.remove(); // Remove from DOM
-            gameContent.style.display = 'flex';
-            console.log('gameContent displayed');
-          }, 1000); // Match fadeOut animation duration
-        };
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          if (data.room === roomCode) {
-            if (data.command === 'startVibrate' && navigator.vibrate) {
-              const intensity = data.intensity || 3;
-              let pattern = [1000]; // Default for wave mode
-              if (data.mode === 'pulse') {
-                switch (intensity) {
-                  case 1: pattern = [50, 200]; break;
-                  case 2: pattern = [50, 100]; break;
-                  case 3: pattern = [50, 50]; break;
-                  case 4: pattern = [100, 50]; break;
-                  case 5: pattern = [200]; break;
-                  default: pattern = [50, 50];
+      if (roomCode) {
+        console.log('Starting game with room code:', roomCode);
+        roomDisplay.value = roomCode;
+        startScreen.classList.add('fade-out');
+        setTimeout(() => {
+          console.log('Fade-out complete, hiding startScreen');
+          startScreen.remove();
+          gameContent.style.display = 'flex';
+          console.log('gameContent displayed');
+          ws = new WebSocket('wss://' + window.location.host);
+          ws.onopen = () => console.log('Connected to server');
+          ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.room === roomCode) {
+              if (data.command === 'startVibrate' && navigator.vibrate) {
+                const intensity = data.intensity || 3;
+                let pattern = [1000];
+                if (data.mode === 'pulse') {
+                  switch (intensity) {
+                    case 1: pattern = [50, 200]; break;
+                    case 2: pattern = [50, 100]; break;
+                    case 3: pattern = [50, 50]; break;
+                    case 4: pattern = [100, 50]; break;
+                    case 5: pattern = [200]; break;
+                    default: pattern = [50, 50];
+                  }
                 }
-              }
-              navigator.vibrate(pattern);
-              console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
-              sliderTrack.classList.add('pulsing');
-              setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
-            } else if (data.command === 'stopVibrate' && navigator.vibrate) {
-              navigator.vibrate(0);
-            } else if (data.command === 'createBurstSprite' && burstMode) {
-              createBurstSprite(data.x, data.y, false); // Create sprite without sending WebSocket message
-            } else if (data.command === 'removeBurstSprite') {
-              if (burstSprite) {
-                burstSprite.remove();
-                burstSprite = null;
+                navigator.vibrate(pattern);
+                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity);
+                sliderTrack.classList.add('pulsing');
+                setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
+              } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+                navigator.vibrate(0);
               }
             }
-          }
-        };
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          errorMessage.textContent = 'Failed to connect to server. Please try again.';
-          errorMessage.style.display = 'block';
-          ws = null;
-        };
-        ws.onclose = () => {
-          console.log('WebSocket connection closed');
-          if (startScreen) {
-            errorMessage.textContent = 'Connection lost. Please try again.';
-            errorMessage.style.display = 'block';
-          }
-          ws = null;
-        };
-      } catch (e) {
-        console.error('WebSocket initialization error:', e);
-        errorMessage.textContent = 'Failed to initialize connection. Please try again.';
-        errorMessage.style.display = 'block';
+          };
+        }, 1000);
+      } else {
+        console.log('No room code entered');
+        roomInput.placeholder = 'Please enter a room code';
+        roomInput.value = '';
       }
     }
 
-    // Handle Enter key or Join button click
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
@@ -536,31 +492,28 @@ app.get('/', (req, res) => {
       startGame();
     });
 
-    // Create glowing dots
     function createGlowDots() {
-      const dotCount = 10; // Reduced number of dots
+      const dotCount = 10;
       for (let i = 0; i < dotCount; i++) {
         const dot = document.createElement('div');
         dot.className = 'glow-dot';
-        const size = Math.random() * 4 + 6; // Random size between 6-10px
+        const size = Math.random() * 4 + 6;
         dot.style.width = size + 'px';
         dot.style.height = size + 'px';
         dot.style.left = Math.random() * 100 + '%';
         dot.style.top = Math.random() * 100 + '%';
-        // Random direction for slow drift
         const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 50 + 50; // Move 50-100px
+        const distance = Math.random() * 50 + 50;
         const moveX = Math.cos(angle) * distance;
         const moveY = Math.sin(angle) * distance;
         dot.style.setProperty('--move-x', moveX + 'px');
         dot.style.setProperty('--move-y', moveY + 'px');
-        dot.style.animationDelay = `${Math.random() * 5}s`;
+        dot.style.animationDelay = Math.random() * 5 + 's';
         glowDotsContainer.appendChild(dot);
       }
     }
     createGlowDots();
 
-    // Score reduction
     setInterval(() => {
       if (score > 0) {
         score = Math.max(0, score - 2);
@@ -568,20 +521,19 @@ app.get('/', (req, res) => {
       }
     }, 1000);
 
-    // Subtle pulsation every 3-6 seconds
     function triggerSubtlePulse() {
       sliderTrack.classList.add('subtle-pulsing');
       setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000; // Random interval between 3-6 seconds
+      const nextPulse = Math.random() * 3000 + 3000;
       setTimeout(triggerSubtlePulse, nextPulse);
     }
     triggerSubtlePulse();
 
-    intensitySlider.addEventListener('input', () => {
+    intensitySlider.oninput = () => {
       intensityDisplay.textContent = intensitySlider.value;
       intensityContainer.classList.add('intensity-pulsing');
       setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
-    });
+    };
 
     pulseToggle.addEventListener('click', () => {
       vibrationMode = 'pulse';
@@ -595,25 +547,40 @@ app.get('/', (req, res) => {
       pulseToggle.classList.remove('toggled');
     });
 
-    burstToggle.addEventListener('click', () => {
-      burstMode = !burstMode;
-      const room = roomDisplay.value;
-      if (burstMode) {
-        burstToggle.classList.add('toggled');
-      } else {
-        burstToggle.classList.remove('toggled');
-        // Remove existing burst sprite
-        if (burstSprite) {
-          burstSprite.remove();
-          burstSprite = null;
-        }
-        if (room && ws) {
-          ws.send(JSON.stringify({ room: room, command: 'removeBurstSprite' }));
-        }
-      }
+    heartToggle.addEventListener('click', () => {
+      interactionMode = 'heart';
+      heartToggle.classList.add('toggled');
+      rectToggle.classList.remove('toggled');
+      vibrateImage.src = '/images/custom-heart.png';
+      vibrateImage.alt = 'Custom Heart';
+      vibrateButton.style.width = '56px';
+      vibrateButton.style.height = '56px';
+      vibrateImage.style.width = '40px';
+      vibrateImage.style.height = '40px';
+      // Reset position to center
+      vibrateButton.style.left = '50%';
+      vibrateButton.style.top = '50%';
+      vibrateButton.style.transform = 'translate(-50%, -50%)';
     });
 
-    // Menu toggle functionality
+    rectToggle.addEventListener('click', () => {
+      interactionMode = 'rect';
+      rectToggle.classList.add('toggled');
+      heartToggle.classList.remove('toggled');
+      vibrateImage.src = '/images/custom-rect.png';
+      vibrateImage.alt = 'Custom Rectangle';
+      vibrateButton.style.width = '40px';
+      vibrateButton.style.height = '20px';
+      vibrateImage.style.width = '32px';
+      vibrateImage.style.height = '16px';
+      // Snap to bar's horizontal center
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
+      vibrateButton.style.top = '50%';
+      vibrateButton.style.transform = 'translateY(-50%)';
+    });
+
     menuToggle.addEventListener('click', () => {
       isSubMenuOpen = !isSubMenuOpen;
       if (isSubMenuOpen) {
@@ -621,15 +588,15 @@ app.get('/', (req, res) => {
         subMenuButtons.forEach((button, index) => {
           setTimeout(() => {
             button.classList.add('pop-in');
-            button.style.setProperty('opacity', '1');
-          }, index * 100); // Staggered animation
+            button.style.opacity = '1';
+          }, index * 100);
         });
         menuToggle.classList.add('toggled');
       } else {
         subMenuButtons.forEach((button, index) => {
           setTimeout(() => {
             button.classList.remove('pop-in');
-            button.style.setProperty('opacity', '0');
+            button.style.opacity = '0';
           }, index * 100);
         });
         setTimeout(() => {
@@ -639,19 +606,18 @@ app.get('/', (req, res) => {
       }
     });
 
-    // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         const barImages = [
-          '/images/custom-bar-img.png',
+          '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
-          '/images/bar-option2.png'
+          '/images/bar-option4.png'
         ];
-        barGraphic.style.setProperty('background', `url('${barImages[index]}') no-repeat center center`);
-        barGraphic.style.setProperty('background-size', 'contain');
-        barGraphic.style.setProperty('background-position', 'center center');
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
         setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
@@ -660,7 +626,8 @@ app.get('/', (req, res) => {
     function createParticle(x, y, side) {
       if (lastCollision === side) return;
       lastCollision = side;
-      score +=  scoreElement.textContent = score;
+      score += 1;
+      scoreElement.textContent = score;
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
         sliderTrack.classList.add('gelatin');
@@ -668,84 +635,49 @@ app.get('/', (req, res) => {
         lastGelatinTime = currentTime;
       }
 
-      // Create a burst of 5 particles
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
       const particleCount = 5;
-      const baseY = side === '0' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
-      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2; // Center of sliderTrack
+      const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
+      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
 
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        const size = Math.random() * 3 + 3; // Random size between 3-6px
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.setProperty('left', `${baseX}px`);
-        particle.style.setProperty('top', `${baseY}px`);
-        // Random direction for particle movement
-        const angle = Math.random() * Math.PI * 2; // Random angle in radians
-        const distance = Math.random() * 50 + 20; // Random distance between 20-70px
+        const size = Math.random() * 3 + 3;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = baseX + 'px';
+        particle.style.top = baseY + 'px';
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 50 + 20;
         const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1); // Move up for top, down for bottom
-        particle.style.setProperty('--move-x', `${moveX}px`);
-        particle.style.setProperty('--move-y', `${moveY}px`);
+        const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
+        particle.style.setProperty('--move-x', moveX + 'px');
+        particle.style.setProperty('--move-y', moveY + 'px');
         glowDotsContainer.appendChild(particle);
-        // Remove particle after animation
         setTimeout(() => {
           particle.remove();
-        }, 1000); // Match particleBurst animation duration
+        }, 1000);
       }
 
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
-    function createBurstSprite(x, y, sendMessage = true) {
-      // Remove existing sprite
-      if (burstSprite) {
-        burstSprite.remove();
-        burstSprite = null;
-      }
-      // Create new sprite
-      const sprite = document.createElement('div');
-      sprite.className = 'burst-sprite';
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const spriteX = x - bodyRect.left - 16; // Center sprite (32px width/2)
-      const spriteY = y - bodyRect.top - 16; // Center sprite Y (32px height/2)
-      sprite.style.setProperty('left', `${spriteX}px`);
-      sprite.style.setProperty('top', `${spriteY}px`);
-      glowDotsContainer.appendChild(sprite);
-      burstSprite = sprite;
-      // Send WebSocket message to other clients
-      if (sendMessage && ws && burstMode) {
-        const room = roomDisplay.value;
-        if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'createBurstSprite', x, y }));
-        }
-      }
-    }
-
     sliderTrack.addEventListener('mousedown', (e) => {
-      // Only trigger if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
         const trackRect = sliderTrack.getBoundingClientRect();
         const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
-        if (burstMode) {
-          createBurstSprite(e.clientX, e.clientY);
-        }
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble style
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', '0.8'); // Squish top Y
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -754,26 +686,19 @@ app.get('/', (req, res) => {
     });
 
     sliderTrack.addEventListener('touchstart', (e) => {
-      // Only trigger if not touching vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
-        e.preventDefault(); // Prevent default touch behavior
         const trackRect = sliderTrack.getBoundingClientRect();
         const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1; // Top 10% of track
+        const topThreshold = trackRect.height * 0.1;
         const currentTime = Date.now();
-        if (burstMode) {
-          createBurstSprite(e.touches[0].clientX, e.touches[0].clientY);
-        }
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          // Trigger pendulum wobble style
           isPressingBar = true;
           sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', '0.8'); // Squish top Y
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          // Trigger gelatin for other parts of sliderTrack
           sliderTrack.classList.add('gelatin');
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
@@ -787,11 +712,10 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
-          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', '1');
+          sliderTrack.style.setProperty('--scale-y', 1);
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
@@ -804,11 +728,10 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
-          // Moved out of top 10%, stop squish
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', '1');
+          sliderTrack.style.setProperty('--scale-y', 1);
           setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
@@ -820,17 +743,17 @@ app.get('/', (req, res) => {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', '1');
+        sliderTrack.style.setProperty('--scale-y', 1);
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
-        if (room && ws) {
+        if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-squish');
-          sliderTrack.style.setProperty('--scale-x', '1');
-          sliderTrack.style.setProperty('--scale-y', '1');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          sliderTrack.style.setProperty('--scale-x', 1);
+          sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -843,17 +766,17 @@ app.get('/', (req, res) => {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', '1');
+        sliderTrack.style.setProperty('--scale-y', 1);
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
-        if (room && ws) {
+        if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-squish');
-          sliderTrack.style.setProperty('--scale-x', '1');
-          sliderTrack.style.setProperty('--scale-y', '1');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
+          sliderTrack.style.setProperty('--scale-x', 1);
+          sliderTrack.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -896,35 +819,47 @@ app.get('/', (req, res) => {
           lastHeartGelatinTime = currentTime;
         }
       }
-      lastPosition = currentTime;
+      lastPosition = vibrateButton.offsetTop;
     });
 
-    function handleMovement(e, isTouch = false) => {
+    function handleMovement(e, isTouch = false) {
       if (isDragging) {
         e.preventDefault();
         const bodyRect = document.body.getBoundingClientRect();
+        const trackRect = sliderTrack.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
         newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        newY = newY - bodyRect.top - (y);
-        // Constrain to body bounds
-        if (newX < 0) newX = 0;
-        if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
-        if (newY < 0) newY = 0;
-        if (newY > bodyRect.height - y) newY = y;
-        vibrateButton.style.setProperty('left', `${newX}px`); // Set left position
-        setTimeout(() => vibrateButton.style.setProperty('top', `${newY}px`); // Set top position
+        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+
+        if (interactionMode === 'heart') {
+          // Heart mode: free movement within body bounds
+          if (newX < 0) newX = 0;
+          if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+          if (newY < 0) newY = 0;
+          if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+          vibrateButton.style.left = newX + 'px';
+          vibrateButton.style.top = newY + 'px';
+        } else {
+          // Rectangle mode: constrain to bar's horizontal center
+          newX = trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2;
+          if (newY < trackRect.top - bodyRect.top) newY = trackRect.top - bodyRect.top;
+          if (newY > trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight) {
+            newY = trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight;
+          }
+          vibrateButton.style.left = newX + 'px';
+          vibrateButton.style.top = newY + 'px';
+          vibrateButton.style.transform = 'translateY(-50%)';
+        }
 
         const room = roomDisplay.value;
-        const trackRect = sliderTrack.getBoundingClientRect();
         const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - trackRect.top - top;
+        const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9; // Bottom 10% of track
-        const topThreshold = maxPosition * 0.1; // Top 10% of track
+        const bottomThreshold = maxPosition * 0.9;
+        const topThreshold = maxPosition * 0.1;
         const currentTime = Date.now();
 
-        // Determine heart position state
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -932,42 +867,41 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update scale only if position changes
         if (newHeartPosition !== currentHeartPosition) {
           if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', '0.8'); // Thinner
-            sliderTrack.style.setProperty('--scale-y', '1.1', ''); // Squeezed
-            sliderTrack.classList.remove('bottom-squish');
+            sliderTrack.style.setProperty('--scale-x', 0.8);
+            sliderTrack.style.setProperty('--scale-y', 1.1);
+            sliderTrack.classList.remove('bottom-gelatin');
             if (currentTime - lastGelatinTime >= 500) {
               sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500); } // Remove gelatin after 500ms
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', '1.2', ''); // Thicker
-            sliderTrack.setProperty('--scale-y', '0.9'); // Shorter
+            sliderTrack.style.setProperty('--scale-x', 1.2);
+            sliderTrack.style.setProperty('--scale-y', 0.9);
             sliderTrack.classList.remove('gelatin');
             if (currentTime - lastBottomGelatinTime >= 500) {
-              sliderTrack.classList.add('bottom-squish');
-              setTimeout(() => { sliderTrack.classList.remove('bottom-squish'); }, 500); } // Remove bottom-squish after 500ms
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
               lastBottomGelatinTime = currentTime;
             }
           } else {
-            sliderTrack.style.setProperty('--scale-x', '1'); // Normal
-            sliderTrack.setProperty('--scale-y', '1');
-            sliderTrack.classList.remove('gelatin', 'bottom-squish');
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
 
-        if (room && ws) {
+        if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
             const intensity = parseInt(intensitySlider.value);
-            ws.send(JSON.stringify({ room: roomDisplay, command: 'startVibrate', intensity: intensity, slide: vibrationMode }));
+            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode }));
             sliderTrack.classList.add('bar-pulsing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + v.offsetHeight / 2, relativeY <= 0 ? '0' : '0');
+            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
-            ws.send(JSON.stringify({ room: roomDisplay, command: 'stopVibrate' }));
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
             sliderTrack.classList.remove('bar-pulsing', 'pinching');
             lastCollision = null;
           }
@@ -979,9 +913,8 @@ app.get('/', (req, res) => {
 </body>
 </html>
   `);
-  });
+});
 
-// WebSocket connection
 let clients = [];
 wss.on('connection', (ws) => {
   clients.push(ws);
@@ -994,10 +927,10 @@ wss.on('connection', (ws) => {
       clients.forEach(client => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(data));
-        });
+        }
       });
-    } catch (e) => {
-      console.error('Error:', e);
+    } catch (e) {
+      console.error('Error parsing message:', e);
     }
   });
 });
