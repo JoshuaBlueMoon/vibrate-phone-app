@@ -86,7 +86,7 @@ app.get('/', (req, res) => {
   </div>
   <style>
     @keyframes fadeOut {
-      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); }
+      0% { opacity: 1; background: radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to-bottom, #201026, #0e1124); }
       100% { opacity: 0; background: #0e1124; }
     }
     #startScreen.fade-out {
@@ -154,7 +154,7 @@ app.get('/', (req, res) => {
     @keyframes drip {
       0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.7; }
       20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.7; }
-      50% { transform: translate(-60%, 50%) scale(1, 2.5); opacity: 0.7; }
+      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.7; }
       80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.7; }
       100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
     }
@@ -208,7 +208,7 @@ app.get('/', (req, res) => {
       z-index: 2;
     }
     .fluid-effect {
-      animation: drip 3s ease-out infinite;
+      animation: drip 6s ease-out infinite;
       pointer-events: none;
     }
     .toggle-button {
@@ -470,6 +470,7 @@ app.get('/', (req, res) => {
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
     let currentFluidSpriteIndex = 0;
+    let lastBarSprite = '/images/custom-bar.png';
     const fluidSprites = [
       '/images/fluid-sprite1.png',
       '/images/fluid-sprite2.png',
@@ -572,8 +573,33 @@ app.get('/', (req, res) => {
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+        // Change bar sprite based on intensity
+        const currentIntensity = Math.ceil(rectScore / 20);
+        const currentBackground = barGraphic.style.background.match(/url\(['"]?([^'"]+)['"]?\)/)?.[1] || '/images/custom-bar.png';
+        if (currentIntensity >= 2 && currentBackground !== '/images/custom-bar-intensity2.png') {
+          barGraphic.style.background = `url('/images/custom-bar-intensity2.png') no-repeat center center`;
+          barGraphic.style.backgroundSize = 'contain';
+          barGraphic.style.backgroundPosition = 'center center';
+          barGraphic.classList.add('gelatin');
+          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
+          console.log('Bar sprite changed to /images/custom-bar-intensity2.png');
+        } else if (currentIntensity < 2 && currentBackground === '/images/custom-bar-intensity2.png') {
+          barGraphic.style.background = `url('${lastBarSprite}') no-repeat center center`;
+          barGraphic.style.backgroundSize = 'contain';
+          barGraphic.style.backgroundPosition = 'center center';
+          barGraphic.classList.add('gelatin');
+          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
+          console.log(`Bar sprite reverted to ${lastBarSprite}`);
+        }
       } else {
         fluidEffect.style.display = 'none';
+        // Revert to last selected bar sprite in heart mode
+        const currentBackground = barGraphic.style.background.match(/url\(['"]?([^'"]+)['"]?\)/)?.[1] || '/images/custom-bar.png';
+        if (currentBackground !== lastBarSprite) {
+          barGraphic.style.background = `url('${lastBarSprite}') no-repeat center center`;
+          barGraphic.style.backgroundSize = 'contain';
+          barGraphic.style.backgroundPosition = 'center center';
+        }
       }
     }
 
@@ -676,6 +702,7 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
+      updateScoreDisplay();
     });
 
     rectToggle.addEventListener('click', () => {
@@ -695,6 +722,7 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
+      updateScoreDisplay();
     });
 
     menuToggle.addEventListener('click', () => {
@@ -732,6 +760,7 @@ app.get('/', (req, res) => {
             '/images/bar-option2.png',
             '/images/bar-option3.png'
           ];
+          lastBarSprite = barImages[index];
           barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
           barGraphic.style.backgroundSize = 'contain';
           barGraphic.style.backgroundPosition = 'center center';
