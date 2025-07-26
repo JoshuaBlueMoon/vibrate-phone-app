@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
         </div>
       </div>
     </div>
-    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: absolute; top: 50%; transform: translateY(-50%); margin: 0 auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; left: 50%; transform: translate(-50%, -50%);">
+    <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: absolute; top: 50%; transform: translate(-50%, -50%); margin: 0 auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; left: 50%;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -588,14 +588,14 @@ app.get('/', (req, res) => {
     // Sub-menu button click handlers
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log('Sub-menu button ' + (index + 1) + ' clicked');
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = 'url("' + barImages[index] + '") no-repeat center center';
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
@@ -721,7 +721,7 @@ app.get('/', (req, res) => {
         if (sliderTrack.offsetTop + offsetY < 0) offsetY = -sliderTrack.offsetTop;
         if (sliderTrack.offsetTop + offsetY > bodyRect.height - sliderTrack.offsetHeight) offsetY = bodyRect.height - sliderTrack.offsetHeight - sliderTrack.offsetTop;
         sliderTrack.style.setProperty('--spring-y', offsetY + 'px');
-        sliderTrack.style.transform = `translate(-50%, calc(-50% + ${offsetY}px)) scale(1.05, 0.95)`;
+        sliderTrack.style.transform = 'translate(-50%, calc(-50% + ' + offsetY + 'px)) scale(1.05, 0.95)';
       }
       handleMovement(e, false);
     });
@@ -746,7 +746,7 @@ app.get('/', (req, res) => {
         if (sliderTrack.offsetTop + offsetY < 0) offsetY = -sliderTrack.offsetTop;
         if (sliderTrack.offsetTop + offsetY > bodyRect.height - sliderTrack.offsetHeight) offsetY = bodyRect.height - sliderTrack.offsetHeight - sliderTrack.offsetTop;
         sliderTrack.style.setProperty('--spring-y', offsetY + 'px');
-        sliderTrack.style.transform = `translate(-50%, calc(-50% + ${offsetY}px)) scale(1.05, 0.95)`;
+        sliderTrack.style.transform = 'translate(-50%, calc(-50% + ' + offsetY + 'px)) scale(1.05, 0.95)';
       }
       handleMovement(e, true);
     });
