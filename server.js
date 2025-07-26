@@ -142,6 +142,10 @@ app.get('/', (req, res) => {
       0% { opacity: 0.7; transform: translate(0, 0) scale(1); }
       100% { opacity: 0; transform: translate(var(--move-x), var(--move-y)) scale(0.5); }
     }
+    @keyframes spriteFade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.2); }
+    }
     @keyframes popIn {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -192,6 +196,16 @@ app.get('/', (req, res) => {
       background: url('/images/particle-dot.png') no-repeat center center;
       background-size: cover;
       animation: particleBurst 1s ease-out forwards;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .burst-sprite {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: url('/images/burst-sprite.png') no-repeat center center;
+      background-size: contain;
+      animation: spriteFade 1s ease-out forwards;
       pointer-events: none;
       z-index: 2;
     }
@@ -354,6 +368,10 @@ app.get('/', (req, res) => {
         width: 5px;
         height: 5px;
       }
+      .burst-sprite {
+        width: 28px;
+        height: 28px;
+      }
       .toggle-button {
         width: 53px;
         height: 53px;
@@ -389,6 +407,7 @@ app.get('/', (req, res) => {
     let ws = null; // Initialize WebSocket after room number is set
     let isVibrating = false;
     let vibrationMode = 'pulse'; // Default mode
+    let burstMode = false; // Independent toggle for sprite effect
     let score = 0;
     let isPressingBar = false; // Track bar press state
     const startScreen = document.getElementById('startScreen');
@@ -453,15 +472,6 @@ app.get('/', (req, res) => {
                     case 4: pattern = [100, 50]; break;
                     case 5: pattern = [200]; break;
                     default: pattern = [50, 50];
-                  }
-                } else if (data.mode === 'burst') {
-                  switch (intensity) {
-                    case 1: pattern = [30, 30, 30, 30]; break;
-                    case 2: pattern = [40, 40, 40, 40]; break;
-                    case 3: pattern = [50, 50, 50, 50]; break;
-                    case 4: pattern = [60, 60, 60, 60]; break;
-                    case 5: pattern = [70, 70, 70, 70]; break;
-                    default: pattern = [50, 50, 50, 50];
                   }
                 }
                 navigator.vibrate(pattern);
@@ -545,21 +555,21 @@ app.get('/', (req, res) => {
       vibrationMode = 'pulse';
       pulseToggle.classList.add('toggled');
       waveToggle.classList.remove('toggled');
-      burstToggle.classList.remove('toggled');
     });
 
     waveToggle.addEventListener('click', () => {
       vibrationMode = 'wave';
       waveToggle.classList.add('toggled');
       pulseToggle.classList.remove('toggled');
-      burstToggle.classList.remove('toggled');
     });
 
     burstToggle.addEventListener('click', () => {
-      vibrationMode = 'burst';
-      burstToggle.classList.add('toggled');
-      pulseToggle.classList.remove('toggled');
-      waveToggle.classList.remove('toggled');
+      burstMode = !burstMode;
+      if (burstMode) {
+        burstToggle.classList.add('toggled');
+      } else {
+        burstToggle.classList.remove('toggled');
+      }
     });
 
     // Menu toggle functionality
@@ -650,6 +660,21 @@ app.get('/', (req, res) => {
       setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
 
+    function createBurstSprite(x, y) {
+      const sprite = document.createElement('div');
+      sprite.className = 'burst-sprite';
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+      const spriteX = x - bodyRect.left - 16; // Center sprite (32px width/2)
+      const spriteY = y - bodyRect.top - 16; // Center sprite (32px height/2)
+      sprite.style.left = spriteX + 'px';
+      sprite.style.top = spriteY + 'px';
+      glowDotsContainer.appendChild(sprite);
+      setTimeout(() => {
+        sprite.remove();
+      }, 1000); // Match spriteFade animation duration
+    }
+
     sliderTrack.addEventListener('mousedown', (e) => {
       // Only trigger if not clicking on vibrateButton
       if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
@@ -657,6 +682,9 @@ app.get('/', (req, res) => {
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
+        if (burstMode) {
+          createBurstSprite(e.clientX, e.clientY);
+        }
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
@@ -681,6 +709,9 @@ app.get('/', (req, res) => {
         const touchY = e.touches[0].clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1; // Top 10% of track
         const currentTime = Date.now();
+        if (burstMode) {
+          createBurstSprite(e.touches[0].clientX, e.touches[0].clientY);
+        }
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           // Trigger pendulum wobble or squish
           isPressingBar = true;
