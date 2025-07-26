@@ -59,9 +59,7 @@ app.get('/', (req, res) => {
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="bar-top" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 33%; background: url('/images/custom-bar.png') no-repeat center top; background-size: 120px 300%; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); border-radius: 2px; z-index: 1; display: none; transition: transform 0.2s ease;"></div>
-      <div class="bar-middle" style="position: absolute; top: 32%; left: 50%; transform: translateX(-50%); width: 120px; height: 34%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 120px 300%; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); border-radius: 2px; z-index: 1; display: none; transition: transform 0.2s ease;"></div>
-      <div class="bar-bottom" style="position: absolute; top: 65%; left: 50%; transform: translateX(-50%); width: 120px; height: 33%; background: url('/images/custom-bar.png') no-repeat center bottom; background-size: 120px 300%; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); border-radius: 2px; z-index: 1; display: none; transition: transform 0.2s ease;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 20px; height: 10px; background: linear-gradient(to bottom, #60a5fa, #ff3333); border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -140,21 +138,6 @@ app.get('/', (req, res) => {
       75% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
-    @keyframes fleshy-squeeze {
-      0% { transform: translateX(-50%) scale(0.85, 1.15) skew(1deg); }
-      50% { transform: translateX(-50%) scale(0.88, 1.12) skew(-1deg); }
-      100% { transform: translateX(-50%) scale(0.85, 1.15) skew(1deg); }
-    }
-    @keyframes fleshy-stretch {
-      0% { transform: translateX(-50%) scale(0.92, 1.2) skew(-2deg); }
-      50% { transform: translateX(-50%) scale(0.95, 1.18) skew(2deg); }
-      100% { transform: translateX(-50%) scale(0.92, 1.2) skew(-2deg); }
-    }
-    @keyframes fleshy-ripple {
-      0% { transform: translateX(-50%) scale(1, 1) skew(0.5deg); }
-      50% { transform: translateX(-50%) scale(1.02, 0.98) skew(-0.5deg); }
-      100% { transform: translateX(-50%) scale(1, 1) skew(0.5deg); }
-    }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
       50% { opacity: 0.5; }
@@ -167,6 +150,11 @@ app.get('/', (req, res) => {
     @keyframes popIn {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes drip {
+      0% { transform: translate(-50%, 0); opacity: 0.7; }
+      80% { transform: translate(-50%, 100%); opacity: 0.7; }
+      100% { transform: translate(-50%, 100%); opacity: 0; }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -194,15 +182,6 @@ app.get('/', (req, res) => {
       animation: bottom-gelatin 0.5s ease-in-out;
       transform-origin: bottom;
     }
-    .fleshy-squeeze {
-      animation: fleshy-squeeze 0.6s ease-in-out infinite;
-    }
-    .fleshy-stretch {
-      animation: fleshy-stretch 0.6s ease-in-out infinite;
-    }
-    .fleshy-ripple {
-      animation: fleshy-ripple 0.4s ease-in-out infinite;
-    }
     .squished {
       transition: transform 0.2s ease-in-out;
     }
@@ -225,6 +204,10 @@ app.get('/', (req, res) => {
       animation: particleBurst 1s ease-out forwards;
       pointer-events: none;
       z-index: 2;
+    }
+    .fluid-effect {
+      animation: drip 2s ease-out infinite;
+      pointer-events: none;
     }
     .toggle-button {
       background: none;
@@ -365,10 +348,11 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
+        will-change: background;
       }
-      .bar-top, .bar-middle, .bar-bottom {
-        width: 120px;
-        background-size: 120px 300%;
+      .fluid-effect {
+        width: 18px;
+        height: 9px;
       }
       #bottomControls {
         margin-top: 28px;
@@ -456,9 +440,7 @@ app.get('/', (req, res) => {
     const intensityFill = document.getElementById('intensityFill');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
-    const barTop = document.querySelector('.bar-top');
-    const barMiddle = document.querySelector('.bar-middle');
-    const barBottom = document.querySelector('.bar-bottom');
+    const fluidEffect = document.querySelector('.fluid-effect');
     const vibrateButton = document.getElementById('vibrateButton');
     const vibrateImage = document.getElementById('vibrateImage');
     const pulseToggle = document.getElementById('pulseToggle');
@@ -571,6 +553,9 @@ app.get('/', (req, res) => {
         const fillPercentage = Math.min(rectScore, 100);
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
+        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+      } else {
+        fluidEffect.style.display = 'none';
       }
     }
 
@@ -606,6 +591,7 @@ app.get('/', (req, res) => {
         clearInterval(rectScoreInterval);
         rectScoreInterval = null;
       }
+      fluidEffect.style.display = 'none';
     }
 
     function triggerSubtlePulse() {
@@ -630,10 +616,12 @@ app.get('/', (req, res) => {
         intensitySlider.value = Math.ceil(rectScore / 20);
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
+        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
+        fluidEffect.style.display = 'none';
       }
     }
 
@@ -652,12 +640,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
-      // Show single bar, hide segments
-      barGraphic.style.display = 'block';
-      barTop.style.display = 'none';
-      barMiddle.style.display = 'none';
-      barBottom.style.display = 'none';
-      barGraphic.classList.remove('gelatin', 'bottom-gelatin');
     });
 
     rectToggle.addEventListener('click', () => {
@@ -677,17 +659,6 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translateY(-50%)';
       startRectScoreInterval();
       updateIntensityBar();
-      // Hide single bar, show segments
-      barGraphic.style.display = 'none';
-      barTop.style.display = 'block';
-      barMiddle.style.display = 'block';
-      barBottom.style.display = 'block';
-      barTop.classList.remove('fleshy-stretch', 'fleshy-ripple');
-      barMiddle.classList.remove('fleshy-ripple');
-      barBottom.classList.remove('fleshy-squeeze', 'fleshy-ripple');
-      barTop.style.transform = 'translateX(-50%) scale(1, 1)';
-      barMiddle.style.transform = 'translateX(-50%) scale(1, 1)';
-      barBottom.style.transform = 'translateX(-50%) scale(1, 1)';
     });
 
     menuToggle.addEventListener('click', () => {
@@ -724,20 +695,11 @@ app.get('/', (req, res) => {
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        if (interactionMode === 'heart') {
-          barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-          barGraphic.style.backgroundSize = 'contain';
-          barGraphic.style.backgroundPosition = 'center center';
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-        } else {
-          barTop.style.background = \`url('\${barImages[index]}') no-repeat center top\`;
-          barMiddle.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-          barBottom.style.background = \`url('\${barImages[index]}') no-repeat center bottom\`;
-          barTop.style.backgroundSize = '120px 300%';
-          barMiddle.style.backgroundSize = '120px 300%';
-          barBottom.style.backgroundSize = '120px 300%';
-        }
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundPosition = 'center center';
+        barGraphic.classList.add('gelatin');
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
       });
     });
 
@@ -752,10 +714,8 @@ app.get('/', (req, res) => {
       updateScoreDisplay();
       const currentTime = Date.now();
       if (currentTime - lastGelatinTime >= 500) {
-        if (interactionMode === 'heart') {
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-        }
+        sliderTrack.classList.add('gelatin');
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         lastGelatinTime = currentTime;
       }
 
@@ -798,34 +758,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('pendulum-wobble');
-            setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          } else {
-            barTop.classList.add('pendulum-wobble');
-            barMiddle.classList.add('pendulum-wobble');
-            barBottom.classList.add('pendulum-wobble');
-            setTimeout(() => {
-              barTop.classList.remove('pendulum-wobble');
-              barMiddle.classList.remove('pendulum-wobble');
-              barBottom.classList.remove('pendulum-wobble');
-            }, 600);
-          }
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('gelatin');
-            setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          } else {
-            barTop.classList.add('gelatin');
-            barMiddle.classList.add('gelatin');
-            barBottom.classList.add('gelatin');
-            setTimeout(() => {
-              barTop.classList.remove('gelatin');
-              barMiddle.classList.remove('gelatin');
-              barBottom.classList.remove('gelatin');
-            }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -841,34 +779,12 @@ app.get('/', (req, res) => {
           isPressingBar = true;
           sliderTrack.classList.add('squished');
           sliderTrack.style.setProperty('--scale-y', 0.8);
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('pendulum-wobble');
-            setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          } else {
-            barTop.classList.add('pendulum-wobble');
-            barMiddle.classList.add('pendulum-wobble');
-            barBottom.classList.add('pendulum-wobble');
-            setTimeout(() => {
-              barTop.classList.remove('pendulum-wobble');
-              barMiddle.classList.remove('pendulum-wobble');
-              barBottom.classList.remove('pendulum-wobble');
-            }, 600);
-          }
+          barGraphic.classList.add('pendulum-wobble');
+          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 500) {
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('gelatin');
-            setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          } else {
-            barTop.classList.add('gelatin');
-            barMiddle.classList.add('gelatin');
-            barBottom.classList.add('gelatin');
-            setTimeout(() => {
-              barTop.classList.remove('gelatin');
-              barMiddle.classList.remove('gelatin');
-              barBottom.classList.remove('gelatin');
-            }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -882,20 +798,9 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('gelatin');
-            setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          } else {
-            barTop.classList.add('gelatin');
-            barMiddle.classList.add('gelatin');
-            barBottom.classList.add('gelatin');
-            setTimeout(() => {
-              barTop.classList.remove('gelatin');
-              barMiddle.classList.remove('gelatin');
-              barBottom.classList.remove('gelatin');
-            }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, false);
@@ -909,20 +814,9 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          if (interactionMode === 'heart') {
-            barGraphic.classList.add('gelatin');
-            setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-          } else {
-            barTop.classList.add('gelatin');
-            barMiddle.classList.add('gelatin');
-            barBottom.classList.add('gelatin');
-            setTimeout(() => {
-              barTop.classList.remove('gelatin');
-              barMiddle.classList.remove('gelatin');
-              barBottom.classList.remove('gelatin');
-            }, 500);
-          }
+          sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
         }
       }
       handleMovement(e, true);
@@ -932,20 +826,9 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        if (interactionMode === 'heart') {
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-        } else {
-          barTop.classList.add('gelatin');
-          barMiddle.classList.add('gelatin');
-          barBottom.classList.add('gelatin');
-          setTimeout(() => {
-            barTop.classList.remove('gelatin');
-            barMiddle.classList.remove('gelatin');
-            barBottom.classList.remove('gelatin');
-          }, 500);
-        }
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -955,16 +838,6 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            barTop.classList.remove('fleshy-stretch', 'fleshy-ripple');
-            barMiddle.classList.remove('fleshy-ripple');
-            barBottom.classList.remove('fleshy-squeeze', 'fleshy-ripple');
-            barTop.style.transform = 'translateX(-50%) scale(1, 1)';
-            barMiddle.style.transform = 'translateX(-50%) scale(1, 1)';
-            barBottom.style.transform = 'translateX(-50%) scale(1, 1)';
-          } else {
-            barGraphic.classList.remove('gelatin', 'bottom-gelatin');
-          }
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -976,20 +849,9 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        if (interactionMode === 'heart') {
-          barGraphic.classList.add('gelatin');
-          setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-        } else {
-          barTop.classList.add('gelatin');
-          barMiddle.classList.add('gelatin');
-          barBottom.classList.add('gelatin');
-          setTimeout(() => {
-            barTop.classList.remove('gelatin');
-            barMiddle.classList.remove('gelatin');
-            barBottom.classList.remove('gelatin');
-          }, 500);
-        }
+        sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -999,16 +861,6 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          if (interactionMode === 'rect') {
-            barTop.classList.remove('fleshy-stretch', 'fleshy-ripple');
-            barMiddle.classList.remove('fleshy-ripple');
-            barBottom.classList.remove('fleshy-squeeze', 'fleshy-ripple');
-            barTop.style.transform = 'translateX(-50%) scale(1, 1)';
-            barMiddle.style.transform = 'translateX(-50%) scale(1, 1)';
-            barBottom.style.transform = 'translateX(-50%) scale(1, 1)';
-          } else {
-            barGraphic.classList.remove('gelatin', 'bottom-gelatin');
-          }
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -1098,59 +950,28 @@ app.get('/', (req, res) => {
         }
 
         if (newHeartPosition !== currentHeartPosition) {
-          if (interactionMode === 'heart') {
-            if (newHeartPosition === 'top') {
-              sliderTrack.style.setProperty('--scale-x', 0.8);
-              sliderTrack.style.setProperty('--scale-y', 1.1);
-              sliderTrack.classList.remove('bottom-gelatin');
-              if (currentTime - lastGelatinTime >= 500) {
-                barGraphic.classList.add('gelatin');
-                setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 500);
-                lastGelatinTime = currentTime;
-              }
-            } else if (newHeartPosition === 'bottom') {
-              sliderTrack.style.setProperty('--scale-x', 1.2);
-              sliderTrack.style.setProperty('--scale-y', 0.9);
-              sliderTrack.classList.remove('gelatin');
-              if (currentTime - lastBottomGelatinTime >= 500) {
-                barGraphic.classList.add('bottom-gelatin');
-                setTimeout(() => { barGraphic.classList.remove('bottom-gelatin'); }, 500);
-                lastBottomGelatinTime = currentTime;
-              }
-            } else {
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-              barGraphic.classList.remove('gelatin', 'bottom-gelatin');
+          if (newHeartPosition === 'top') {
+            sliderTrack.style.setProperty('--scale-x', 0.8);
+            sliderTrack.style.setProperty('--scale-y', 1.1);
+            sliderTrack.classList.remove('bottom-gelatin');
+            if (currentTime - lastGelatinTime >= 500) {
+              sliderTrack.classList.add('gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 500);
+              lastGelatinTime = currentTime;
+            }
+          } else if (newHeartPosition === 'bottom') {
+            sliderTrack.style.setProperty('--scale-x', 1.2);
+            sliderTrack.style.setProperty('--scale-y', 0.9);
+            sliderTrack.classList.remove('gelatin');
+            if (currentTime - lastBottomGelatinTime >= 500) {
+              sliderTrack.classList.add('bottom-gelatin');
+              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 500);
+              lastBottomGelatinTime = currentTime;
             }
           } else {
-            if (newHeartPosition === 'top') {
-              barTop.classList.add('fleshy-stretch');
-              barMiddle.classList.add('fleshy-ripple');
-              barBottom.classList.add('fleshy-ripple');
-              barTop.classList.remove('gelatin', 'bottom-gelatin');
-              barMiddle.classList.remove('gelatin', 'bottom-gelatin');
-              barBottom.classList.remove('gelatin', 'bottom-gelatin', 'fleshy-squeeze');
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-            } else if (newHeartPosition === 'bottom') {
-              barBottom.classList.add('fleshy-squeeze');
-              barMiddle.classList.add('fleshy-ripple');
-              barTop.classList.add('fleshy-ripple');
-              barTop.classList.remove('gelatin', 'bottom-gelatin', 'fleshy-stretch');
-              barMiddle.classList.remove('gelatin', 'bottom-gelatin');
-              barBottom.classList.remove('gelatin', 'bottom-gelatin');
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-            } else {
-              barTop.classList.remove('fleshy-stretch', 'fleshy-ripple', 'gelatin', 'bottom-gelatin');
-              barMiddle.classList.remove('fleshy-ripple', 'gelatin', 'bottom-gelatin');
-              barBottom.classList.remove('fleshy-squeeze', 'fleshy-ripple', 'gelatin', 'bottom-gelatin');
-              barTop.style.transform = 'translateX(-50%) scale(1, 1)';
-              barMiddle.style.transform = 'translateX(-50%) scale(1, 1)';
-              barBottom.style.transform = 'translateX(-50%) scale(1, 1)';
-              sliderTrack.style.setProperty('--scale-x', 1);
-              sliderTrack.style.setProperty('--scale-y', 1);
-            }
+            sliderTrack.style.setProperty('--scale-x', 1);
+            sliderTrack.style.setProperty('--scale-y', 1);
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
