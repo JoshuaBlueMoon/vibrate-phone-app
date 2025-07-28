@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
-<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; color: white;">
+<body style="margin: 0; height: 100vh; width: 100%; max-width: 414px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; font-family: Arial; colorF2F3F4; color: white;">
   <div id="startScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100vh; background: url('/images/background.png'), radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); background-size: cover; background-position: center; background-repeat: no-repeat; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;">
     <img id="titleImage" src="/images/title.png" alt="Game Title" style="width: 200px; max-width: 80%; margin-bottom: 20px;">
     <input id="roomInput" type="text" placeholder="Enter Room Code" style="width: 36px; height: 18px; font-size: 10px; padding: 4px; background: url('/images/room-code-bg.png') no-repeat center center; background-size: contain; border: none; color: white; text-align: center;">
@@ -47,7 +47,7 @@
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.6, 0.6); width: 24px; height: 12px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5)); border-radius: 50% 50% 60% 60%; opacity: 0.8; box-shadow: 0 0 8px rgba(255, 255, 255, 0.4); z-index: 2;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.8, 0.8); width: 30px; height: 15px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5)); border-radius: 50% 50% 30% 30%; opacity: 0.8; box-shadow: 0 2px 8px rgba(255, 255, 255, 0.4); z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
     </div>
@@ -139,12 +139,11 @@
       100% { opacity: 1; transform: translateY(0); }
     }
     @keyframes drip {
-      0% { transform: translate(-50%, -20%) scale(0.6, 0.6); opacity: 0.8; }
-      10% { transform: translate(-50%, 0%) scale(0.8, 0.8); opacity: 0.9; }
-      40% { transform: translate(-50%, 40%) scale(0.8, 1.5); opacity: 0.9; }
-      70% { transform: translate(-50%, 80%) scale(0.7, 2.0); opacity: 0.7; }
-      90% { transform: translate(-50%, 100%) scale(0.6, 1.8); opacity: 0.5; }
-      100% { transform: translate(-50%, 120%) scale(0.5, 1.5); opacity: 0; }
+      0% { transform: translate(-50%, 0) scale(0.8, 0.8); opacity: 0.8; }
+      20% { transform: translate(-50%, 20%) scale(0.9, 1.2); opacity: 0.9; }
+      50% { transform: translate(-50%, 50%) scale(0.8, 1.6); opacity: 0.9; }
+      80% { transform: translate(-50%, 80%) scale(0.7, 1.8); opacity: 0.7; }
+      100% { transform: translate(-50%, 100%) scale(0.6, 1.2); opacity: 0; }
     }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -341,8 +340,9 @@
         will-change: background;
       }
       .fluid-effect {
-        width: 22px;
-        height: 11px;
+        width: 27px;
+        height: 13.5px;
+        animation: drip 8s ease-out infinite;
       }
       #bottomControls {
         margin-top: 28px;
@@ -545,7 +545,7 @@
         const fillPercentage = Math.min(rectScore, 100);
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        fluidEffect.style.display = rectScore >= 40 ? 'block' : 'none';
+        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
       } else {
         fluidEffect.style.display = 'none';
       }
@@ -608,7 +608,7 @@
         intensitySlider.value = Math.ceil(rectScore / 20);
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        fluidEffect.style.display = rectScore >= 40 ? 'block' : 'none';
+        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
