@@ -151,11 +151,11 @@ app.get('/', (req, res) => {
       100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes drip {
-  0% { transform: translate(-50%, 0) scale(0.6, 0.6); opacity: 0.8; }
-  20% { transform: translate(-50%, 30%) scale(0.8, 1.2); opacity: 0.8; }
-  50% { transform: translate(-50%, 70%) scale(0.7, 1.5); opacity: 0.7; }
-  80% { transform: translate(-50%, 120%) scale(0.6, 1.3); opacity: 0.6; }
-  100% { transform: translate(-50%, 150%) scale(0.5, 1.0); opacity: 0; }
+  0% { transform: translate(-50%, 0) scale(0.8, 0.8); opacity: 0.9; }
+  20% { transform: translate(-50%, 20%) scale(0.9, 1.3); opacity: 0.9; }
+  50% { transform: translate(-50%, 60%) scale(0.7, 1.8); opacity: 0.85; }
+  80% { transform: translate(-50%, 100%) scale(0.6, 2.0); opacity: 0.8; }
+  100% { transform: translate(-50%, 150%) scale(0.5, 1.5); opacity: 0; }
 }
     .pulsing {
       animation: pulse 0.5s ease-in-out;
@@ -207,19 +207,19 @@ app.get('/', (req, res) => {
       z-index: 2;
     }
 .fluid-effect {
-  animation: drip 8s ease-out infinite;
+  animation: drip 10s ease-out infinite;
   pointer-events: none;
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translateX(-50%) scale(0.6, 0.6);
-  width: 24px;
-  height: 12px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(200, 200, 200, 0.5));
-  border-radius: 50% 50% 60% 60%;
-  opacity: 0.8;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
-  filter: blur(1px);
+  transform: translateX(-50%) scale(0.8, 0.8);
+  width: 30px;
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(180, 180, 180, 0.6));
+  border-radius: 50% 50% 70% 70%;
+  opacity: 0.9;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
+  filter: blur(2px);
   z-index: 2;
     }
     .toggle-button {
