@@ -76,7 +76,8 @@ app.get('/', (req, res) => {
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
-        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;"></div>
+        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
+        </div>
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
@@ -119,21 +120,21 @@ app.get('/', (req, res) => {
     }
     @keyframes pinch {
       0% { transform: scaleX(1); }
-      50% { transform: scaleX(0.95); }
+      50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
     @keyframes gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
+      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
+      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes bottom-gelatin {
       0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      25% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.15)); }
-      50% { transform: scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)); }
-      75% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
+      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
+      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
+      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
       100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes slowDrift {
@@ -173,17 +174,17 @@ app.get('/', (req, res) => {
       transform-origin: bottom center;
     }
     .pinching {
-      animation: pinch 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pinch 0.3s ease-in-out;
     }
     .gelatin {
-      animation: gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      animation: gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
     .bottom-gelatin {
       animation: bottom-gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       transform-origin: bottom;
     }
     .squished {
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .glow-dot {
       position: absolute;
@@ -708,18 +709,18 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
-        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 700);
       });
     });
 
@@ -733,9 +734,9 @@ app.get('/', (req, res) => {
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 600) {
+      if (currentTime - lastGelatinTime >= 700) {
         sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
         lastGelatinTime = currentTime;
       }
 
@@ -781,9 +782,9 @@ app.get('/', (req, res) => {
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 600) {
+        } else if (currentTime - lastTrackGelatinTime >= 700) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -802,9 +803,9 @@ app.get('/', (req, res) => {
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 600) {
+        } else if (currentTime - lastTrackGelatinTime >= 700) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -820,7 +821,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
         }
       }
       handleMovement(e, false);
@@ -836,7 +837,7 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('squished');
           sliderTrack.classList.add('gelatin');
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
         }
       }
       handleMovement(e, true);
@@ -848,7 +849,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -858,7 +859,6 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 700);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -872,7 +872,7 @@ app.get('/', (req, res) => {
         sliderTrack.classList.remove('squished');
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
       }
       if (isDragging) {
         const room = roomDisplay.value;
@@ -882,7 +882,6 @@ app.get('/', (req, res) => {
           sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
           sliderTrack.style.setProperty('--scale-x', 1);
           sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 700);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -900,9 +899,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 600) {
+        if (currentTime - lastHeartGelatinTime >= 700) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -919,9 +918,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 600) {
+        if (currentTime - lastHeartGelatinTime >= 700) {
           vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 600);
+          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -976,9 +975,9 @@ app.get('/', (req, res) => {
             sliderTrack.style.setProperty('--scale-x', 0.8);
             sliderTrack.style.setProperty('--scale-y', 1.1);
             sliderTrack.classList.remove('bottom-gelatin');
-            if (currentTime - lastGelatinTime >= 600) {
+            if (currentTime - lastGelatinTime >= 700) {
               sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 600);
+              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
@@ -993,8 +992,7 @@ app.get('/', (req, res) => {
           } else {
             sliderTrack.style.setProperty('--scale-x', 1);
             sliderTrack.style.setProperty('--scale-y', 1);
-            setTimeout(() => { sliderTrack.classList.remove('gelatin', 'bottom-gelatin'); }, 700);
-            currentHeartPosition = 'middle';
+            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
           }
           currentHeartPosition = newHeartPosition;
         }
