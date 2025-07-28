@@ -149,14 +149,14 @@ app.get('/', (req, res) => {
     @keyframes popIn {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes drip {
-      0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.6; }
-      20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.6; }
-      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.6; }
-      80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.6; }
-      100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
-    }
+}
+@keyframes drip {
+  0% { transform: translate(-50%, 0) scale(0.6, 0.6); opacity: 0.8; }
+  20% { transform: translate(-50%, 30%) scale(0.8, 1.2); opacity: 0.8; }
+  50% { transform: translate(-50%, 70%) scale(0.7, 1.5); opacity: 0.7; }
+  80% { transform: translate(-50%, 120%) scale(0.6, 1.3); opacity: 0.6; }
+  100% { transform: translate(-50%, 150%) scale(0.5, 1.0); opacity: 0; }
+}
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
