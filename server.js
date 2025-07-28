@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     </div>
     <div id="sliderTrack" style="width: 120px; height: 50%; max-height: 300px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
-      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, #60a5fa, #ff3333); border-radius: 50% 50% 20% 20%; opacity: 0.7; z-index: 2;"></div>
+      <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4)); border-radius: 50%; opacity: 0.6; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="pulse-symbol top" style="position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #ff3333; z-index: 4;">〰️</div>
@@ -152,10 +152,10 @@ app.get('/', (req, res) => {
       100% { opacity: 1; transform: translateY(0); }
     }
     @keyframes drip {
-      0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.7; }
-      20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.7; }
-      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.7; }
-      80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.7; }
+      0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.6; }
+      20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.6; }
+      50% { transform: translate(-60%, 50%) scale(1, 1.3); opacity: 0.6; }
+      80% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0.6; }
       100% { transform: translate(-60%, 100%) scale(1, 1); opacity: 0; }
     }
     .pulsing {
@@ -933,7 +933,8 @@ app.get('/', (req, res) => {
           lastHeartGelatinTime = currentTime;
         }
       }
-      lastPosition = vibrateButton.offsetTop;
+      lastPosition = v
+ibrateButton.offsetTop;
     });
 
     function handleMovement(e, isTouch = false) {
