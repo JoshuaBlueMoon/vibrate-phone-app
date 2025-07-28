@@ -206,9 +206,21 @@ app.get('/', (req, res) => {
       pointer-events: none;
       z-index: 2;
     }
-    .fluid-effect {
-      animation: drip 6s ease-out infinite;
-      pointer-events: none;
+.fluid-effect {
+  animation: drip 8s ease-out infinite;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) scale(0.6, 0.6);
+  width: 24px;
+  height: 12px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(200, 200, 200, 0.5));
+  border-radius: 50% 50% 60% 60%;
+  opacity: 0.8;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+  filter: blur(1px);
+  z-index: 2;
     }
     .toggle-button {
       background: none;
