@@ -123,19 +123,21 @@ app.get('/', (req, res) => {
       50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
-    @keyframes gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+@keyframes gelatin {
+  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+  20% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.2)) rotate(2deg); }
+  40% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 1.3)) rotate(-2deg); }
+  60% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.25)) rotate(1deg); }
+  80% { transform: scale(calc(var(--scale-x, 1) * 1.02), calc(var(--scale-y, 1) * 1.15)) rotate(-1deg); }
+  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
     }
-    @keyframes bottom-gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+@keyframes bottom-gelatin {
+  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+  20% { transform: scale(calc(var(--scale-x, 1) * 1.3), calc(var(--scale-y, 1) * 0.8)) rotate(3deg); }
+  40% { transform: scale(calc(var(--scale-x, 1) * 1.4), calc(var(--scale-y, 1) * 0.75)) rotate(-3deg); }
+  60% { transform: scale(calc(var(--scale-x, 1) * 1.25), calc(var(--scale-y, 1) * 0.85)) rotate(2deg); }
+  80% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.95)) rotate(-1deg); }
+  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -939,109 +941,109 @@ app.get('/', (req, res) => {
       lastPosition = vibrateButton.offsetTop;
     });
 
-    function handleMovement(e, isTouch = false) {
-      if (isDragging) {
-        e.preventDefault();
-        const bodyRect = document.body.getBoundingClientRect();
-        const trackRect = sliderTrack.getBoundingClientRect();
-        let newX = isTouch ? e.touches[0].clientX : e.clientX;
-        let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+  function handleMovement(e, isTouch = false) {
+  if (isDragging) {
+    e.preventDefault();
+    const bodyRect = document.body.getBoundingClientRect();
+    const trackRect = sliderTrack.getBoundingClientRect();
+    let newX = isTouch ? e.touches[0].clientX : e.clientX;
+    let newY = isTouch ? e.touches[0].clientY : e.clientY;
+    newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+    newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
 
-        if (interactionMode === 'heart') {
-          if (newX < 0) newX = 0;
-          if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
-          if (newY < 0) newY = 0;
-          if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
-          vibrateButton.style.left = newX + 'px';
-          vibrateButton.style.top = newY + 'px';
-        } else {
-          newX = trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2;
-          if (newY < trackRect.top - bodyRect.top) newY = trackRect.top - bodyRect.top;
-          if (newY > trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight) {
-            newY = trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight;
+    if (interactionMode === 'heart') {
+      if (newX < 0) newX = 0;
+      if (newX > bodyRect.width - vibrateButton.offsetWidth) newX = bodyRect.width - vibrateButton.offsetWidth;
+      if (newY < 0) newY = 0;
+      if (newY > bodyRect.height - vibrateButton.offsetHeight) newY = bodyRect.height - vibrateButton.offsetHeight;
+      vibrateButton.style.left = newX + 'px';
+      vibrateButton.style.top = newY + 'px';
+    } else {
+      newX = trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2;
+      if (newY < trackRect.top - bodyRect.top) newY = trackRect.top - bodyRect.top;
+      if (newY > trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight) {
+        newY = trackRect.top - bodyRect.top + trackRect.height - vibrateButton.offsetHeight;
+      }
+      vibrateButton.style.left = newX + 'px';
+      vibrateButton.style.top = newY + 'px';
+      vibrateButton.style.transform = 'translateY(-50%)';
+    }
+
+    const room = roomDisplay.value;
+    const heartRect = vibrateButton.getBoundingClientRect();
+    const relativeY = heartRect.top - trackRect.top;
+    const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+    const bottomThreshold = maxPosition * 0.9;
+    const topThreshold = maxPosition * 0.1;
+    const currentTime = Date.now();
+
+    let newHeartPosition = 'middle';
+    if (relativeY <= topThreshold) {
+      newHeartPosition = 'top';
+    } else if (relativeY >= bottomThreshold) {
+      newHeartPosition = 'bottom';
+    }
+
+    if (newHeartPosition !== currentHeartPosition) {
+      if (newHeartPosition === 'top') {
+        sliderTrack.style.setProperty('--scale-x', 0.85);
+        sliderTrack.style.setProperty('--scale-y', 1.3);
+        sliderTrack.classList.remove('bottom-gelatin');
+        if (currentTime - lastGelatinTime >= 900) {
+          sliderTrack.classList.add('gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 900);
+          lastGelatinTime = currentTime;
+        }
+      } else if (newHeartPosition === 'bottom') {
+        sliderTrack.style.setProperty('--scale-x', 1.4);
+        sliderTrack.style.setProperty('--scale-y', 0.75);
+        sliderTrack.classList.remove('gelatin');
+        if (currentTime - lastBottomGelatinTime >= 900) {
+          sliderTrack.classList.add('bottom-gelatin');
+          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 900);
+          lastBottomGelatinTime = currentTime;
+        }
+      } else {
+        sliderTrack.style.setProperty('--scale-x', 1);
+        sliderTrack.style.setProperty('--scale-y', 1);
+        sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
+      }
+      currentHeartPosition = newHeartPosition;
+    }
+
+    if (room) {
+      if (relativeY <= 0 || relativeY >= maxPosition) {
+        const intensity = interactionMode === 'rect' ? Math.ceil(rectScore / 20) : parseInt(intensitySlider.value);
+        let pattern;
+        if (vibrationMode === 'pulse') {
+          switch (intensity) {
+            case 1: pattern = [50, 200]; break;
+            case 2: pattern = [50, 100]; break;
+            case 3: pattern = [50, 50]; break;
+            case 4: pattern = [100, 50]; break;
+            case 5: pattern = [200]; break;
+            default: pattern = [50, 50];
           }
-          vibrateButton.style.left = newX + 'px';
-          vibrateButton.style.top = newY + 'px';
-          vibrateButton.style.transform = 'translateY(-50%)';
-        }
-
-        const room = roomDisplay.value;
-        const heartRect = vibrateButton.getBoundingClientRect();
-        const relativeY = heartRect.top - trackRect.top;
-        const maxPosition = trackRect.height - vibrateButton.offsetHeight;
-        const bottomThreshold = maxPosition * 0.9;
-        const topThreshold = maxPosition * 0.1;
-        const currentTime = Date.now();
-
-        let newHeartPosition = 'middle';
-        if (relativeY <= topThreshold) {
-          newHeartPosition = 'top';
-        } else if (relativeY >= bottomThreshold) {
-          newHeartPosition = 'bottom';
-        }
-
-        if (newHeartPosition !== currentHeartPosition) {
-          if (newHeartPosition === 'top') {
-            sliderTrack.style.setProperty('--scale-x', 0.8);
-            sliderTrack.style.setProperty('--scale-y', 1.1);
-            sliderTrack.classList.remove('bottom-gelatin');
-            if (currentTime - lastGelatinTime >= 700) {
-              sliderTrack.classList.add('gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-              lastGelatinTime = currentTime;
-            }
-          } else if (newHeartPosition === 'bottom') {
-            sliderTrack.style.setProperty('--scale-x', 1.2);
-            sliderTrack.style.setProperty('--scale-y', 0.9);
-            sliderTrack.classList.remove('gelatin');
-            if (currentTime - lastBottomGelatinTime >= 700) {
-              sliderTrack.classList.add('bottom-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 700);
-              lastBottomGelatinTime = currentTime;
-            }
-          } else {
-            sliderTrack.style.setProperty('--scale-x', 1);
-            sliderTrack.style.setProperty('--scale-y', 1);
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
-          }
-          currentHeartPosition = newHeartPosition;
-        }
-
-        if (room) {
-          if (relativeY <= 0 || relativeY >= maxPosition) {
-            const intensity = interactionMode === 'rect' ? Math.ceil(rectScore / 20) : parseInt(intensitySlider.value);
-            let pattern;
-            if (vibrationMode === 'pulse') {
-              switch (intensity) {
-                case 1: pattern = [50, 200]; break;
-                case 2: pattern = [50, 100]; break;
-                case 3: pattern = [50, 50]; break;
-                case 4: pattern = [100, 50]; break;
-                case 5: pattern = [200]; break;
-                default: pattern = [50, 50];
-              }
-            } else if (vibrationMode === 'wave') {
-              switch (intensity) {
-                case 1: pattern = [1000]; break;
-                case 2: pattern = [1500]; break;
-                case 3: pattern = [2000]; break;
-                case 4: pattern = [2500]; break;
-                case 5: pattern = [3000]; break;
-                default: pattern = [2000];
-              }
-            }
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
-            sliderTrack.classList.add('bar-pulsing', 'pinching');
-            createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
-          } else {
-            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'pinching');
-            lastCollision = null;
+        } else if (vibrationMode === 'wave') {
+          switch (intensity) {
+            case 1: pattern = [1000]; break;
+            case 2: pattern = [1500]; break;
+            case 3: pattern = [2000]; break;
+            case 4: pattern = [2500]; break;
+            case 5: pattern = [3000]; break;
+            default: pattern = [2000];
           }
         }
-        lastPosition = relativeY;
+        ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
+        sliderTrack.classList.add('bar-pulsing', 'pinching');
+        createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
+      } else {
+        ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+        sliderTrack.classList.remove('bar-pulsing', 'pinching');
+        lastCollision = null;
+      }
+    }
+    lastPosition = relativeY;
       }
     }
   </script>
