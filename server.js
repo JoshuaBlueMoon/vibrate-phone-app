@@ -124,20 +124,20 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
 @keyframes gelatin {
-  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
-  20% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.2)) rotate(2deg); }
-  40% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 1.3)) rotate(-2deg); }
-  60% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.25)) rotate(1deg); }
-  80% { transform: scale(calc(var(--scale-x, 1) * 1.02), calc(var(--scale-y, 1) * 1.15)) rotate(-1deg); }
-  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+  20% { transform: scale(calc(var(--scale-x, 1) * 0.92), calc(var(--scale-y, 1) * 1.15)); }
+  40% { transform: scale(calc(var(--scale-x, 1) * 1.08), calc(var(--scale-y, 1) * 0.85)); }
+  60% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.10)); }
+  80% { transform: scale(calc(var(--scale-x, 1) * 1.03), calc(var(--scale-y, 1) * 0.95)); }
+  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
 @keyframes bottom-gelatin {
-  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
-  20% { transform: scale(calc(var(--scale-x, 1) * 1.3), calc(var(--scale-y, 1) * 0.8)) rotate(3deg); }
-  40% { transform: scale(calc(var(--scale-x, 1) * 1.4), calc(var(--scale-y, 1) * 0.75)) rotate(-3deg); }
-  60% { transform: scale(calc(var(--scale-x, 1) * 1.25), calc(var(--scale-y, 1) * 0.85)) rotate(2deg); }
-  80% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.95)) rotate(-1deg); }
-  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+  20% { transform: scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)); }
+  40% { transform: scale(calc(var(--scale-x, 1) * 0.90), calc(var(--scale-y, 1) * 1.08)); }
+  60% { transform: scale(calc(var(--scale-x, 1) * 1.10), calc(var(--scale-y, 1) * 0.92)); }
+  80% { transform: scale(calc(var(--scale-x, 1) * 0.97), calc(var(--scale-y, 1) * 1.03)); }
+  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -178,12 +178,14 @@ app.get('/', (req, res) => {
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
-    .gelatin {
-      animation: gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+.gelatin {
+  animation: gelatin 1.2s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  will-change: transform;
     }
-    .bottom-gelatin {
-      animation: bottom-gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      transform-origin: bottom;
+.bottom-gelatin {
+  animation: bottom-gelatin 1.2s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  transform-origin: bottom;
+  will-change: transform;
     }
     .squished {
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
