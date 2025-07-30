@@ -223,15 +223,6 @@ app.get('/', (req, res) => {
   box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
   filter: blur(2px);
   z-index: 2;
-  .squished-top {
-  transform: scale(0.8, 1.1);
-  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.squished-bottom {
-  transform: scale(1.2, 0.9);
-  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
     }
     .toggle-button {
       background: none;
