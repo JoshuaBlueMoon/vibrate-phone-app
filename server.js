@@ -124,12 +124,11 @@ app.get('/', (req, res) => {
       100% { transform: scaleX(1); }
     }
 @keyframes gelatin {
-  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
-  20% { transform: scale(calc(var(--scale-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.2)) rotate(2deg); }
-  40% { transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.8)) rotate(-2deg); }
-  60% { transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.15)) rotate(1deg); }
-  80% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)) rotate(-1deg); }
-  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
+  0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
+  25% { transform: scale(calc(var(--scale-x, 1) * 0.92), calc(var(--scale-y, 1) * 1.08)); }
+  50% { transform: scale(calc(var(--scale-x, 1) * 1.08), calc(var(--scale-y, 1) * 0.92)); }
+  75% { transform: scale(calc(var(--scale-x, 1) * 0.96), calc(var(--scale-y, 1) * 1.04)); }
+  100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
 }
 @keyframes bottom-gelatin {
   0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)) rotate(0deg); }
