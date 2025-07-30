@@ -123,20 +123,6 @@ app.get('/', (req, res) => {
       50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
-    @keyframes gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-    }
-    @keyframes bottom-gelatin {
-      0% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-      30% { transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)); }
-      60% { transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)); }
-      80% { transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
-      100% { transform: scale(var(--scale-x, 1), var(--scale-y, 1)); }
-    }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
       50% { opacity: 0.5; }
@@ -175,13 +161,6 @@ app.get('/', (req, res) => {
     }
     .pinching {
       animation: pinch 0.3s ease-in-out;
-    }
-    .gelatin {
-      animation: gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .bottom-gelatin {
-      animation: bottom-gelatin 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      transform-origin: bottom;
     }
     .squished {
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -452,10 +431,6 @@ app.get('/', (req, res) => {
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let lastGelatinTime = 0;
-    let lastHeartGelatinTime = 0;
-    let lastTrackGelatinTime = 0;
-    let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle';
     let isSubMenuOpen = false;
@@ -803,10 +778,6 @@ app.get('/', (req, res) => {
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 700) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-          lastTrackGelatinTime = currentTime;
         }
       }
     });
@@ -868,8 +839,7 @@ app.get('/', (req, res) => {
 
     document.addEventListener('touchend', () => {
       if (isPressingBar) {
-        isPressingBar = false;
-        sliderTrack.classList.remove('squished');
+        isPressingBar = true;
         sliderTrack.classList.add('gelatin');
         sliderTrack.style.setProperty('--scale-y', 1);
         setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
