@@ -404,10 +404,7 @@ app.get('/', (req, res) => {
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
-    const menuToggle = document.getElementById('menuToggle');
-    const subMenu = document.getElementById('subMenu');
-    const subMenuButtons = document.querySelectorAll('.sub-menu-button');
-    let isDragging = false;
+    const menuToggle = document.getElementById('menuToggle,nil    let isDragging = false;
     let startX = 0;
     let startY = 0;
     let lastPosition = 0;
@@ -427,7 +424,7 @@ app.get('/', (req, res) => {
     const minWidth = 100; // Narrower for more pronounced thinning
     const maxWidth = 200; // Wider for more pronounced squishing
     const minHeight = 70; // Shorter for squishing
-    const maxHeight = 130; // Taller for thinning
+    const maxHeight = 110; // Reduced for less stretch at top
     const stiffness = 0.08; // Slightly softer for more wobble
     const damping = 0.85; // Slightly higher damping for smoother oscillation
 
@@ -503,6 +500,12 @@ app.get('/', (req, res) => {
       const barHeightPx = (barHeight / 100) * trackRect.height;
       barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
       barGraphic.style.transform = \`translateX(-50%)\`;
+
+      // Reset to default dimensions when not dragging
+      if (!isDragging) {
+        targetWidth = 150;
+        targetHeight = 100;
+      }
 
       requestAnimationFrame(updateBar);
     }
@@ -716,11 +719,10 @@ app.get('/', (req, res) => {
       lastCollision = side;
       if (interactionMode === 'heart') {
         score += 1;
-        updateScoreDisplay();
       } else {
         rectScore = Math.min(rectScore + 1, 100);
-        updateScoreDisplay();
       }
+      updateScoreDisplay();
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -902,7 +904,7 @@ app.get('/', (req, res) => {
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
 
-        // Update target dimensions for spring system
+        // Update target dimensions for spring system only when dragging
         const t = Math.max(0, Math.min(1, relativeY / maxPosition));
         targetWidth = minWidth + (maxWidth - minWidth) * t;
         targetHeight = maxHeight - (maxHeight - minHeight) * t;
