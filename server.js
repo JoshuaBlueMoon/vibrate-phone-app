@@ -440,517 +440,477 @@ app.get('/', (req, res) => {
     }
   </style>
   <script>
-    let ws = null;
-    let isVibrating = false;
-    let vibrationMode = 'pulse';
-    let score = 0;
-    let rectScore = 0;
-    let isPressingBar = false;
-    let interactionMode = 'heart';
-    const startScreen = document.getElementById('startScreen');
-    const roomInput = document.getElementById('roomInput');
-    const joinButton = document.getElementById('joinButton');
-    const gameContent = document.getElementById('gameContent');
-    const intensityDisplay = document.getElementById('intensityValue');
-    const intensitySlider = document.getElementById('intensity');
-    const intensityContainer = document.getElementById('intensityContainer');
-    const intensityFill = document.getElementById('intensityFill');
-    const sliderTrack = document.getElementById('sliderTrack');
-    const barGraphic = document.querySelector('.bar-graphic');
-    const fluidEffect = document.querySelector('.fluid-effect');
-    const vibrateButton = document.getElementById('vibrateButton');
-    const vibrateImage = document.getElementById('vibrateImage');
-    const pulseToggle = document.getElementById('pulseToggle');
-    const waveToggle = document.getElementById('waveToggle');
-    const heartToggle = document.getElementById('heartToggle');
-    const rectToggle = document.getElementById('rectToggle');
-    const scoreElement = document.getElementById('score');
-    const glowDotsContainer = document.getElementById('glowDotsContainer');
-    const roomDisplay = document.getElementById('room');
-    const menuToggle = document.getElementById('menuToggle');
-    const subMenu = document.getElementById('subMenu');
-    const subMenuButtons = document.querySelectorAll('.sub-menu-button');
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let lastPosition = 0;
-    let lastCollision = null;
-    let lastGelatinTime = 0;
-    let lastHeartGelatinTime = 0;
-    let lastTrackGelatinTime = 0;
-    let lastBottomGelatinTime = 0;
-    let lastPendulumTime = 0;
-    let currentHeartPosition = 'middle';
-    let isSubMenuOpen = false;
-    let rectScoreInterval = null;
+   let ws = null;
+let isVibrating = false;
+let vibrationMode = 'pulse';
+let score = 0;
+let rectScore = 0;
+let isPressingBar = false;
+let interactionMode = 'heart';
+const startScreen = document.getElementById('startScreen');
+const roomInput = document.getElementById('roomInput');
+const joinButton = document.getElementById('joinButton');
+const gameContent = document.getElementById('gameContent');
+const intensityDisplay = document.getElementById('intensityValue');
+const intensitySlider = document.getElementById('intensity');
+const intensityContainer = document.getElementById('intensityContainer');
+const intensityFill = document.getElementById('intensityFill');
+const sliderTrack = document.getElementById('sliderTrack');
+const barGraphic = document.querySelector('.bar-graphic');
+const fluidEffect = document.querySelector('.fluid-effect');
+const vibrateButton = document.getElementById('vibrateButton');
+const vibrateImage = document.getElementById('vibrateImage');
+const pulseToggle = document.getElementById('pulseToggle');
+const waveToggle = document.getElementById('waveToggle');
+const heartToggle = document.getElementById('heartToggle');
+const rectToggle = document.getElementById('rectToggle');
+const scoreElement = document.getElementById('score');
+const glowDotsContainer = document.getElementById('glowDotsContainer');
+const roomDisplay = document.getElementById('room');
+const menuToggle = document.getElementById('menuToggle');
+const subMenu = document.getElementById('subMenu');
+const subMenuButtons = document.querySelectorAll('.sub-menu-button');
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let lastPosition = 0;
+let lastCollision = null;
+let lastPendulumTime = 0;
+let currentHeartPosition = 'middle';
+let isSubMenuOpen = false;
+let rectScoreInterval = null;
 
-    function startGame() {
-      const roomCode = roomInput.value.trim();
-      if (roomCode) {
-        console.log('Starting game with room code:', roomCode);
-        roomDisplay.value = roomCode;
-        startScreen.classList.add('fade-out');
-        setTimeout(() => {
-          console.log('Fade-out complete, hiding startScreen');
-          startScreen.remove();
-          gameContent.style.display = 'flex';
-          console.log('gameContent displayed');
-          ws = new WebSocket('wss://' + window.location.host);
-          ws.onopen = () => console.log('Connected to server');
-          ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.room === roomCode) {
-              if (data.command === 'startVibrate' && navigator.vibrate) {
-                const intensity = data.intensity || 3;
-                let pattern;
-                if (data.mode === 'pulse') {
-                  switch (intensity) {
-                    case 1: pattern = [50, 200]; break;
-                    case 2: pattern = [50, 100]; break;
-                    case 3: pattern = [50, 50]; break;
-                    case 4: pattern = [100, 50]; break;
-                    case 5: pattern = [200]; break;
-                    default: pattern = [50, 50];
-                  }
-                } else if (data.mode === 'wave') {
-                  switch (intensity) {
-                    case 1: pattern = [1000]; break;
-                    case 2: pattern = [1500]; break;
-                    case 3: pattern = [2000]; break;
-                    case 4: pattern = [2500]; break;
-                    case 5: pattern = [3000]; break;
-                    default: pattern = [2000];
-                  }
-                }
-                navigator.vibrate(pattern);
-                console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity, 'pattern:', pattern);
-                sliderTrack.classList.add('pulsing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
-              } else if (data.command === 'stopVibrate' && navigator.vibrate) {
-                navigator.vibrate(0);
+function startGame() {
+  const roomCode = roomInput.value.trim();
+  if (roomCode) {
+    console.log('Starting game with room code:', roomCode);
+    roomDisplay.value = roomCode;
+    startScreen.classList.add('fade-out');
+    setTimeout(() => {
+      console.log('Fade-out complete, hiding startScreen');
+      startScreen.remove();
+      gameContent.style.display = 'flex';
+      console.log('gameContent displayed');
+      ws = new WebSocket('wss://' + window.location.host);
+      ws.onopen = () => console.log('Connected to server');
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.room === roomCode) {
+          if (data.command === 'startVibrate' && navigator.vibrate) {
+            const intensity = data.intensity || 3;
+            let pattern;
+            if (data.mode === 'pulse') {
+              switch (intensity) {
+                case 1: pattern = [50, 200]; break;
+                case 2: pattern = [50, 100]; break;
+                case 3: pattern = [50, 50]; break;
+                case 4: pattern = [100, 50]; break;
+                case 5: pattern = [200]; break;
+                default: pattern = [50, 50];
+              }
+            } else if (data.mode === 'wave') {
+              switch (intensity) {
+                case 1: pattern = [1000]; break;
+                case 2: pattern = [1500]; break;
+                case 3: pattern = [2000]; break;
+                case 4: pattern = [2500]; break;
+                case 5: pattern = [3000]; break;
+                default: pattern = [2000];
               }
             }
-          };
-        }, 1000);
-      } else {
-        console.log('No room code entered');
-        roomInput.placeholder = 'Please enter a room code';
-        roomInput.value = '';
-      }
-    }
-
-    roomInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        console.log('Enter key pressed');
-        startGame();
-      }
-    });
-
-    joinButton.addEventListener('click', () => {
-      console.log('Join button clicked');
-      startGame();
-    });
-
-    function createGlowDots() {
-      const dotCount = 10;
-      for (let i = 0; i < dotCount; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'glow-dot';
-        const size = Math.random() * 4 + 6;
-        dot.style.width = size + 'px';
-        dot.style.height = size + 'px';
-        dot.style.left = Math.random() * 100 + '%';
-        dot.style.top = Math.random() * 100 + '%';
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 50 + 50;
-        const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance;
-        dot.style.setProperty('--move-x', moveX + 'px');
-        dot.style.setProperty('--move-y', moveY + 'px');
-        dot.style.animationDelay = Math.random() * 5 + 's';
-        glowDotsContainer.appendChild(dot);
-      }
-    }
-    createGlowDots();
-
-    function updateScoreDisplay() {
-      scoreElement.textContent = score;
-      if (interactionMode === 'rect') {
-        const fillPercentage = Math.min(rectScore, 100);
-        intensityFill.style.width = fillPercentage + '%';
-        intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-      } else {
-        fluidEffect.style.display = 'none';
-      }
-    }
-
-    setInterval(() => {
-      if (score > 0 && interactionMode === 'heart') {
-        score = Math.max(0, score - 2);
-        scoreElement.textContent = score;
-      }
-    }, 1000);
-
-    function startRectScoreInterval() {
-      if (rectScoreInterval) clearInterval(rectScoreInterval);
-      rectScoreInterval = setInterval(() => {
-        if (rectScore > 0 && interactionMode === 'rect') {
-          const intensity = Math.ceil(rectScore / 20);
-          let decrement;
-          switch (intensity) {
-            case 1: decrement = 0.1; break;
-            case 2: decrement = 0.3; break;
-            case 3: decrement = 0.5; break;
-            case 4: decrement = 0.7; break;
-            case 5: decrement = 0.9; break;
-            default: decrement = 0.1;
+            navigator.vibrate(pattern);
+            console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity, 'pattern:', pattern);
+            sliderTrack.classList.add('pulsing');
+            setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
+          } else if (data.command === 'stopVibrate' && navigator.vibrate) {
+            navigator.vibrate(0);
           }
-          rectScore = Math.max(0, rectScore - decrement);
-          updateScoreDisplay();
         }
-      }, 1000);
-    }
+      };
+    }, 1000);
+  } else {
+    console.log('No room code entered');
+    roomInput.placeholder = 'Please enter a room code';
+    roomInput.value = '';
+  }
+}
 
-    function stopRectScoreInterval() {
-      if (rectScoreInterval) {
-        clearInterval(rectScoreInterval);
-        rectScoreInterval = null;
+roomInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    console.log('Enter key pressed');
+    startGame();
+  }
+});
+
+joinButton.addEventListener('click', () => {
+  console.log('Join button clicked');
+  startGame();
+});
+
+function createGlowDots() {
+  const dotCount = 10;
+  for (let i = 0; i < dotCount; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'glow-dot';
+    const size = Math.random() * 4 + 6;
+    dot.style.width = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.left = Math.random() * 100 + '%';
+    dot.style.top = Math.random() * 100 + '%';
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 50 + 50;
+    const moveX = Math.cos(angle) * distance;
+    const moveY = Math.sin(angle) * distance;
+    dot.style.setProperty('--move-x', moveX + 'px');
+    dot.style.setProperty('--move-y', moveY + 'px');
+    dot.style.animationDelay = Math.random() * 5 + 's';
+    glowDotsContainer.appendChild(dot);
+  }
+}
+createGlowDots();
+
+function updateScoreDisplay() {
+  scoreElement.textContent = score;
+  if (interactionMode === 'rect') {
+    const fillPercentage = Math.min(rectScore, 100);
+    intensityFill.style.width = fillPercentage + '%';
+    intensityDisplay.textContent = Math.ceil(rectScore / 20);
+    fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+  } else {
+    fluidEffect.style.display = 'none';
+  }
+}
+
+setInterval(() => {
+  if (score > 0 && interactionMode === 'heart') {
+    score = Math.max(0, score - 2);
+    scoreElement.textContent = score;
+  }
+}, 1000);
+
+function startRectScoreInterval() {
+  if (rectScoreInterval) clearInterval(rectScoreInterval);
+  rectScoreInterval = setInterval(() => {
+    if (rectScore > 0 && interactionMode === 'rect') {
+      const intensity = Math.ceil(rectScore / 20);
+      let decrement;
+      switch (intensity) {
+        case 1: decrement = 0.1; break;
+        case 2: decrement = 0.3; break;
+        case 3: decrement = 0.5; break;
+        case 4: decrement = 0.7; break;
+        case 5: decrement = 0.9; break;
+        default: decrement = 0.1;
       }
-      fluidEffect.style.display = 'none';
-    }
-
-    function triggerSubtlePulse() {
-      sliderTrack.classList.add('subtle-pulsing');
-      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
-      const nextPulse = Math.random() * 3000 + 3000;
-      setTimeout(triggerSubtlePulse, nextPulse);
-    }
-    triggerSubtlePulse();
-
-    intensitySlider.oninput = () => {
-      if (interactionMode === 'heart') {
-        intensityDisplay.textContent = intensitySlider.value;
-        intensityContainer.classList.add('intensity-pulsing');
-        setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
-      }
-    };
-
-    function updateIntensityBar() {
-      if (interactionMode === 'rect') {
-        intensitySlider.classList.add('disabled');
-        intensitySlider.value = Math.ceil(rectScore / 20);
-        intensityFill.style.width = Math.min(rectScore, 100) + '%';
-        intensityDisplay.textContent = Math.ceil(rectScore / 20);
-        fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-      } else {
-        intensitySlider.classList.remove('disabled');
-        intensityFill.style.width = '0%';
-        intensityDisplay.textContent = intensitySlider.value;
-        fluidEffect.style.display = 'none';
-      }
-    }
-
-    pulseToggle.addEventListener('click', () => {
-      if (vibrationMode !== 'pulse') {
-        vibrationMode = 'pulse';
-        pulseToggle.classList.add('toggled');
-        waveToggle.classList.remove('toggled');
-        console.log('Switched to pulse mode');
-      }
-    });
-
-    waveToggle.addEventListener('click', () => {
-      if (vibrationMode !== 'wave') {
-        vibrationMode = 'wave';
-        waveToggle.classList.add('toggled');
-        pulseToggle.classList.remove('toggled');
-        console.log('Switched to wave mode');
-      }
-    });
-
-    heartToggle.addEventListener('click', () => {
-      interactionMode = 'heart';
-      heartToggle.classList.add('toggled');
-      rectToggle.classList.remove('toggled');
-      vibrateImage.src = '/images/custom-heart.png';
-      vibrateImage.alt = 'Custom Heart';
-      vibrateButton.style.width = '56px';
-      vibrateButton.style.height = '56px';
-      vibrateImage.style.width = '40px';
-      vibrateImage.style.height = '40px';
-      vibrateButton.style.left = '50%';
-      vibrateButton.style.top = '50%';
-      vibrateButton.style.transform = 'translate(-50%, -50%)';
-      stopRectScoreInterval();
-      updateIntensityBar();
-    });
-
-    rectToggle.addEventListener('click', () => {
-      interactionMode = 'rect';
-      rectToggle.classList.add('toggled');
-      heartToggle.classList.remove('toggled');
-      vibrateImage.src = '/images/custom-rect.png';
-      vibrateImage.alt = 'Custom Rectangle';
-      vibrateButton.style.width = '40px';
-      vibrateButton.style.height = '20px';
-      vibrateImage.style.width = '32px';
-      vibrateImage.style.height = '16px';
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
-      vibrateButton.style.top = '50%';
-      vibrateButton.style.transform = 'translateY(-50%)';
-      startRectScoreInterval();
-      updateIntensityBar();
-    });
-
-    menuToggle.addEventListener('click', () => {
-      isSubMenuOpen = !isSubMenuOpen;
-      if (isSubMenuOpen) {
-        subMenu.style.display = 'flex';
-        subMenuButtons.forEach((button, index) => {
-          setTimeout(() => {
-            button.classList.add('pop-in');
-            button.style.opacity = '1';
-          }, index * 100);
-        });
-        menuToggle.classList.add('toggled');
-      } else {
-        subMenuButtons.forEach((button, index) => {
-          setTimeout(() => {
-            button.classList.remove('pop-in');
-            button.style.opacity = '0';
-          }, index * 100);
-        });
-        setTimeout(() => {
-          subMenu.style.display = 'none';
-        }, subMenuButtons.length * 100);
-        menuToggle.classList.remove('toggled');
-      }
-    });
-
-    subMenuButtons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
-        const barImages = [
-          '/images/custom-bar.png',
-          '/images/bar-option2.png',
-          '/images/bar-option3.png',
-          '/images/bar-option4.png'
-        ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-        barGraphic.style.backgroundSize = 'contain';
-        barGraphic.style.backgroundPosition = 'center center';
-        barGraphic.classList.add('gelatin');
-        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 700);
-      });
-    });
-
-    function createParticle(x, y, side) {
-      if (lastCollision === side) return;
-      lastCollision = side;
-      if (interactionMode === 'heart') {
-        score += 1;
-      } else {
-        rectScore = Math.min(rectScore + 1, 100);
-      }
+      rectScore = Math.max(0, rectScore - decrement);
       updateScoreDisplay();
-      const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 700) {
-        sliderTrack.classList.add('gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-        lastGelatinTime = currentTime;
-      }
-
-      const trackRect = sliderTrack.getBoundingClientRect();
-      const bodyRect = document.body.getBoundingClientRect();
-      const particleCount = 5;
-      const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
-      const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
-
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        const size = Math.random() * 3 + 3;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = baseX + 'px';
-        particle.style.top = baseY + 'px';
-        const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 50 + 20;
-        const moveX = Math.cos(angle) * distance;
-        const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
-        particle.style.setProperty('--move-x', moveX + 'px');
-        particle.style.setProperty('--move-y', moveY + 'px');
-        glowDotsContainer.appendChild(particle);
-        setTimeout(() => {
-          particle.remove();
-        }, 1000);
-      }
-
-      setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
     }
+  }, 1000);
+}
 
-    sliderTrack.addEventListener('mousedown', (e) => {
-      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
-        const currentTime = Date.now();
-        if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          isPressingBar = true;
-          sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
-          barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 700) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-          lastTrackGelatinTime = currentTime;
-        }
-      }
+function stopRectScoreInterval() {
+  if (rectScoreInterval) {
+    clearInterval(rectScoreInterval);
+    rectScoreInterval = null;
+  }
+  fluidEffect.style.display = 'none';
+}
+
+function triggerSubtlePulse() {
+  sliderTrack.classList.add('subtle-pulsing');
+  setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
+  const nextPulse = Math.random() * 3000 + 3000;
+  setTimeout(triggerSubtlePulse, nextPulse);
+}
+triggerSubtlePulse();
+
+intensitySlider.oninput = () => {
+  if (interactionMode === 'heart') {
+    intensityDisplay.textContent = intensitySlider.value;
+    intensityContainer.classList.add('intensity-pulsing');
+    setTimeout(() => { intensityContainer.classList.remove('intensity-pulsing'); }, 300);
+  }
+};
+
+function updateIntensityBar() {
+  if (interactionMode === 'rect') {
+    intensitySlider.classList.add('disabled');
+    intensitySlider.value = Math.ceil(rectScore / 20);
+    intensityFill.style.width = Math.min(rectScore, 100) + '%';
+    intensityDisplay.textContent = Math.ceil(rectScore / 20);
+    fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+  } else {
+    intensitySlider.classList.remove('disabled');
+    intensityFill.style.width = '0%';
+    intensityDisplay.textContent = intensitySlider.value;
+    fluidEffect.style.display = 'none';
+  }
+}
+
+pulseToggle.addEventListener('click', () => {
+  if (vibrationMode !== 'pulse') {
+    vibrationMode = 'pulse';
+    pulseToggle.classList.add('toggled');
+    waveToggle.classList.remove('toggled');
+    console.log('Switched to pulse mode');
+  }
+});
+
+waveToggle.addEventListener('click', () => {
+  if (vibrationMode !== 'wave') {
+    vibrationMode = 'wave';
+    waveToggle.classList.add('toggled');
+    pulseToggle.classList.remove('toggled');
+    console.log('Switched to wave mode');
+  }
+});
+
+heartToggle.addEventListener('click', () => {
+  interactionMode = 'heart';
+  heartToggle.classList.add('toggled');
+  rectToggle.classList.remove('toggled');
+  vibrateImage.src = '/images/custom-heart.png';
+  vibrateImage.alt = 'Custom Heart';
+  vibrateButton.style.width = '56px';
+  vibrateButton.style.height = '56px';
+  vibrateImage.style.width = '40px';
+  vibrateImage.style.height = '40px';
+  vibrateButton.style.left = '50%';
+  vibrateButton.style.top = '50%';
+  vibrateButton.style.transform = 'translate(-50%, -50%)';
+  stopRectScoreInterval();
+  updateIntensityBar();
+});
+
+rectToggle.addEventListener('click', () => {
+  interactionMode = 'rect';
+  rectToggle.classList.add('toggled');
+  heartToggle.classList.remove('toggled');
+  vibrateImage.src = '/images/custom-rect.png';
+  vibrateImage.alt = 'Custom Rectangle';
+  vibrateButton.style.width = '40px';
+  vibrateButton.style.height = '20px';
+  vibrateImage.style.width = '32px';
+  vibrateImage.style.height = '16px';
+  const trackRect = sliderTrack.getBoundingClientRect();
+  const bodyRect = document.body.getBoundingClientRect();
+  vibrateButton.style.left = (trackRect.left - bodyRect.left + trackRect.width / 2 - vibrateButton.offsetWidth / 2) + 'px';
+  vibrateButton.style.top = '50%';
+  vibrateButton.style.transform = 'translateY(-50%)';
+  startRectScoreInterval();
+  updateIntensityBar();
+});
+
+menuToggle.addEventListener('click', () => {
+  isSubMenuOpen = !isSubMenuOpen;
+  if (isSubMenuOpen) {
+    subMenu.style.display = 'flex';
+    subMenuButtons.forEach((button, index) => {
+      setTimeout(() => {
+        button.classList.add('pop-in');
+        button.style.opacity = '1';
+      }, index * 100);
     });
-
-    sliderTrack.addEventListener('touchstart', (e) => {
-      if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
-        const currentTime = Date.now();
-        if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
-          isPressingBar = true;
-          sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
-          barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 700) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-          lastTrackGelatinTime = currentTime;
-        }
-      }
+    menuToggle.classList.add('toggled');
+  } else {
+    subMenuButtons.forEach((button, index) => {
+      setTimeout(() => {
+        button.classList.remove('pop-in');
+        button.style.opacity = '0';
+      }, index * 100);
     });
+    setTimeout(() => {
+      subMenu.style.display = 'none';
+    }, subMenuButtons.length * 100);
+    menuToggle.classList.remove('toggled');
+  }
+});
 
-    document.addEventListener('mousemove', (e) => {
-      if (isPressingBar) {
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const clickY = e.clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
-        if (clickY > topThreshold) {
-          isPressingBar = false;
-          sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-        }
-      }
-      handleMovement(e, false);
-    });
+subMenuButtons.forEach((button, index) => {
+  button.addEventListener('click', () => {
+    console.log(`Sub-menu button ${index + 1} clicked`);
+    const barImages = [
+      '/images/custom-bar.png',
+      '/images/bar-option2.png',
+      '/images/bar-option3.png',
+      '/images/bar-option4.png'
+    ];
+    barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+    barGraphic.style.backgroundSize = 'contain';
+    barGraphic.style.backgroundPosition = 'center center';
+  });
+});
 
-    document.addEventListener('touchmove', (e) => {
-      if (isPressingBar) {
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const touchY = e.touches[0].clientY - trackRect.top;
-        const topThreshold = trackRect.height * 0.1;
-        if (touchY > topThreshold) {
-          isPressingBar = false;
-          sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gelatin');
-          sliderTrack.style.setProperty('--scale-y', 1);
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-        }
-      }
-      handleMovement(e, true);
-    });
+function createParticle(x, y, side) {
+  if (lastCollision === side) return;
+  lastCollision = side;
+  if (interactionMode === 'heart') {
+    score += 1;
+  } else {
+    rectScore = Math.min(rectScore + 1, 100);
+  }
+  updateScoreDisplay();
 
-    document.addEventListener('mouseup', () => {
-      if (isPressingBar) {
-        isPressingBar = false;
-        sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-      }
-      if (isDragging) {
-        const room = roomDisplay.value;
-        if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          currentHeartPosition = 'middle';
-        }
-        isDragging = false;
-        lastCollision = null;
-      }
-    });
+  const trackRect = sliderTrack.getBoundingClientRect();
+  const bodyRect = document.body.getBoundingClientRect();
+  const particleCount = 5;
+  const baseY = side === 'top' ? trackRect.top - bodyRect.top : trackRect.bottom - bodyRect.top;
+  const baseX = trackRect.left - bodyRect.left + trackRect.width / 2;
 
-    document.addEventListener('touchend', () => {
-      if (isPressingBar) {
-        isPressingBar = false;
-        sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gelatin');
-        sliderTrack.style.setProperty('--scale-y', 1);
-        setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 700);
-      }
-      if (isDragging) {
-        const room = roomDisplay.value;
-        if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-          vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          currentHeartPosition = 'middle';
-        }
-        isDragging = false;
-        lastCollision = null;
-      }
-    });
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const size = Math.random() * 3 + 3;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.left = baseX + 'px';
+    particle.style.top = baseY + 'px';
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 50 + 20;
+    const moveX = Math.cos(angle) * distance;
+    const moveY = Math.sin(angle) * distance * (side === 'top' ? -1 : 1);
+    particle.style.setProperty('--move-x', moveX + 'px');
+    particle.style.setProperty('--move-y', moveY + 'px');
+    glowDotsContainer.appendChild(particle);
+    setTimeout(() => {
+      particle.remove();
+    }, 1000);
+  }
 
-    vibrateButton.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      isDragging = true;
-      const bodyRect = document.body.getBoundingClientRect();
-      startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-      const room = roomDisplay.value;
-      if (room) {
-        vibrateButton.classList.add('pulsing');
-        const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
-          lastHeartGelatinTime = currentTime;
-        }
-      }
-      lastPosition = vibrateButton.offsetTop;
-    });
+  setTimeout(() => { if (lastCollision === side) lastCollision = null; }, 200);
+}
 
-    vibrateButton.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      isDragging = true;
-      const bodyRect = document.body.getBoundingClientRect();
-      startX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
-      const room = roomDisplay.value;
-      if (room) {
-        vibrateButton.classList.add('pulsing');
-        const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
-          lastHeartGelatinTime = currentTime;
-        }
-      }
-      lastPosition = vibrateButton.offsetTop;
-    });
+sliderTrack.addEventListener('mousedown', (e) => {
+  if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+    const trackRect = sliderTrack.getBoundingClientRect();
+    const clickY = e.clientY - trackRect.top;
+    const topThreshold = trackRect.height * 0.1;
+    const currentTime = Date.now();
+    if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+      isPressingBar = true;
+      sliderTrack.classList.add('squished');
+      sliderTrack.style.setProperty('--scale-y', 0.8);
+      barGraphic.classList.add('pendulum-wobble');
+      setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+      lastPendulumTime = currentTime;
+    }
+  }
+});
 
-  function handleMovement(e, isTouch = false) {
+sliderTrack.addEventListener('touchstart', (e) => {
+  if (e.target !== vibrateButton && !vibrateButton.contains(e.target)) {
+    const trackRect = sliderTrack.getBoundingClientRect();
+    const touchY = e.touches[0].clientY - trackRect.top;
+    const topThreshold = trackRect.height * 0.1;
+    const currentTime = Date.now();
+    if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
+      isPressingBar = true;
+      sliderTrack.classList.add('squished');
+      sliderTrack.style.setProperty('--scale-y', 0.8);
+      barGraphic.classList.add('pendulum-wobble');
+      setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+      lastPendulumTime = currentTime;
+    }
+  }
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (isPressingBar) {
+    const trackRect = sliderTrack.getBoundingClientRect();
+    const clickY = e.clientY - trackRect.top;
+    const topThreshold = trackRect.height * 0.1;
+    if (clickY > topThreshold) {
+      isPressingBar = false;
+      sliderTrack.classList.remove('squished');
+      sliderTrack.style.setProperty('--scale-y', 1);
+    }
+  }
+  handleMovement(e, false);
+});
+
+document.addEventListener('touchmove', (e) => {
+  if (isPressingBar) {
+    const trackRect = sliderTrack.getBoundingClientRect();
+    const touchY = e.touches[0].clientY - trackRect.top;
+    const topThreshold = trackRect.height * 0.1;
+    if (touchY > topThreshold) {
+      isPressingBar = false;
+      sliderTrack.classList.remove('squished');
+      sliderTrack.style.setProperty('--scale-y', 1);
+    }
+  }
+  handleMovement(e, true);
+});
+
+document.addEventListener('mouseup', () => {
+  if (isPressingBar) {
+    isPressingBar = false;
+    sliderTrack.classList.remove('squished');
+    sliderTrack.style.setProperty('--scale-y', 1);
+  }
+  if (isDragging) {
+    const room = roomDisplay.value;
+    if (room) {
+      ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+      vibrateButton.classList.remove('pulsing');
+      sliderTrack.classList.remove('bar-pulsing', 'pinching');
+      sliderTrack.style.setProperty('--scale-x', 1);
+      sliderTrack.style.setProperty('--scale-y', 1);
+      currentHeartPosition = 'middle';
+    }
+    isDragging = false;
+    lastCollision = null;
+  }
+});
+
+document.addEventListener('touchend', () => {
+  if (isPressingBar) {
+    isPressingBar = false;
+    sliderTrack.classList.remove('squished');
+    sliderTrack.style.setProperty('--scale-y', 1);
+  }
+  if (isDragging) {
+    const room = roomDisplay.value;
+    if (room) {
+      ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+      vibrateButton.classList.remove('pulsing');
+      sliderTrack.classList.remove('bar-pulsing', 'pinching');
+      sliderTrack.style.setProperty('--scale-x', 1);
+      sliderTrack.style.setProperty('--scale-y', 1);
+      currentHeartPosition = 'middle';
+    }
+    isDragging = false;
+    lastCollision = null;
+  }
+});
+
+vibrateButton.addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  isDragging = true;
+  const bodyRect = document.body.getBoundingClientRect();
+  startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+  startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+  const room = roomDisplay.value;
+  if (room) {
+    vibrateButton.classList.add('pulsing');
+  }
+  lastPosition = vibrateButton.offsetTop;
+});
+
+vibrateButton.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  isDragging = true;
+  const bodyRect = document.body.getBoundingClientRect();
+  startX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
+  startY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+  const room = roomDisplay.value;
+  if (room) {
+    vibrateButton.classList.add('pulsing');
+  }
+  lastPosition = vibrateButton.offsetTop;
+});
+
+function handleMovement(e, isTouch = false) {
   if (isDragging) {
     e.preventDefault();
     const bodyRect = document.body.getBoundingClientRect();
@@ -984,7 +944,6 @@ app.get('/', (req, res) => {
     const maxPosition = trackRect.height - vibrateButton.offsetHeight;
     const bottomThreshold = maxPosition * 0.9;
     const topThreshold = maxPosition * 0.1;
-    const currentTime = Date.now();
 
     let newHeartPosition = 'middle';
     if (relativeY <= topThreshold) {
@@ -994,24 +953,15 @@ app.get('/', (req, res) => {
     }
 
     if (newHeartPosition !== currentHeartPosition) {
-      sliderTrack.classList.remove('squished-top', 'squished-bottom', 'gelatin', 'bottom-gelatin');
-      sliderTrack.style.setProperty('--scale-x', 1);
-      sliderTrack.style.setProperty('--scale-y', 1);
-
       if (newHeartPosition === 'top') {
-        sliderTrack.classList.add('squished-top');
-        if (currentTime - lastGelatinTime >= 700) {
-          sliderTrack.classList.add('gelatin');
-          setTimeout(() => { if (currentHeartPosition !== 'top') sliderTrack.classList.remove('gelatin'); }, 700);
-          lastGelatinTime = currentTime;
-        }
+        sliderTrack.style.setProperty('--scale-x', 0.8);
+        sliderTrack.style.setProperty('--scale-y', 1.1);
       } else if (newHeartPosition === 'bottom') {
-        sliderTrack.classList.add('squished-bottom');
-        if (currentTime - lastBottomGelatinTime >= 700) {
-          sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { if (currentHeartPosition !== 'bottom') sliderTrack.classList.remove('bottom-gelatin'); }, 700);
-          lastBottomGelatinTime = currentTime;
-        }
+        sliderTrack.style.setProperty('--scale-x', 1.2);
+        sliderTrack.style.setProperty('--scale-y', 0.9);
+      } else {
+        sliderTrack.style.setProperty('--scale-x', 1);
+        sliderTrack.style.setProperty('--scale-y', 1);
       }
       currentHeartPosition = newHeartPosition;
     }
