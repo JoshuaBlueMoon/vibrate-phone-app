@@ -123,171 +123,11 @@ app.get('/', (req, res) => {
       50% { transform: scaleX(0.9); }
       100% { transform: scaleX(1); }
     }
-    @keyframes gelatin {
-      0% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-      25% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.92), calc(var(--scale-y, 1) * 1.08)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.8), calc(var(--skew-y, 0deg) * 0.8))
-                   translate(calc(var(--translate-x, 0px) * 0.8), calc(var(--translate-y, 0px) * 0.8));
-      }
-      50% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.06), calc(var(--scale-y, 1) * 0.94)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.6), calc(var(--skew-y, 0deg) * -0.6))
-                   translate(calc(var(--translate-x, 0px) * -0.6), calc(var(--translate-y, 0px) * -0.6));
-      }
-      75% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.3), calc(var(--skew-y, 0deg) * 0.3))
-                   translate(calc(var(--translate-x, 0px) * 0.3), calc(var(--translate-y, 0px) * 0.3));
-      }
-      100% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-    }
-    @keyframes bottom-gelatin {
-      0% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-        transform-origin: bottom center;
-      }
-      25% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.88), calc(var(--scale-y, 1) * 1.12)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.9), calc(var(--skew-y, 0deg) * 0.9))
-                   translate(calc(var(--translate-x, 0px) * 0.9), calc(var(--translate-y, 0px) * 0.9));
-        transform-origin: bottom center;
-      }
-      50% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.08), calc(var(--scale-y, 1) * 0.92)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.7), calc(var(--skew-y, 0deg) * -0.7))
-                   translate(calc(var(--translate-x, 0px) * -0.7), calc(var(--translate-y, 0px) * -0.7));
-        transform-origin: bottom center;
-      }
-      75% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.96), calc(var(--scale-y, 1) * 1.04)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.4), calc(var(--skew-y, 0deg) * 0.4))
-                   translate(calc(var(--translate-x, 0px) * 0.4), calc(var(--translate-y, 0px) * 0.4));
-        transform-origin: bottom center;
-      }
-      100% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-        transform-origin: bottom center;
-      }
-    }
-    @keyframes squeeze-gelatin {
-      0% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-      20% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.85), calc(var(--scale-y, 1) * 1.15)) 
-                   skew(calc(var(--skew-x, 0deg) * 1.2), calc(var(--skew-y, 0deg) * 1.2))
-                   translate(calc(var(--translate-x, 0px) * 1.2), calc(var(--translate-y, 0px) * 1.2));
-      }
-      40% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.1), calc(var(--scale-y, 1) * 0.9)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.8), calc(var(--skew-y, 0deg) * -0.8))
-                   translate(calc(var(--translate-x, 0px) * -0.8), calc(var(--translate-y, 0px) * -0.8));
-      }
-      60% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.5), calc(var(--skew-y, 0deg) * 0.5))
-                   translate(calc(var(--translate-x, 0px) * 0.5), calc(var(--translate-y, 0px) * 0.5));
-      }
-      80% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.02), calc(var(--scale-y, 1) * 0.98)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.2), calc(var(--skew-y, 0deg) * -0.2))
-                   translate(calc(var(--translate-x, 0px) * -0.2), calc(var(--translate-y, 0px) * -0.2));
-      }
-      100% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-    }
-    @keyframes stretch-gelatin {
-      0% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-      20% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.15), calc(var(--scale-y, 1) * 0.85)) 
-                   skew(calc(var(--skew-x, 0deg) * -1.2), calc(var(--skew-y, 0deg) * -1.2))
-                   translate(calc(var(--translate-x, 0px) * -1.2), calc(var(--translate-y, 0px) * -1.2));
-      }
-      40% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.9), calc(var(--scale-y, 1) * 1.1)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.8), calc(var(--skew-y, 0deg) * 0.8))
-                   translate(calc(var(--translate-x, 0px) * 0.8), calc(var(--translate-y, 0px) * 0.8));
-      }
-      60% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.5), calc(var(--skew-y, 0deg) * -0.5))
-                   translate(calc(var(--translate-x, 0px) * -0.5), calc(var(--translate-y, 0px) * -0.5));
-      }
-      80% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.2), calc(var(--skew-y, 0deg) * 0.2))
-                   translate(calc(var(--translate-x, 0px) * 0.2), calc(var(--translate-y, 0px) * 0.2));
-      }
-      100% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-    }
-    @keyframes rub-gelatin {
-      0% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-      15% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.95), calc(var(--scale-y, 1) * 1.05)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.8), calc(var(--skew-y, 0deg) * 0.8))
-                   translate(calc(var(--translate-x, 0px) * 0.8), calc(var(--translate-y, 0px) * 0.8));
-      }
-      30% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.05), calc(var(--scale-y, 1) * 0.95)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.6), calc(var(--skew-y, 0deg) * -0.6))
-                   translate(calc(var(--translate-x, 0px) * -0.6), calc(var(--translate-y, 0px) * -0.6));
-      }
-      45% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.4), calc(var(--skew-y, 0deg) * 0.4))
-                   translate(calc(var(--translate-x, 0px) * 0.4), calc(var(--translate-y, 0px) * 0.4));
-      }
-      60% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.02), calc(var(--scale-y, 1) * 0.98)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.3), calc(var(--skew-y, 0deg) * -0.3))
-                   translate(calc(var(--translate-x, 0px) * -0.3), calc(var(--translate-y, 0px) * -0.3));
-      }
-      75% { 
-        transform: scale(calc(var(--scale-x, 1) * 0.99), calc(var(--scale-y, 1) * 1.01)) 
-                   skew(calc(var(--skew-x, 0deg) * 0.2), calc(var(--skew-y, 0deg) * 0.2))
-                   translate(calc(var(--translate-x, 0px) * 0.2), calc(var(--translate-y, 0px) * 0.2));
-      }
-      90% { 
-        transform: scale(calc(var(--scale-x, 1) * 1.01), calc(var(--scale-y, 1) * 0.99)) 
-                   skew(calc(var(--skew-x, 0deg) * -0.1), calc(var(--skew-y, 0deg) * -0.1))
-                   translate(calc(var(--translate-x, 0px) * -0.1), calc(var(--translate-y, 0px) * -0.1));
-      }
-      100% { 
-        transform: scale(var(--scale-x, 1), var(--scale-y, 1)) 
-                   skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                   translate(var(--translate-x, 0px), var(--translate-y, 0px));
-      }
-    }
+
+
+
+
+
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
       50% { opacity: 0.5; }
@@ -327,22 +167,7 @@ app.get('/', (req, res) => {
     .pinching {
       animation: pinch 0.3s ease-in-out;
     }
-    .gelatin {
-      animation: gelatin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .bottom-gelatin {
-      animation: bottom-gelatin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      transform-origin: bottom center;
-    }
-    .squeeze-gelatin {
-      animation: squeeze-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .stretch-gelatin {
-      animation: stretch-gelatin 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .rub-gelatin {
-      animation: rub-gelatin 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
+
     .squished {
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -574,6 +399,32 @@ app.get('/', (req, res) => {
       input[type="range"]::-moz-range-track {
         height: 15px;
       }
+    }
+    @keyframes squeeze {
+      0% { transform: scale(1, 1); }
+      50% { transform: scale(1.2, 0.8); }
+      100% { transform: scale(1, 1); }
+    }
+    @keyframes stretch {
+      0% { transform: scale(1, 1); }
+      50% { transform: scale(0.8, 1.2); }
+      100% { transform: scale(1, 1); }
+    }
+    @keyframes gentle-rub {
+      0% { transform: scale(1, 1); }
+      25% { transform: scale(0.95, 1.05); }
+      50% { transform: scale(1.05, 0.95); }
+      75% { transform: scale(0.98, 1.02); }
+      100% { transform: scale(1, 1); }
+    }
+    .squeeze {
+      animation: squeeze 0.4s ease-out;
+    }
+    .stretch {
+      animation: stretch 0.4s ease-out;
+    }
+    .gentle-rub {
+      animation: gentle-rub 0.6s ease-out;
     }
   </style>
   <script>
@@ -895,26 +746,14 @@ app.get('/', (req, res) => {
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 600) {
-        // Determine animation type based on collision side
+      if (currentTime - lastGelatinTime >= 400) {
+        // Simple animation based on collision side
         if (side === 'top') {
-          sliderTrack.style.setProperty('--scale-x', 0.9);
-          sliderTrack.style.setProperty('--scale-y', 1.1);
-          sliderTrack.style.setProperty('--skew-x', '1deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '-1px');
-          sliderTrack.classList.add('stretch-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('stretch-gelatin'); }, 600);
+          sliderTrack.classList.add('stretch');
+          setTimeout(() => { sliderTrack.classList.remove('stretch'); }, 400);
         } else {
-          sliderTrack.style.setProperty('--scale-x', 1.1);
-          sliderTrack.style.setProperty('--scale-y', 0.9);
-          sliderTrack.style.setProperty('--skew-x', '-1deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '1px');
-          sliderTrack.classList.add('squeeze-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin'); }, 600);
+          sliderTrack.classList.add('squeeze');
+          setTimeout(() => { sliderTrack.classList.remove('squeeze'); }, 400);
         }
         lastGelatinTime = currentTime;
       }
@@ -962,14 +801,8 @@ app.get('/', (req, res) => {
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 600) {
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
-          sliderTrack.classList.add('rub-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+          sliderTrack.classList.add('gentle-rub');
+          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -989,14 +822,8 @@ app.get('/', (req, res) => {
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
         } else if (currentTime - lastTrackGelatinTime >= 600) {
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
-          sliderTrack.classList.add('rub-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+          sliderTrack.classList.add('gentle-rub');
+          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
           lastTrackGelatinTime = currentTime;
         }
       }
@@ -1010,14 +837,8 @@ app.get('/', (req, res) => {
         if (clickY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
-          sliderTrack.classList.add('rub-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+          sliderTrack.classList.add('gentle-rub');
+          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
         }
       }
       handleMovement(e, false);
@@ -1031,14 +852,8 @@ app.get('/', (req, res) => {
         if (touchY > topThreshold) {
           isPressingBar = false;
           sliderTrack.classList.remove('squished');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
-          sliderTrack.classList.add('rub-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+          sliderTrack.classList.add('gentle-rub');
+          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
         }
       }
       handleMovement(e, true);
@@ -1048,27 +863,15 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.style.setProperty('--scale-x', 1);
-        sliderTrack.style.setProperty('--scale-y', 1);
-        sliderTrack.style.setProperty('--skew-x', '0deg');
-        sliderTrack.style.setProperty('--skew-y', '0deg');
-        sliderTrack.style.setProperty('--translate-x', '0px');
-        sliderTrack.style.setProperty('--translate-y', '0px');
-        sliderTrack.classList.add('rub-gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+        sliderTrack.classList.add('gentle-rub');
+        setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin', 'rub-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -1080,27 +883,15 @@ app.get('/', (req, res) => {
       if (isPressingBar) {
         isPressingBar = false;
         sliderTrack.classList.remove('squished');
-        sliderTrack.style.setProperty('--scale-x', 1);
-        sliderTrack.style.setProperty('--scale-y', 1);
-        sliderTrack.style.setProperty('--skew-x', '0deg');
-        sliderTrack.style.setProperty('--skew-y', '0deg');
-        sliderTrack.style.setProperty('--translate-x', '0px');
-        sliderTrack.style.setProperty('--translate-y', '0px');
-        sliderTrack.classList.add('rub-gelatin');
-        setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+        sliderTrack.classList.add('gentle-rub');
+        setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin', 'rub-gelatin');
-          sliderTrack.style.setProperty('--scale-x', 1);
-          sliderTrack.style.setProperty('--scale-y', 1);
-          sliderTrack.style.setProperty('--skew-x', '0deg');
-          sliderTrack.style.setProperty('--skew-y', '0deg');
-          sliderTrack.style.setProperty('--translate-x', '0px');
-          sliderTrack.style.setProperty('--translate-y', '0px');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -1121,12 +912,6 @@ app.get('/', (req, res) => {
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
-        const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
-          lastHeartGelatinTime = currentTime;
-        }
       }
       lastPosition = vibrateButton.offsetTop;
     });
@@ -1144,12 +929,6 @@ app.get('/', (req, res) => {
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
-        const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
-          lastHeartGelatinTime = currentTime;
-        }
       }
       lastPosition = vibrateButton.offsetTop;
     });
@@ -1198,88 +977,28 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Calculate movement direction and intensity
-        const movementY = relativeY - lastHeartY;
-        const movementIntensity = Math.abs(movementY) / 10; // Normalize movement
-        
+        // Simple animation system - only trigger when position changes
         if (newHeartPosition !== currentHeartPosition) {
+          // Remove all animation classes first
+          sliderTrack.classList.remove('squeeze', 'stretch', 'gentle-rub');
+          
           if (newHeartPosition === 'top') {
-            // Moving to top - stretch effect
-            sliderTrack.style.setProperty('--scale-x', 0.85);
-            sliderTrack.style.setProperty('--scale-y', 1.15);
-            sliderTrack.style.setProperty('--skew-x', '2deg');
-            sliderTrack.style.setProperty('--skew-y', '0deg');
-            sliderTrack.style.setProperty('--translate-x', '0px');
-            sliderTrack.style.setProperty('--translate-y', '-2px');
-            sliderTrack.classList.remove('bottom-gelatin', 'squeeze-gelatin', 'rub-gelatin');
-            if (currentTime - lastGelatinTime >= 600) {
-              sliderTrack.classList.add('stretch-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('stretch-gelatin'); }, 600);
+            // Heart at top - stretch the bar
+            if (currentTime - lastGelatinTime >= 400) {
+              sliderTrack.classList.add('stretch');
+              setTimeout(() => { sliderTrack.classList.remove('stretch'); }, 400);
               lastGelatinTime = currentTime;
             }
           } else if (newHeartPosition === 'bottom') {
-            // Moving to bottom - squeeze effect
-            sliderTrack.style.setProperty('--scale-x', 1.15);
-            sliderTrack.style.setProperty('--scale-y', 0.85);
-            sliderTrack.style.setProperty('--skew-x', '-2deg');
-            sliderTrack.style.setProperty('--skew-y', '0deg');
-            sliderTrack.style.setProperty('--translate-x', '0px');
-            sliderTrack.style.setProperty('--translate-y', '2px');
-            sliderTrack.classList.remove('gelatin', 'stretch-gelatin', 'rub-gelatin');
-            if (currentTime - lastBottomGelatinTime >= 600) {
-              sliderTrack.classList.add('squeeze-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('squeeze-gelatin'); }, 600);
-              lastBottomGelatinTime = currentTime;
-            }
-          } else {
-            // Middle position - gentle rub effect
-            sliderTrack.style.setProperty('--scale-x', 1);
-            sliderTrack.style.setProperty('--scale-y', 1);
-            sliderTrack.style.setProperty('--skew-x', '0deg');
-            sliderTrack.style.setProperty('--skew-y', '0deg');
-            sliderTrack.style.setProperty('--translate-x', '0px');
-            sliderTrack.style.setProperty('--translate-y', '0px');
-            sliderTrack.classList.remove('gelatin', 'bottom-gelatin', 'squeeze-gelatin', 'stretch-gelatin');
-            
-            // Add subtle rub effect for movement in middle
-            if (Math.abs(movementY) > 5 && currentTime - lastGelatinTime >= 900) {
-              sliderTrack.classList.add('rub-gelatin');
-              setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
+            // Heart at bottom - squeeze the bar
+            if (currentTime - lastGelatinTime >= 400) {
+              sliderTrack.classList.add('squeeze');
+              setTimeout(() => { sliderTrack.classList.remove('squeeze'); }, 400);
               lastGelatinTime = currentTime;
             }
           }
           currentHeartPosition = newHeartPosition;
-        } else {
-          // Same position but moving - add dynamic effects
-          if (Math.abs(movementY) > 3) {
-            if (newHeartPosition === 'top' && movementY > 0) {
-              // Moving down from top - squeeze effect
-              sliderTrack.style.setProperty('--scale-x', 1.1);
-              sliderTrack.style.setProperty('--scale-y', 0.9);
-              sliderTrack.style.setProperty('--skew-x', '-1deg');
-              sliderTrack.style.setProperty('--skew-y', '0deg');
-              sliderTrack.style.setProperty('--translate-x', '0px');
-              sliderTrack.style.setProperty('--translate-y', '1px');
-            } else if (newHeartPosition === 'bottom' && movementY < 0) {
-              // Moving up from bottom - stretch effect
-              sliderTrack.style.setProperty('--scale-x', 0.9);
-              sliderTrack.style.setProperty('--scale-y', 1.1);
-              sliderTrack.style.setProperty('--skew-x', '1deg');
-              sliderTrack.style.setProperty('--skew-y', '0deg');
-              sliderTrack.style.setProperty('--translate-x', '0px');
-              sliderTrack.style.setProperty('--translate-y', '-1px');
-            } else if (newHeartPosition === 'middle' && Math.abs(movementY) > 5) {
-              // Moving in middle - rub effect
-              if (currentTime - lastGelatinTime >= 900) {
-                sliderTrack.classList.add('rub-gelatin');
-                setTimeout(() => { sliderTrack.classList.remove('rub-gelatin'); }, 900);
-                lastGelatinTime = currentTime;
-              }
-            }
-          }
         }
-        
-        lastHeartY = relativeY;
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
