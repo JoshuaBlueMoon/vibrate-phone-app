@@ -9,7 +9,8 @@ app.use(express.static('public'));
 
 // Serve the web page
 app.get('/', (req, res) => {
-  res.send(`<!DOCTYPE html>
+  res.send(`
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -669,7 +670,7 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log('Sub-menu button ' + (index + 1) + ' clicked');
         const barColors = [
           ['#60a5fa', '#ff3333'],
           ['#ff69b4', '#4b0082'],
@@ -893,7 +894,7 @@ app.get('/', (req, res) => {
         const topWidth = 110 + 40 * t; // Wider at bottom (150), narrower at top (110)
         const topHeight = 20 + 20 * (1 - t); // Taller at top (40), shorter at bottom (20)
         const midY = 180 * (1 - t * 0.5); // Control point moves up as heart moves down
-        barPath.setAttribute('d', `M20,360 Q20,${midY} 20,${topHeight} Q${75},${topHeight - 20} ${topWidth},${topHeight} Q${topWidth},${midY} ${topWidth},360 Z`);
+        barPath.setAttribute('d', 'M20,360 Q20,${midY} 20,${topHeight} Q${75},${topHeight - 20} ${topWidth},${topHeight} Q${topWidth},${midY} ${topWidth},360 Z');
 
         const currentTime = Date.now();
         let newHeartPosition = 'middle';
@@ -947,25 +948,3 @@ app.get('/', (req, res) => {
 </html>
   `);
 });
-
-let clients = [];
-wss.on('connection', (ws) => {
-  clients.push(ws);
-  ws.on('close', () => {
-    clients = clients.filter(client => client !== ws);
-  });
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      clients.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
-    } catch (e) {
-      console.error('Error parsing message:', e);
-    }
-  });
-});
-
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
