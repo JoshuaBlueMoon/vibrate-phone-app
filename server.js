@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, width, height; z-index: 1;"></div>
+      <div class="bar-graphic" style="position: absolute; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 100% 100%; will-change: transform, width, height, top; z-index: 1;"></div>
       <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4)); border-radius: 50%; opacity: 0.6; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -308,8 +308,8 @@ app.get('/', (req, res) => {
         width: 150px;
         height: 100%;
         background-position: center center;
-        background-size: contain;
-        will-change: transform, width, height;
+        background-size: 100% 100%;
+        will-change: transform, width, height, top;
       }
       .fluid-effect {
         width: 18px;
@@ -412,7 +412,6 @@ app.get('/', (req, res) => {
     let startY = 0;
     let lastPosition = 0;
     let lastCollision = null;
-    let lastGelatinTime = 0;
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle';
     let isSubMenuOpen = false;
@@ -425,12 +424,12 @@ app.get('/', (req, res) => {
     let targetHeight = 100;
     let velocityWidth = 0;
     let velocityHeight = 0;
-    const minWidth = 120;
-    const maxWidth = 180;
-    const minHeight = 80;
-    const maxHeight = 120;
-    const stiffness = 0.1;
-    const damping = 0.8;
+    const minWidth = 100; // Narrower for more pronounced thinning
+    const maxWidth = 200; // Wider for more pronounced squishing
+    const minHeight = 70; // Shorter for squishing
+    const maxHeight = 130; // Taller for thinning
+    const stiffness = 0.08; // Slightly softer for more wobble
+    const damping = 0.85; // Slightly higher damping for smoother oscillation
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -498,9 +497,11 @@ app.get('/', (req, res) => {
       barWidth += velocityWidth;
       barHeight += velocityHeight;
 
-      // Apply dimensions to bar-graphic
+      // Apply dimensions to bar-graphic, keeping bottom fixed
       barGraphic.style.width = \`\${barWidth}px\`;
       barGraphic.style.height = \`\${barHeight}%\`;
+      const barHeightPx = (barHeight / 100) * trackRect.height;
+      barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
       barGraphic.style.transform = \`translateX(-50%)\`;
 
       requestAnimationFrame(updateBar);
@@ -705,7 +706,7 @@ app.get('/', (req, res) => {
           '/images/bar-option4.png'
         ];
         barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
-        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundSize = '100% 100%';
         barGraphic.style.backgroundPosition = 'center center';
       });
     });
@@ -715,10 +716,11 @@ app.get('/', (req, res) => {
       lastCollision = side;
       if (interactionMode === 'heart') {
         score += 1;
+        updateScoreDisplay();
       } else {
         rectScore = Math.min(rectScore + 1, 100);
+        updateScoreDisplay();
       }
-      updateScoreDisplay();
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -901,7 +903,7 @@ app.get('/', (req, res) => {
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
 
         // Update target dimensions for spring system
-        const t = relativeY / maxPosition;
+        const t = Math.max(0, Math.min(1, relativeY / maxPosition));
         targetWidth = minWidth + (maxWidth - minWidth) * t;
         targetHeight = maxHeight - (maxHeight - minHeight) * t;
 
