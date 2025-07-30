@@ -387,7 +387,7 @@ app.get('/', (req, res) => {
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
-    const gameContent = document.getElementById('gameContent');
+    const gameContent = document.getElementById('GAMEContent');
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
@@ -404,7 +404,10 @@ app.get('/', (req, res) => {
     const scoreElement = document.getElementById('score');
     const glowDotsContainer = document.getElementById('glowDotsContainer');
     const roomDisplay = document.getElementById('room');
-    const menuToggle = document.getElementById('menuToggle,nil    let isDragging = false;
+    const menuToggle = document.getElementById('menuToggle');
+    const subMenu = document.getElementById('subMenu');
+    const subMenuButtons = document.querySelectorAll('.sub-menu-button');
+    let isDragging = false;
     let startX = 0;
     let startY = 0;
     let lastPosition = 0;
@@ -421,12 +424,12 @@ app.get('/', (req, res) => {
     let targetHeight = 100;
     let velocityWidth = 0;
     let velocityHeight = 0;
-    const minWidth = 100; // Narrower for more pronounced thinning
-    const maxWidth = 200; // Wider for more pronounced squishing
+    const minWidth = 100; // Narrower for thinning
+    const maxWidth = 200; // Wider for squishing
     const minHeight = 70; // Shorter for squishing
     const maxHeight = 110; // Reduced for less stretch at top
-    const stiffness = 0.08; // Slightly softer for more wobble
-    const damping = 0.85; // Slightly higher damping for smoother oscillation
+    const stiffness = 0.08;
+    const damping = 0.85;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -500,12 +503,6 @@ app.get('/', (req, res) => {
       const barHeightPx = (barHeight / 100) * trackRect.height;
       barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
       barGraphic.style.transform = \`translateX(-50%)\`;
-
-      // Reset to default dimensions when not dragging
-      if (!isDragging) {
-        targetWidth = 150;
-        targetHeight = 100;
-      }
 
       requestAnimationFrame(updateBar);
     }
@@ -817,6 +814,8 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
+          targetWidth = 150; // Reset to default when not pressing
+          targetHeight = 100;
         }
         isDragging = false;
         lastCollision = null;
@@ -833,6 +832,8 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
+          targetWidth = 150; // Reset to default when not pressing
+          targetHeight = 100;
         }
         isDragging = false;
         lastCollision = null;
@@ -904,10 +905,12 @@ app.get('/', (req, res) => {
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
 
-        // Update target dimensions for spring system only when dragging
-        const t = Math.max(0, Math.min(1, relativeY / maxPosition));
-        targetWidth = minWidth + (maxWidth - minWidth) * t;
-        targetHeight = maxHeight - (maxHeight - minHeight) * t;
+        // Update target dimensions only when actively pressing
+        if (isDragging) {
+          const t = Math.max(0, Math.min(1, relativeY / maxPosition));
+          targetWidth = minWidth + (maxWidth - minWidth) * t;
+          targetHeight = maxHeight - (maxHeight - minHeight) * t;
+        }
 
         const bottomThreshold = maxPosition * 0.9;
         const topThreshold = maxPosition * 0.1;
@@ -953,6 +956,10 @@ app.get('/', (req, res) => {
           }
         }
         lastPosition = relativeY;
+      } else {
+        // Reset to default dimensions when not pressing
+        targetWidth = 150;
+        targetHeight = 100;
       }
     }
   </script>
