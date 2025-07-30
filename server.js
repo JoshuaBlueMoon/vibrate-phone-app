@@ -426,6 +426,19 @@ app.get('/', (req, res) => {
     .gentle-rub {
       animation: gentle-rub 0.6s ease-out;
     }
+    /* Continuous bar deformation states */
+    .bar-deform-top {
+      transform: scale(0.8, 1.2) !important;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bar-deform-bottom {
+      transform: scale(1.2, 0.8) !important;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bar-deform-middle {
+      transform: scale(1, 1) !important;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
   <script>
     let ws = null;
@@ -721,14 +734,14 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log('Sub-menu button ' + (index + 1) + ' clicked');
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = 'url(\'' + barImages[index] + '\') no-repeat center center';
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('gelatin');
@@ -871,7 +884,10 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
+          // Return bar to normal state
+          sliderTrack.style.transform = 'scale(1, 1)';
+          sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -891,7 +907,10 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
+          // Return bar to normal state
+          sliderTrack.style.transform = 'scale(1, 1)';
+          sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -970,33 +989,39 @@ app.get('/', (req, res) => {
         const topThreshold = maxPosition * 0.1;
         const currentTime = Date.now();
 
+        // Calculate continuous deformation based on exact heart position
+        const normalizedY = Math.max(0, Math.min(1, relativeY / maxPosition));
+        
+        // Remove all discrete deformation classes
+        sliderTrack.classList.remove('bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
+        
+        // Apply continuous deformation based on normalized position
+        let scaleX, scaleY;
+        if (normalizedY < 0.5) {
+          // Top half: becomes thinner and taller as it goes up
+          const intensity = (0.5 - normalizedY) * 2; // 0 to 1
+          scaleX = 1 - (intensity * 0.3); // 1.0 to 0.7
+          scaleY = 1 + (intensity * 0.4); // 1.0 to 1.4
+        } else {
+          // Bottom half: becomes thicker and shorter as it goes down
+          const intensity = (normalizedY - 0.5) * 2; // 0 to 1
+          scaleX = 1 + (intensity * 0.4); // 1.0 to 1.4
+          scaleY = 1 - (intensity * 0.3); // 1.0 to 0.7
+        }
+        
+        // Apply the continuous transformation
+        sliderTrack.style.transform = 'scale(' + scaleX + ', ' + scaleY + ')';
+        sliderTrack.style.transition = 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Update position tracking for discrete zones (for other effects)
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
         } else if (relativeY >= bottomThreshold) {
           newHeartPosition = 'bottom';
         }
-
-        // Simple animation system - only trigger when position changes
+        
         if (newHeartPosition !== currentHeartPosition) {
-          // Remove all animation classes first
-          sliderTrack.classList.remove('squeeze', 'stretch', 'gentle-rub');
-          
-          if (newHeartPosition === 'top') {
-            // Heart at top - stretch the bar
-            if (currentTime - lastGelatinTime >= 400) {
-              sliderTrack.classList.add('stretch');
-              setTimeout(() => { sliderTrack.classList.remove('stretch'); }, 400);
-              lastGelatinTime = currentTime;
-            }
-          } else if (newHeartPosition === 'bottom') {
-            // Heart at bottom - squeeze the bar
-            if (currentTime - lastGelatinTime >= 400) {
-              sliderTrack.classList.add('squeeze');
-              setTimeout(() => { sliderTrack.classList.remove('squeeze'); }, 400);
-              lastGelatinTime = currentTime;
-            }
-          }
           currentHeartPosition = newHeartPosition;
         }
 
