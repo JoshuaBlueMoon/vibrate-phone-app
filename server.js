@@ -417,22 +417,6 @@ app.get('/', (req, res) => {
       75% { transform: scale(0.98, 1.02); }
       100% { transform: scale(1, 1); }
     }
-    @keyframes continuous-squish-x {
-      0% { transform: scaleX(1) scaleY(1); }
-      50% { transform: scaleX(var(--squish-x, 0.95)) scaleY(var(--squish-y, 1.05)); }
-      100% { transform: scaleX(1) scaleY(1); }
-    }
-    @keyframes continuous-squish-y {
-      0% { transform: scaleX(1) scaleY(1); }
-      50% { transform: scaleX(var(--squish-x, 1.05)) scaleY(var(--squish-y, 0.95)); }
-      100% { transform: scaleX(1) scaleY(1); }
-    }
-    @keyframes wobble {
-      0% { transform: scaleX(var(--wobble-x, 1)) scaleY(var(--wobble-y, 1)) rotate(0deg); }
-      25% { transform: scaleX(var(--wobble-x, 1)) scaleY(var(--wobble-y, 1)) rotate(var(--wobble-rotation, 1deg)); }
-      75% { transform: scaleX(var(--wobble-x, 1)) scaleY(var(--wobble-y, 1)) rotate(calc(var(--wobble-rotation, 1deg) * -1)); }
-      100% { transform: scaleX(var(--wobble-x, 1)) scaleY(var(--wobble-y, 1)) rotate(0deg); }
-    }
     .squeeze {
       animation: squeeze 0.4s ease-out;
     }
@@ -441,15 +425,6 @@ app.get('/', (req, res) => {
     }
     .gentle-rub {
       animation: gentle-rub 0.6s ease-out;
-    }
-    .continuous-squish-x {
-      animation: continuous-squish-x 0.3s ease-out;
-    }
-    .continuous-squish-y {
-      animation: continuous-squish-y 0.3s ease-out;
-    }
-    .wobble {
-      animation: wobble 0.4s ease-in-out;
     }
   </style>
   <script>
@@ -495,12 +470,8 @@ app.get('/', (req, res) => {
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle';
     let lastHeartY = 0;
-    let lastHeartX = 0;
-    let lastMovementTime = 0;
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
-    let currentDeformation = { scaleX: 1, scaleY: 1 };
-    let deformationAnimationId = null;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -765,85 +736,6 @@ app.get('/', (req, res) => {
       });
     });
 
-    function applyContinuousGelatin(velocityX, velocityY, currentX, currentY, trackRect) {
-      // Clear any existing deformation animation
-      if (deformationAnimationId) {
-        cancelAnimationFrame(deformationAnimationId);
-      }
-      
-      // Calculate movement intensity based on velocity
-      const totalVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-      const maxVelocity = 50; // Maximum expected velocity for normalization
-      const intensity = Math.min(totalVelocity / maxVelocity, 1);
-      
-      // Calculate position-based factors
-      const relativeY = (currentY - trackRect.top) / trackRect.height;
-      const relativeX = (currentX - trackRect.left) / trackRect.width;
-      
-      // Remove existing animation classes
-      sliderTrack.classList.remove('continuous-squish-x', 'continuous-squish-y', 'wobble', 'squeeze', 'stretch', 'gentle-rub');
-      
-      if (intensity > 0.1) { // Only animate if there's significant movement
-        // Determine primary movement direction
-        const horizontalMovement = Math.abs(velocityX) > Math.abs(velocityY);
-        
-        if (horizontalMovement) {
-          // Horizontal movement - squish horizontally
-          const squishX = Math.max(0.85, 1 - intensity * 0.15);
-          const squishY = Math.min(1.15, 1 + intensity * 0.15);
-          
-          sliderTrack.style.setProperty('--squish-x', squishX);
-          sliderTrack.style.setProperty('--squish-y', squishY);
-          sliderTrack.classList.add('continuous-squish-x');
-          
-          // Add subtle wobble for fast horizontal movement
-          if (intensity > 0.3) {
-            const wobbleIntensity = intensity * 2;
-            sliderTrack.style.setProperty('--wobble-x', 1 + intensity * 0.05);
-            sliderTrack.style.setProperty('--wobble-y', 1 - intensity * 0.02);
-            sliderTrack.style.setProperty('--wobble-rotation', wobbleIntensity + 'deg');
-            sliderTrack.classList.add('wobble');
-          }
-        } else {
-          // Vertical movement - squish vertically based on direction
-          if (velocityY < 0) {
-            // Moving up - stretch upward
-            const squishX = Math.min(1.1, 1 + intensity * 0.1);
-            const squishY = Math.max(0.9, 1 - intensity * 0.1);
-            
-            sliderTrack.style.setProperty('--squish-x', squishX);
-            sliderTrack.style.setProperty('--squish-y', squishY);
-            sliderTrack.classList.add('continuous-squish-y');
-          } else {
-            // Moving down - compress downward
-            const squishX = Math.min(1.08, 1 + intensity * 0.08);
-            const squishY = Math.max(0.92, 1 - intensity * 0.08);
-            
-            sliderTrack.style.setProperty('--squish-x', squishX);
-            sliderTrack.style.setProperty('--squish-y', squishY);
-            sliderTrack.classList.add('continuous-squish-y');
-          }
-        }
-        
-        // Additional deformation based on position within the bar
-        if (relativeY < 0.3 || relativeY > 0.7) {
-          // Near edges - add extra squish
-          const edgeIntensity = relativeY < 0.3 ? (0.3 - relativeY) * 3 : (relativeY - 0.7) * 3;
-          const extraSquish = Math.min(0.05, edgeIntensity * 0.05);
-          
-          if (relativeY < 0.3) {
-            // Near top - stretch effect
-            const currentSquishY = parseFloat(sliderTrack.style.getPropertyValue('--squish-y')) || 1;
-            sliderTrack.style.setProperty('--squish-y', Math.min(1.2, currentSquishY + extraSquish));
-          } else {
-            // Near bottom - compress effect  
-            const currentSquishY = parseFloat(sliderTrack.style.getPropertyValue('--squish-y')) || 1;
-            sliderTrack.style.setProperty('--squish-y', Math.max(0.8, currentSquishY - extraSquish));
-          }
-        }
-      }
-    }
-
     function createParticle(x, y, side) {
       if (lastCollision === side) return;
       lastCollision = side;
@@ -979,15 +871,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'continuous-squish-x', 'continuous-squish-y', 'wobble');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
           currentHeartPosition = 'middle';
-          
-          // Reset deformation variables
-          sliderTrack.style.removeProperty('--squish-x');
-          sliderTrack.style.removeProperty('--squish-y');
-          sliderTrack.style.removeProperty('--wobble-x');
-          sliderTrack.style.removeProperty('--wobble-y');
-          sliderTrack.style.removeProperty('--wobble-rotation');
         }
         isDragging = false;
         lastCollision = null;
@@ -1006,15 +891,8 @@ app.get('/', (req, res) => {
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'continuous-squish-x', 'continuous-squish-y', 'wobble');
+          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub');
           currentHeartPosition = 'middle';
-          
-          // Reset deformation variables
-          sliderTrack.style.removeProperty('--squish-x');
-          sliderTrack.style.removeProperty('--squish-y');
-          sliderTrack.style.removeProperty('--wobble-x');
-          sliderTrack.style.removeProperty('--wobble-y');
-          sliderTrack.style.removeProperty('--wobble-rotation');
         }
         isDragging = false;
         lastCollision = null;
@@ -1031,12 +909,6 @@ app.get('/', (req, res) => {
       const offsetY = e.clientY - heartRect.top - (heartRect.height / 2);
       startX = offsetX;
       startY = offsetY;
-      
-      // Initialize movement tracking
-      lastHeartX = e.clientX - bodyRect.left - startX;
-      lastHeartY = e.clientY - bodyRect.top - startY;
-      lastMovementTime = Date.now();
-      
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -1054,12 +926,6 @@ app.get('/', (req, res) => {
       const offsetY = e.touches[0].clientY - heartRect.top - (heartRect.height / 2);
       startX = offsetX;
       startY = offsetY;
-      
-      // Initialize movement tracking
-      lastHeartX = e.touches[0].clientX - bodyRect.left - startX;
-      lastHeartY = e.touches[0].clientY - bodyRect.top - startY;
-      lastMovementTime = Date.now();
-      
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -1074,21 +940,9 @@ app.get('/', (req, res) => {
         const trackRect = sliderTrack.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        
         // Apply the offset we calculated when starting the drag
         newX = newX - bodyRect.left - startX;
         newY = newY - bodyRect.top - startY;
-
-        // Calculate velocity for continuous animation
-        const currentTime = Date.now();
-        const deltaTime = currentTime - lastMovementTime;
-        let velocityX = 0;
-        let velocityY = 0;
-        
-        if (deltaTime > 0 && lastMovementTime > 0) {
-          velocityX = (newX - lastHeartX) / deltaTime * 16; // Normalized to 60fps
-          velocityY = (newY - lastHeartY) / deltaTime * 16;
-        }
 
         if (interactionMode === 'heart') {
           if (newX < 0) newX = 0;
@@ -1108,21 +962,13 @@ app.get('/', (req, res) => {
           vibrateButton.style.transform = 'translateY(-50%)';
         }
 
-        // Get current heart position for continuous gelatin animation
-        const heartRect = vibrateButton.getBoundingClientRect();
-        const currentHeartX = heartRect.left + heartRect.width / 2;
-        const currentHeartY = heartRect.top + heartRect.height / 2;
-        
-        // Apply continuous gelatin animation based on movement
-        if (deltaTime > 0) {
-          applyContinuousGelatin(velocityX, velocityY, currentHeartX, currentHeartY, trackRect);
-        }
-
         const room = roomDisplay.value;
+        const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
         const bottomThreshold = maxPosition * 0.9;
         const topThreshold = maxPosition * 0.1;
+        const currentTime = Date.now();
 
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
@@ -1131,11 +977,28 @@ app.get('/', (req, res) => {
           newHeartPosition = 'bottom';
         }
 
-        // Update position tracking for next frame
-        currentHeartPosition = newHeartPosition;
-        lastHeartX = newX;
-        lastHeartY = newY;
-        lastMovementTime = currentTime;
+        // Simple animation system - only trigger when position changes
+        if (newHeartPosition !== currentHeartPosition) {
+          // Remove all animation classes first
+          sliderTrack.classList.remove('squeeze', 'stretch', 'gentle-rub');
+          
+          if (newHeartPosition === 'top') {
+            // Heart at top - stretch the bar
+            if (currentTime - lastGelatinTime >= 400) {
+              sliderTrack.classList.add('stretch');
+              setTimeout(() => { sliderTrack.classList.remove('stretch'); }, 400);
+              lastGelatinTime = currentTime;
+            }
+          } else if (newHeartPosition === 'bottom') {
+            // Heart at bottom - squeeze the bar
+            if (currentTime - lastGelatinTime >= 400) {
+              sliderTrack.classList.add('squeeze');
+              setTimeout(() => { sliderTrack.classList.remove('squeeze'); }, 400);
+              lastGelatinTime = currentTime;
+            }
+          }
+          currentHeartPosition = newHeartPosition;
+        }
 
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
