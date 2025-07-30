@@ -387,7 +387,7 @@ app.get('/', (req, res) => {
     const startScreen = document.getElementById('startScreen');
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
-    const gameContent = document.getElementById('GAMEContent');
+    const gameContent = document.getElementById('gameContent');
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
@@ -424,12 +424,12 @@ app.get('/', (req, res) => {
     let targetHeight = 100;
     let velocityWidth = 0;
     let velocityHeight = 0;
-    const minWidth = 100; // Narrower for thinning
-    const maxWidth = 200; // Wider for squishing
-    const minHeight = 70; // Shorter for squishing
-    const maxHeight = 110; // Reduced for less stretch at top
-    const stiffness = 0.08;
-    const damping = 0.85;
+    const minWidth = 100; // Narrower for pronounced thinning
+    const maxWidth = 200; // Wider for pronounced squishing
+    const minHeight = 80; // Adjusted for balanced squishing
+    const maxHeight = 110; // Reduced to prevent off-screen stretching
+    const stiffness = 0.08; // Soft for wobbly effect
+    const damping = 0.85; // Smooth oscillation
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -501,7 +501,7 @@ app.get('/', (req, res) => {
       barGraphic.style.width = \`\${barWidth}px\`;
       barGraphic.style.height = \`\${barHeight}%\`;
       const barHeightPx = (barHeight / 100) * trackRect.height;
-      barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
+      barGraphic.style.top = \`\${Math.max(0, trackRect.height - barHeightPx)}px\`;
       barGraphic.style.transform = \`translateX(-50%)\`;
 
       requestAnimationFrame(updateBar);
@@ -716,10 +716,11 @@ app.get('/', (req, res) => {
       lastCollision = side;
       if (interactionMode === 'heart') {
         score += 1;
+        updateScoreDisplay();
       } else {
         rectScore = Math.min(rectScore + 1, 100);
+        updateScoreDisplay();
       }
-      updateScoreDisplay();
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -814,8 +815,6 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
-          targetWidth = 150; // Reset to default when not pressing
-          targetHeight = 100;
         }
         isDragging = false;
         lastCollision = null;
@@ -832,8 +831,6 @@ app.get('/', (req, res) => {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
-          targetWidth = 150; // Reset to default when not pressing
-          targetHeight = 100;
         }
         isDragging = false;
         lastCollision = null;
@@ -868,7 +865,7 @@ app.get('/', (req, res) => {
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
-      }
+     WEB
       lastPosition = vibrateButton.offsetTop;
     });
 
@@ -905,12 +902,10 @@ app.get('/', (req, res) => {
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
 
-        // Update target dimensions only when actively pressing
-        if (isDragging) {
-          const t = Math.max(0, Math.min(1, relativeY / maxPosition));
-          targetWidth = minWidth + (maxWidth - minWidth) * t;
-          targetHeight = maxHeight - (maxHeight - minHeight) * t;
-        }
+        // Update target dimensions for spring system
+        const t = Math.max(0, Math.min(1, relativeY / maxPosition));
+        targetWidth = minWidth + (maxWidth - minWidth) * t;
+        targetHeight = maxHeight - (maxHeight - minHeight) * t;
 
         const bottomThreshold = maxPosition * 0.9;
         const topThreshold = maxPosition * 0.1;
@@ -956,10 +951,6 @@ app.get('/', (req, res) => {
           }
         }
         lastPosition = relativeY;
-      } else {
-        // Reset to default dimensions when not pressing
-        targetWidth = 150;
-        targetHeight = 100;
       }
     }
   </script>
