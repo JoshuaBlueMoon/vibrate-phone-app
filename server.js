@@ -689,14 +689,14 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log('Sub-menu button ' + (index + 1) + ' clicked');
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.background = 'url(\'' + barImages[index] + '\') no-repeat center center';
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
         barGraphic.classList.add('soft-tube');
@@ -1004,6 +1004,8 @@ app.get('/', (req, res) => {
   </script>
 </body>
 </html>
+  `);
+});
 
 let clients = [];
 wss.on('connection', (ws) => {
