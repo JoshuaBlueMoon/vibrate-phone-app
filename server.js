@@ -405,6 +405,13 @@ app.get('/', (req, res) => {
     const roomInput = document.getElementById('roomInput');
     const joinButton = document.getElementById('joinButton');
     const gameContent = document.getElementById('gameContent');
+    
+    console.log('Elements found:', {
+      startScreen: !!startScreen,
+      roomInput: !!roomInput,
+      joinButton: !!joinButton,
+      gameContent: !!gameContent
+    });
     const intensityDisplay = document.getElementById('intensityValue');
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
@@ -439,7 +446,9 @@ app.get('/', (req, res) => {
     let rectScoreInterval = null;
 
     function startGame() {
+      console.log('startGame function called');
       const roomCode = roomInput.value.trim();
+      console.log('Room code:', roomCode);
       if (roomCode) {
         console.log('Starting game with room code:', roomCode);
         roomDisplay.value = roomCode;
@@ -449,8 +458,29 @@ app.get('/', (req, res) => {
           startScreen.remove();
           gameContent.style.display = 'flex';
           console.log('gameContent displayed');
-          ws = new WebSocket('wss://' + window.location.host);
-          ws.onopen = () => console.log('Connected to server');
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          ws = new WebSocket(protocol + '//' + window.location.host);
+          
+          // Add timeout for WebSocket connection
+          const wsTimeout = setTimeout(() => {
+            if (ws.readyState === WebSocket.CONNECTING) {
+              console.log('WebSocket connection timeout, continuing without connection');
+              ws.close();
+            }
+          }, 5000);
+          ws.onopen = () => {
+            console.log('Connected to server');
+            clearTimeout(wsTimeout);
+          };
+          ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            console.log('Continuing without WebSocket connection');
+            clearTimeout(wsTimeout);
+          };
+          ws.onclose = () => {
+            console.log('WebSocket connection closed');
+            clearTimeout(wsTimeout);
+          };
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.room === roomCode) {
@@ -501,7 +531,11 @@ app.get('/', (req, res) => {
     });
 
     joinButton.addEventListener('click', () => {
-      console.log('Join button clicked');
+      console.log('Join button clicked - event listener triggered');
+      joinButton.style.background = '#ff4444';
+      setTimeout(() => {
+        joinButton.style.background = '#60a5fa';
+      }, 200);
       startGame();
     });
 
@@ -834,7 +868,9 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          }
           vibrateButton.classList.remove('pulsing');
           barGraphic.classList.remove('bar-pulsing', 'pinching', 'soft-tube');
           barGraphic.style.setProperty('--scale-x', 1);
@@ -857,7 +893,9 @@ app.get('/', (req, res) => {
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
-          ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
+          }
           vibrateButton.classList.remove('pulsing');
           barGraphic.classList.remove('bar-pulsing', 'pinching', 'soft-tube');
           barGraphic.style.setProperty('--scale-x', 1);
@@ -989,7 +1027,9 @@ app.get('/', (req, res) => {
                 default: pattern = [2000];
               }
             }
-            ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
+            }
             sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
