@@ -987,28 +987,24 @@ app.get('/', (req, res) => {
     }
 
     if (newHeartPosition !== currentHeartPosition) {
+      sliderTrack.classList.remove('squished-top', 'squished-bottom', 'gelatin', 'bottom-gelatin');
+      sliderTrack.style.setProperty('--scale-x', 1);
+      sliderTrack.style.setProperty('--scale-y', 1);
+
       if (newHeartPosition === 'top') {
-        sliderTrack.style.setProperty('--scale-x', 0.85);
-        sliderTrack.style.setProperty('--scale-y', 1.3);
-        sliderTrack.classList.remove('bottom-gelatin');
-        if (currentTime - lastGelatinTime >= 900) {
+        sliderTrack.classList.add('squished-top');
+        if (currentTime - lastGelatinTime >= 700) {
           sliderTrack.classList.add('gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('gelatin'); }, 900);
+          setTimeout(() => { if (currentHeartPosition !== 'top') sliderTrack.classList.remove('gelatin'); }, 700);
           lastGelatinTime = currentTime;
         }
       } else if (newHeartPosition === 'bottom') {
-        sliderTrack.style.setProperty('--scale-x', 1.4);
-        sliderTrack.style.setProperty('--scale-y', 0.75);
-        sliderTrack.classList.remove('gelatin');
-        if (currentTime - lastBottomGelatinTime >= 900) {
+        sliderTrack.classList.add('squished-bottom');
+        if (currentTime - lastBottomGelatinTime >= 700) {
           sliderTrack.classList.add('bottom-gelatin');
-          setTimeout(() => { sliderTrack.classList.remove('bottom-gelatin'); }, 900);
+          setTimeout(() => { if (currentHeartPosition !== 'bottom') sliderTrack.classList.remove('bottom-gelatin'); }, 700);
           lastBottomGelatinTime = currentTime;
         }
-      } else {
-        sliderTrack.style.setProperty('--scale-x', 1);
-        sliderTrack.style.setProperty('--scale-y', 1);
-        sliderTrack.classList.remove('gelatin', 'bottom-gelatin');
       }
       currentHeartPosition = newHeartPosition;
     }
@@ -1046,8 +1042,8 @@ app.get('/', (req, res) => {
       }
     }
     lastPosition = relativeY;
-      }
-    }
+  }
+}
   </script>
 </body>
 </html>
