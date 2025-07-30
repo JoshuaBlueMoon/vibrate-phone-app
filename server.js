@@ -58,15 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <svg class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%;" viewBox="0 0 150 360" preserveAspectRatio="none">
-        <path id="barPath" d="M20,360 Q20,180 20,20 Q75,0 130,20 Q130,180 130,360 Z" fill="url(#barGradient)" stroke="rgba(255, 255, 255, 0.2)" stroke-width="2"/>
-        <defs>
-          <linearGradient id="barGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:0.8"/>
-            <stop offset="100%" style="stop-color:#ff3333;stop-opacity:0.8"/>
-          </linearGradient>
-        </defs>
-      </svg>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform; z-index: 1;"></div>
       <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4)); border-radius: 50%; opacity: 0.6; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -126,6 +118,18 @@ app.get('/', (req, res) => {
       75% { transform: translateX(-50%) rotate(-3deg); }
       100% { transform: translateX(-50%) rotate(0deg); }
     }
+    @keyframes pinch {
+      0% { transform: scaleX(1); }
+      50% { transform: scaleX(0.9); }
+      100% { transform: scaleX(1); }
+    }
+    @keyframes softTube {
+      0% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+      30% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.92), calc(var(--scale-y, 1) * 1.08)); }
+      60% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 1.04), calc(var(--scale-y, 1) * 0.96)); }
+      80% { transform: translateX(-50%) scale(calc(var(--scale-x, 1) * 0.98), calc(var(--scale-y, 1) * 1.02)); }
+      100% { transform: translateX(-50%) scale(var(--scale-x, 1), var(--scale-y, 1)); }
+    }
     @keyframes drip {
       0% { transform: translate(-50%, 0) scale(0.5, 0.5); opacity: 0.6; }
       20% { transform: translate(-60%, 20%) scale(1, 1); opacity: 0.6; }
@@ -148,6 +152,16 @@ app.get('/', (req, res) => {
     .pendulum-wobble {
       animation: pendulumWobble 0.6s ease-in-out;
       transform-origin: bottom center;
+    }
+    .pinching {
+      animation: pinch 0.3s ease-in-out;
+    }
+    .soft-tube {
+      animation: softTube 0.8s cubic-bezier(0.65, -0.4, 0.35, 1.4);
+      transform-origin: bottom center;
+    }
+    .squished {
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .glow-dot {
       position: absolute;
@@ -310,6 +324,9 @@ app.get('/', (req, res) => {
       .bar-graphic {
         width: 150px;
         height: 100%;
+        background-position: center center;
+        background-size: contain;
+        will-change: transform;
       }
       .fluid-effect {
         width: 18px;
@@ -394,7 +411,6 @@ app.get('/', (req, res) => {
     const intensityFill = document.getElementById('intensityFill');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
-    const barPath = document.getElementById('barPath');
     const fluidEffect = document.querySelector('.fluid-effect');
     const vibrateButton = document.getElementById('vibrateButton');
     const vibrateImage = document.getElementById('vibrateImage');
@@ -622,6 +638,9 @@ app.get('/', (req, res) => {
       vibrateButton.style.transform = 'translate(-50%, -50%)';
       stopRectScoreInterval();
       updateIntensityBar();
+      barGraphic.classList.remove('soft-tube');
+      barGraphic.style.setProperty('--scale-x', 1);
+      barGraphic.style.setProperty('--scale-y', 1);
     });
 
     rectToggle.addEventListener('click', () => {
@@ -670,18 +689,18 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log('Sub-menu button ' + (index + 1) + ' clicked');
-        const barColors = [
-          ['#60a5fa', '#ff3333'],
-          ['#ff69b4', '#4b0082'],
-          ['#00ff00', '#0000ff'],
-          ['#ffd700', '#ff4500']
+        console.log(`Sub-menu button ${index + 1} clicked`);
+        const barImages = [
+          '/images/custom-bar.png',
+          '/images/bar-option2.png',
+          '/images/bar-option3.png',
+          '/images/bar-option4.png'
         ];
-        const gradient = barGraphic.querySelector('#barGradient');
-        gradient.innerHTML = `
-          <stop offset="0%" style="stop-color:${barColors[index][0]};stop-opacity:0.8"/>
-          <stop offset="100%" style="stop-color:${barColors[index][1]};stop-opacity:0.8"/>
-        `;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.backgroundSize = 'contain';
+        barGraphic.style.backgroundPosition = 'center center';
+        barGraphic.classList.add('soft-tube');
+        setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
       });
     });
 
@@ -695,7 +714,9 @@ app.get('/', (req, res) => {
       }
       updateScoreDisplay();
       const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 700) {
+      if (currentTime - lastGelatinTime >= 800) {
+        barGraphic.classList.add('soft-tube');
+        setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
         lastGelatinTime = currentTime;
       }
 
@@ -736,9 +757,15 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
+          sliderTrack.classList.add('squished');
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
+        } else if (currentTime - lastTrackGelatinTime >= 800) {
+          barGraphic.classList.add('soft-tube');
+          setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
+          lastTrackGelatinTime = currentTime;
         }
       }
     });
@@ -751,9 +778,15 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
+          sliderTrack.classList.add('squished');
+          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
+        } else if (currentTime - lastTrackGelatinTime >= 800) {
+          barGraphic.classList.add('soft-tube');
+          setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
+          lastTrackGelatinTime = currentTime;
         }
       }
     });
@@ -765,6 +798,10 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
           isPressingBar = false;
+          sliderTrack.classList.remove('squished');
+          barGraphic.classList.add('soft-tube');
+          sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
         }
       }
       handleMovement(e, false);
@@ -777,6 +814,10 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
           isPressingBar = false;
+          sliderTrack.classList.remove('squished');
+          barGraphic.classList.add('soft-tube');
+          sliderTrack.style.setProperty('--scale-y', 1);
+          setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
         }
       }
       handleMovement(e, true);
@@ -785,13 +826,19 @@ app.get('/', (req, res) => {
     document.addEventListener('mouseup', () => {
       if (isPressingBar) {
         isPressingBar = false;
+        sliderTrack.classList.remove('squished');
+        barGraphic.classList.add('soft-tube');
+        sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          barPath.setAttribute('d', 'M20,360 Q20,180 20,20 Q75,0 130,20 Q130,180 130,360 Z');
+          barGraphic.classList.remove('bar-pulsing', 'pinching', 'soft-tube');
+          barGraphic.style.setProperty('--scale-x', 1);
+          barGraphic.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -802,13 +849,19 @@ app.get('/', (req, res) => {
     document.addEventListener('touchend', () => {
       if (isPressingBar) {
         isPressingBar = false;
+        sliderTrack.classList.remove('squished');
+        barGraphic.classList.add('soft-tube');
+        sliderTrack.style.setProperty('--scale-y', 1);
+        setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          barPath.setAttribute('d', 'M20,360 Q20,180 20,20 Q75,0 130,20 Q130,180 130,360 Z');
+          barGraphic.classList.remove('bar-pulsing', 'pinching', 'soft-tube');
+          barGraphic.style.setProperty('--scale-x', 1);
+          barGraphic.style.setProperty('--scale-y', 1);
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -826,9 +879,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
+        if (currentTime - lastHeartGelatinTime >= 800) {
+          vibrateButton.classList.add('soft-tube');
+          setTimeout(() => { vibrateButton.classList.remove('soft-tube'); }, 800);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -845,9 +898,9 @@ app.get('/', (req, res) => {
       if (room) {
         vibrateButton.classList.add('pulsing');
         const currentTime = Date.now();
-        if (currentTime - lastHeartGelatinTime >= 700) {
-          vibrateButton.classList.add('gelatin');
-          setTimeout(() => { vibrateButton.classList.remove('gelatin'); }, 700);
+        if (currentTime - lastHeartGelatinTime >= 800) {
+          vibrateButton.classList.add('soft-tube');
+          setTimeout(() => { vibrateButton.classList.remove('soft-tube'); }, 800);
           lastHeartGelatinTime = currentTime;
         }
       }
@@ -886,17 +939,22 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+
+        // Dynamic scaling for soft tube effect
+        const positionRatio = relativeY / maxPosition; // 0 at top, 1 at bottom
+        const scaleX = 1.2 - (positionRatio * 0.4); // Wider at top (1.2), narrower at bottom (0.8)
+        const scaleY = 0.9 + (positionRatio * 0.2); // Shorter at top (0.9), taller at bottom (1.1)
+        barGraphic.style.setProperty('--scale-x', scaleX);
+        barGraphic.style.setProperty('--scale-y', scaleY);
+        const currentTime = Date.now();
+        if (currentTime - lastGelatinTime >= 800) {
+          barGraphic.classList.add('soft-tube');
+          setTimeout(() => { barGraphic.classList.remove('soft-tube'); }, 800);
+          lastGelatinTime = currentTime;
+        }
+
         const bottomThreshold = maxPosition * 0.9;
         const topThreshold = maxPosition * 0.1;
-
-        // Update bar shape based on position
-        const t = Math.max(0, Math.min(1, relativeY / maxPosition)); // Normalized position (0 at top, 1 at bottom)
-        const topWidth = 110 + 40 * t; // Wider at bottom (150), narrower at top (110)
-        const topHeight = 20 + 20 * (1 - t); // Taller at top (40), shorter at bottom (20)
-        const midY = 180 * (1 - t * 0.5); // Control point moves up as heart moves down
-        barPath.setAttribute('d', 'M20,360 Q20,${midY} 20,${topHeight} Q${75},${topHeight - 20} ${topWidth},${topHeight} Q${topWidth},${midY} ${topWidth},360 Z');
-
-        const currentTime = Date.now();
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
@@ -932,11 +990,11 @@ app.get('/', (req, res) => {
               }
             }
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
-            sliderTrack.classList.add('bar-pulsing');
+            sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing');
+            sliderTrack.classList.remove('bar-pulsing', 'pinching');
             lastCollision = null;
           }
         }
@@ -946,8 +1004,6 @@ app.get('/', (req, res) => {
   </script>
 </body>
 </html>
-  `);
-});
 
 let clients = [];
 wss.on('connection', (ws) => {
