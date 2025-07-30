@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
       </div>
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
-      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: background; z-index: 1;"></div>
+      <div class="bar-graphic" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: contain; background-position: center center; will-change: transform, width, height; z-index: 1;"></div>
       <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4)); border-radius: 50%; opacity: 0.6; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); z-index: 2;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
       <div class="red-dot" style="width: 18px; height: 18px; background: transparent; border-radius: 50%; z-index: 3;"></div>
@@ -97,11 +97,6 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
-    @keyframes barPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
     @keyframes subtlePulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.02); }
@@ -118,16 +113,6 @@ app.get('/', (req, res) => {
       75% { transform: translateX(-50%) rotate(-3deg); }
       100% { transform: translateX(-50%) rotate(0deg); }
     }
-    @keyframes pinch {
-      0% { transform: scaleX(1); }
-      50% { transform: scaleX(0.9); }
-      100% { transform: scaleX(1); }
-    }
-
-
-
-
-
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
       50% { opacity: 0.5; }
@@ -151,9 +136,6 @@ app.get('/', (req, res) => {
     .pulsing {
       animation: pulse 0.5s ease-in-out;
     }
-    .bar-pulsing {
-      animation: barPulse 0.4s ease-in-out infinite;
-    }
     .subtle-pulsing {
       animation: subtlePulse 0.4s ease-in-out;
     }
@@ -163,13 +145,6 @@ app.get('/', (req, res) => {
     .pendulum-wobble {
       animation: pendulumWobble 0.6s ease-in-out;
       transform-origin: bottom center;
-    }
-    .pinching {
-      animation: pinch 0.3s ease-in-out;
-    }
-
-    .squished {
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .glow-dot {
       position: absolute;
@@ -334,7 +309,7 @@ app.get('/', (req, res) => {
         height: 100%;
         background-position: center center;
         background-size: contain;
-        will-change: background;
+        will-change: transform, width, height;
       }
       .fluid-effect {
         width: 18px;
@@ -400,45 +375,6 @@ app.get('/', (req, res) => {
         height: 15px;
       }
     }
-    @keyframes squeeze {
-      0% { transform: scale(1, 1); }
-      50% { transform: scale(1.2, 0.8); }
-      100% { transform: scale(1, 1); }
-    }
-    @keyframes stretch {
-      0% { transform: scale(1, 1); }
-      50% { transform: scale(0.8, 1.2); }
-      100% { transform: scale(1, 1); }
-    }
-    @keyframes gentle-rub {
-      0% { transform: scale(1, 1); }
-      25% { transform: scale(0.95, 1.05); }
-      50% { transform: scale(1.05, 0.95); }
-      75% { transform: scale(0.98, 1.02); }
-      100% { transform: scale(1, 1); }
-    }
-    .squeeze {
-      animation: squeeze 0.4s ease-out;
-    }
-    .stretch {
-      animation: stretch 0.4s ease-out;
-    }
-    .gentle-rub {
-      animation: gentle-rub 0.6s ease-out;
-    }
-    /* Continuous bar deformation states */
-    .bar-deform-top {
-      transform: scale(0.8, 1.2) !important;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .bar-deform-bottom {
-      transform: scale(1.2, 0.8) !important;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .bar-deform-middle {
-      transform: scale(1, 1) !important;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
   </style>
   <script>
     let ws = null;
@@ -477,14 +413,24 @@ app.get('/', (req, res) => {
     let lastPosition = 0;
     let lastCollision = null;
     let lastGelatinTime = 0;
-    let lastHeartGelatinTime = 0;
-    let lastTrackGelatinTime = 0;
-    let lastBottomGelatinTime = 0;
     let lastPendulumTime = 0;
     let currentHeartPosition = 'middle';
-    let lastHeartY = 0;
     let isSubMenuOpen = false;
     let rectScoreInterval = null;
+
+    // Spring system variables for gelatinous effect
+    let barWidth = 150;
+    let barHeight = 100; // Percentage of sliderTrack height
+    let targetWidth = 150;
+    let targetHeight = 100;
+    let velocityWidth = 0;
+    let velocityHeight = 0;
+    const minWidth = 120;
+    const maxWidth = 180;
+    const minHeight = 80;
+    const maxHeight = 120;
+    const stiffness = 0.1;
+    const damping = 0.8;
 
     function startGame() {
       const roomCode = roomInput.value.trim();
@@ -526,19 +472,38 @@ app.get('/', (req, res) => {
                 }
                 navigator.vibrate(pattern);
                 console.log('Vibrate started with mode:', data.mode, 'intensity:', intensity, 'pattern:', pattern);
-                sliderTrack.classList.add('pulsing');
-                setTimeout(() => sliderTrack.classList.remove('pulsing'), 500);
+                setTimeout(() => {}, 500);
               } else if (data.command === 'stopVibrate' && navigator.vibrate) {
                 navigator.vibrate(0);
               }
             }
           };
+          // Start the spring animation loop
+          requestAnimationFrame(updateBar);
         }, 1000);
       } else {
         console.log('No room code entered');
         roomInput.placeholder = 'Please enter a room code';
         roomInput.value = '';
       }
+    }
+
+    function updateBar() {
+      // Update spring system
+      const trackRect = sliderTrack.getBoundingClientRect();
+      const forceWidth = (targetWidth - barWidth) * stiffness;
+      const forceHeight = (targetHeight - barHeight) * stiffness;
+      velocityWidth = (velocityWidth + forceWidth) * damping;
+      velocityHeight = (velocityHeight + forceHeight) * damping;
+      barWidth += velocityWidth;
+      barHeight += velocityHeight;
+
+      // Apply dimensions to bar-graphic
+      barGraphic.style.width = \`\${barWidth}px\`;
+      barGraphic.style.height = \`\${barHeight}%\`;
+      barGraphic.style.transform = \`translateX(-50%)\`;
+
+      requestAnimationFrame(updateBar);
     }
 
     roomInput.addEventListener('keypress', (e) => {
@@ -623,8 +588,6 @@ app.get('/', (req, res) => {
     }
 
     function triggerSubtlePulse() {
-      sliderTrack.classList.add('subtle-pulsing');
-      setTimeout(() => { sliderTrack.classList.remove('subtle-pulsing'); }, 400);
       const nextPulse = Math.random() * 3000 + 3000;
       setTimeout(triggerSubtlePulse, nextPulse);
     }
@@ -734,18 +697,16 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log('Sub-menu button ' + (index + 1) + ' clicked');
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = 'url(\'' + barImages[index] + '\') no-repeat center center';
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
         barGraphic.style.backgroundSize = 'contain';
         barGraphic.style.backgroundPosition = 'center center';
-        barGraphic.classList.add('gelatin');
-        setTimeout(() => { barGraphic.classList.remove('gelatin'); }, 700);
       });
     });
 
@@ -758,18 +719,6 @@ app.get('/', (req, res) => {
         rectScore = Math.min(rectScore + 1, 100);
       }
       updateScoreDisplay();
-      const currentTime = Date.now();
-      if (currentTime - lastGelatinTime >= 400) {
-        // Simple animation based on collision side
-        if (side === 'top') {
-          sliderTrack.classList.add('stretch');
-          setTimeout(() => { sliderTrack.classList.remove('stretch'); }, 400);
-        } else {
-          sliderTrack.classList.add('squeeze');
-          setTimeout(() => { sliderTrack.classList.remove('squeeze'); }, 400);
-        }
-        lastGelatinTime = currentTime;
-      }
 
       const trackRect = sliderTrack.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
@@ -808,15 +757,9 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (clickY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
-          sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 600) {
-          sliderTrack.classList.add('gentle-rub');
-          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
-          lastTrackGelatinTime = currentTime;
         }
       }
     });
@@ -829,15 +772,9 @@ app.get('/', (req, res) => {
         const currentTime = Date.now();
         if (touchY <= topThreshold && currentTime - lastPendulumTime >= 600) {
           isPressingBar = true;
-          sliderTrack.classList.add('squished');
-          sliderTrack.style.setProperty('--scale-y', 0.8);
           barGraphic.classList.add('pendulum-wobble');
           setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
           lastPendulumTime = currentTime;
-        } else if (currentTime - lastTrackGelatinTime >= 600) {
-          sliderTrack.classList.add('gentle-rub');
-          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
-          lastTrackGelatinTime = currentTime;
         }
       }
     });
@@ -849,9 +786,6 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
           isPressingBar = false;
-          sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gentle-rub');
-          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
         }
       }
       handleMovement(e, false);
@@ -864,9 +798,6 @@ app.get('/', (req, res) => {
         const topThreshold = trackRect.height * 0.1;
         if (touchY > topThreshold) {
           isPressingBar = false;
-          sliderTrack.classList.remove('squished');
-          sliderTrack.classList.add('gentle-rub');
-          setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
         }
       }
       handleMovement(e, true);
@@ -875,19 +806,12 @@ app.get('/', (req, res) => {
     document.addEventListener('mouseup', () => {
       if (isPressingBar) {
         isPressingBar = false;
-        sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gentle-rub');
-        setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
-          // Return bar to normal state
-          sliderTrack.style.transform = 'scale(1, 1)';
-          sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -898,19 +822,12 @@ app.get('/', (req, res) => {
     document.addEventListener('touchend', () => {
       if (isPressingBar) {
         isPressingBar = false;
-        sliderTrack.classList.remove('squished');
-        sliderTrack.classList.add('gentle-rub');
-        setTimeout(() => { sliderTrack.classList.remove('gentle-rub'); }, 600);
       }
       if (isDragging) {
         const room = roomDisplay.value;
         if (room) {
           ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
           vibrateButton.classList.remove('pulsing');
-          sliderTrack.classList.remove('bar-pulsing', 'pinching', 'squeeze', 'stretch', 'gentle-rub', 'bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
-          // Return bar to normal state
-          sliderTrack.style.transform = 'scale(1, 1)';
-          sliderTrack.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           currentHeartPosition = 'middle';
         }
         isDragging = false;
@@ -922,7 +839,6 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
-      // Calculate the offset from the cursor to the heart's center
       const heartRect = vibrateButton.getBoundingClientRect();
       const offsetX = e.clientX - heartRect.left - (heartRect.width / 2);
       const offsetY = e.clientY - heartRect.top - (heartRect.height / 2);
@@ -939,7 +855,6 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
-      // Calculate the offset from the touch to the heart's center
       const heartRect = vibrateButton.getBoundingClientRect();
       const offsetX = e.touches[0].clientX - heartRect.left - (heartRect.width / 2);
       const offsetY = e.touches[0].clientY - heartRect.top - (heartRect.height / 2);
@@ -959,7 +874,6 @@ app.get('/', (req, res) => {
         const trackRect = sliderTrack.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        // Apply the offset we calculated when starting the drag
         newX = newX - bodyRect.left - startX;
         newY = newY - bodyRect.top - startY;
 
@@ -985,42 +899,21 @@ app.get('/', (req, res) => {
         const heartRect = vibrateButton.getBoundingClientRect();
         const relativeY = heartRect.top - trackRect.top;
         const maxPosition = trackRect.height - vibrateButton.offsetHeight;
+
+        // Update target dimensions for spring system
+        const t = relativeY / maxPosition;
+        targetWidth = minWidth + (maxWidth - minWidth) * t;
+        targetHeight = maxHeight - (maxHeight - minHeight) * t;
+
         const bottomThreshold = maxPosition * 0.9;
         const topThreshold = maxPosition * 0.1;
-        const currentTime = Date.now();
-
-        // Calculate continuous deformation based on exact heart position
-        const normalizedY = Math.max(0, Math.min(1, relativeY / maxPosition));
-        
-        // Remove all discrete deformation classes
-        sliderTrack.classList.remove('bar-deform-top', 'bar-deform-bottom', 'bar-deform-middle');
-        
-        // Apply continuous deformation based on normalized position
-        let scaleX, scaleY;
-        if (normalizedY < 0.5) {
-          // Top half: becomes thinner and taller as it goes up
-          const intensity = (0.5 - normalizedY) * 2; // 0 to 1
-          scaleX = 1 - (intensity * 0.3); // 1.0 to 0.7
-          scaleY = 1 + (intensity * 0.4); // 1.0 to 1.4
-        } else {
-          // Bottom half: becomes thicker and shorter as it goes down
-          const intensity = (normalizedY - 0.5) * 2; // 0 to 1
-          scaleX = 1 + (intensity * 0.4); // 1.0 to 1.4
-          scaleY = 1 - (intensity * 0.3); // 1.0 to 0.7
-        }
-        
-        // Apply the continuous transformation
-        sliderTrack.style.transform = 'scale(' + scaleX + ', ' + scaleY + ')';
-        sliderTrack.style.transition = 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)';
-        
-        // Update position tracking for discrete zones (for other effects)
         let newHeartPosition = 'middle';
         if (relativeY <= topThreshold) {
           newHeartPosition = 'top';
         } else if (relativeY >= bottomThreshold) {
           newHeartPosition = 'bottom';
         }
-        
+
         if (newHeartPosition !== currentHeartPosition) {
           currentHeartPosition = newHeartPosition;
         }
@@ -1049,11 +942,9 @@ app.get('/', (req, res) => {
               }
             }
             ws.send(JSON.stringify({ room: room, command: 'startVibrate', intensity: intensity, mode: vibrationMode, pattern: pattern }));
-            sliderTrack.classList.add('bar-pulsing', 'pinching');
             createParticle(vibrateButton.offsetLeft + vibrateButton.offsetWidth / 2, vibrateButton.offsetTop + vibrateButton.offsetHeight / 2, relativeY <= 0 ? 'top' : 'bottom');
           } else {
             ws.send(JSON.stringify({ room: room, command: 'stopVibrate' }));
-            sliderTrack.classList.remove('bar-pulsing', 'pinching');
             lastCollision = null;
           }
         }
