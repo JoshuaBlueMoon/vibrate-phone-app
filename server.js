@@ -1112,8 +1112,12 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
-      startX = e.clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+      // Calculate the offset from the cursor to the heart's center
+      const heartRect = vibrateButton.getBoundingClientRect();
+      const offsetX = e.clientX - heartRect.left - (heartRect.width / 2);
+      const offsetY = e.clientY - heartRect.top - (heartRect.height / 2);
+      startX = offsetX;
+      startY = offsetY;
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -1131,8 +1135,12 @@ app.get('/', (req, res) => {
       e.preventDefault();
       isDragging = true;
       const bodyRect = document.body.getBoundingClientRect();
-      startX = e.touches[0].clientX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-      startY = e.touches[0].clientY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+      // Calculate the offset from the touch to the heart's center
+      const heartRect = vibrateButton.getBoundingClientRect();
+      const offsetX = e.touches[0].clientX - heartRect.left - (heartRect.width / 2);
+      const offsetY = e.touches[0].clientY - heartRect.top - (heartRect.height / 2);
+      startX = offsetX;
+      startY = offsetY;
       const room = roomDisplay.value;
       if (room) {
         vibrateButton.classList.add('pulsing');
@@ -1153,8 +1161,9 @@ app.get('/', (req, res) => {
         const trackRect = sliderTrack.getBoundingClientRect();
         let newX = isTouch ? e.touches[0].clientX : e.clientX;
         let newY = isTouch ? e.touches[0].clientY : e.clientY;
-        newX = newX - bodyRect.left - (vibrateButton.offsetWidth / 2);
-        newY = newY - bodyRect.top - (vibrateButton.offsetHeight / 2);
+        // Apply the offset we calculated when starting the drag
+        newX = newX - bodyRect.left - startX;
+        newY = newY - bodyRect.top - startY;
 
         if (interactionMode === 'heart') {
           if (newX < 0) newX = 0;
