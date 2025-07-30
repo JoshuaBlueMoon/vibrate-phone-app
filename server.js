@@ -948,3 +948,25 @@ app.get('/', (req, res) => {
 </html>
   `);
 });
+
+let clients = [];
+wss.on('connection', (ws) => {
+  clients.push(ws);
+  ws.on('close', () => {
+    clients = clients.filter(client => client !== ws);
+  });
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(data));
+        }
+      });
+    } catch (e) {
+      console.error('Error parsing message:', e);
+    }
+  });
+});
+
+server.listen(process.env.PORT || 3000, () => console.log('Server running'));
