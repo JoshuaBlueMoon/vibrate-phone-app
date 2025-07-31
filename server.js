@@ -433,6 +433,20 @@ app.get('/', (req, res) => {
     const defaultWidth = 150; // Default bar width
     const defaultHeight = 100; // Default bar height (percentage)
 
+    // Pendulum wobble variables
+    let pendulumAngle = 0; // Current rotation angle in radians
+    let pendulumVelocity = 0; // Angular velocity
+    const pendulumDamping = 0.95; // Damping factor for pendulum motion
+    const pendulumStiffness = 0.02; // Spring force to return to center
+    const maxPendulumAngle = 0.3; // Maximum wobble angle (in radians, ~17 degrees)
+    
+    // Function to trigger pendulum wobble
+    function triggerPendulumWobble(intensity = 0.2) {
+      const randomDirection = Math.random() > 0.5 ? 1 : -1;
+      pendulumAngle = randomDirection * intensity;
+      pendulumVelocity = randomDirection * 0.05; // Small initial velocity
+    }
+
     function startGame() {
       const roomCode = roomInput.value.trim();
       if (roomCode) {
@@ -503,12 +517,24 @@ app.get('/', (req, res) => {
       barWidth += velocityWidth;
       barHeight += velocityHeight;
 
+      // Update pendulum physics
+      const pendulumForce = -pendulumAngle * pendulumStiffness;
+      pendulumVelocity = (pendulumVelocity + pendulumForce) * pendulumDamping;
+      pendulumAngle += pendulumVelocity;
+
+      // Clamp pendulum angle to maximum
+      pendulumAngle = Math.max(-maxPendulumAngle, Math.min(maxPendulumAngle, pendulumAngle));
+
       // Apply dimensions to bar-graphic, keeping bottom fixed
       barGraphic.style.width = \`\${barWidth}px\`;
       barGraphic.style.height = \`\${barHeight}%\`;
       const barHeightPx = (barHeight / 100) * trackRect.height;
       barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
-      barGraphic.style.transform = \`translateX(-50%)\`;
+      
+      // Apply pendulum rotation around the bottom point
+      const rotationDegrees = pendulumAngle * (180 / Math.PI);
+      barGraphic.style.transform = \`translateX(-50%) rotate(\${rotationDegrees}deg)\`;
+      barGraphic.style.transformOrigin = \`50% 100%\`; // Rotate around bottom center
 
       requestAnimationFrame(updateBar);
     }
@@ -822,6 +848,8 @@ app.get('/', (req, res) => {
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
         }
+        // Trigger wobble when releasing the button
+        triggerPendulumWobble(0.1);
         isDragging = false;
         lastCollision = null;
       }
@@ -838,6 +866,8 @@ app.get('/', (req, res) => {
           vibrateButton.classList.remove('pulsing');
           currentHeartPosition = 'middle';
         }
+        // Trigger wobble when releasing the button
+        triggerPendulumWobble(0.1);
         isDragging = false;
         lastCollision = null;
       }
@@ -924,6 +954,10 @@ app.get('/', (req, res) => {
 
         if (newHeartPosition !== currentHeartPosition) {
           currentHeartPosition = newHeartPosition;
+          // Trigger wobble when reaching the bottom
+          if (newHeartPosition === 'bottom') {
+            triggerPendulumWobble(0.15);
+          }
         }
 
         if (room) {
