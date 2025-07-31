@@ -956,7 +956,7 @@ app.get('/', (req, res) => {
           currentHeartPosition = newHeartPosition;
           // Trigger wobble when reaching the bottom
           if (newHeartPosition === 'bottom') {
-            triggerPendulumWobble(0.15);
+            triggerPendulumWobble(0.05);
           }
         }
 
