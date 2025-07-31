@@ -105,11 +105,12 @@ app.get('/', (req, res) => {
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
-    @keyframes pendulumWobble {
-      0% { transform: translateX(-50%) rotate(0deg); }
-      25% { transform: translateX(-50%) rotate(3deg); }
-      75% { transform: translateX(-50%) rotate(-3deg); }
-      100% { transform: translateX(-50%) rotate(0deg); }
+@keyframes pendulumWobble {
+  0% { transform: translateX(-50%) scale(1, 1); }
+  25% { transform: translateX(-50%) scale(1.1, 1); }
+  75% { transform: translateX(-50%) scale(0.9, 1); }
+  100% { transform: translateX(-50%) scale(1, 1); }
+}
     }
     @keyframes slowDrift {
       0% { transform: translate(0, 0); opacity: 0.3; }
@@ -140,10 +141,10 @@ app.get('/', (req, res) => {
     .intensity-pulsing {
       animation: intensityPulse 0.3s ease-in-out;
     }
-    .pendulum-wobble {
-      animation: pendulumWobble 0.6s ease-in-out;
-      transform-origin: bottom center;
-    }
+.pendulum-wobble {
+  animation: pendulumWobble 0.6s ease-in-out;
+  transform-origin: bottom center;
+}
     .glow-dot {
       position: absolute;
       width: 6px;
@@ -791,6 +792,12 @@ app.get('/', (req, res) => {
         }
         isDragging = false;
         lastCollision = null;
+        const currentTime = Date.now();
+if (currentTime - lastPendulumTime >= 600) {
+  barGraphic.classList.add('pendulum-wobble');
+  setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+  lastPendulumTime = currentTime;
+}
       }
     });
     document.addEventListener('touchend', () => {
@@ -882,6 +889,14 @@ app.get('/', (req, res) => {
         }
         if (newHeartPosition !== currentHeartPosition) {
           currentHeartPosition = newHeartPosition;
+          if (newHeartPosition === 'bottom') {
+  const currentTime = Date.now();
+  if (currentTime - lastPendulumTime >= 600) {
+    barGraphic.classList.add('pendulum-wobble');
+    setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
+    lastPendulumTime = currentTime;
+  }
+}
         }
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
