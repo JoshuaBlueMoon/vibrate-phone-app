@@ -486,26 +486,28 @@ app.get('/', (req, res) => {
         roomInput.value = '';
       }
     }
-    function updateBar() {
-      // Update spring system
-      const trackRect = sliderTrack.getBoundingClientRect();
-      // Use default dimensions when not dragging
-      const currentTargetWidth = isDragging ? targetWidth : defaultWidth;
-      const currentTargetHeight = isDragging ? targetHeight : defaultHeight;
-      const forceWidth = (currentTargetWidth - barWidth) * stiffness;
-      const forceHeight = (currentTargetHeight - barHeight) * stiffness;
-      velocityWidth = (velocityWidth + forceWidth) * damping;
-      velocityHeight = (velocityHeight + forceHeight) * damping;
-      barWidth += velocityWidth;
-      barHeight += velocityHeight;
-      // Apply dimensions to bar-graphic, keeping bottom fixed
-      barGraphic.style.width = \`\${barWidth}px\`;
-      barGraphic.style.height = \`\${barHeight}%\`;
-      const barHeightPx = (barHeight / 100) * trackRect.height;
-      barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
-      barGraphic.style.transform = \`translateX(-50%)\`;
-      requestAnimationFrame(updateBar);
-    }
+function updateBar() {
+  // Update spring system
+  const trackRect = sliderTrack.getBoundingClientRect();
+  const currentTargetWidth = isDragging ? targetWidth : defaultWidth;
+  const currentTargetHeight = isDragging ? targetHeight : defaultHeight;
+  const forceWidth = (currentTargetWidth - barWidth) * stiffness;
+  const forceHeight = (currentTargetHeight - barHeight) * stiffness;
+  velocityWidth = (velocityWidth + forceWidth) * damping;
+  velocityHeight = (velocityHeight + forceHeight) * damping;
+  barWidth += velocityWidth;
+  barHeight += velocityHeight;
+  // Apply dimensions to bar-graphic, keeping bottom fixed
+  barGraphic.style.width = `${barWidth}px`;
+  barGraphic.style.height = `${barHeight}%`;
+  const barHeightPx = (barHeight / 100) * trackRect.height;
+  barGraphic.style.top = `${trackRect.height - barHeightPx}px`;
+  // Only set transform if pendulum-wobble is not active
+  if (!barGraphic.classList.contains('pendulum-wobble')) {
+    barGraphic.style.transform = `translateX(-50%)`;
+  }
+  requestAnimationFrame(updateBar);
+}
     roomInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         console.log('Enter key pressed');
@@ -793,12 +795,13 @@ app.get('/', (req, res) => {
         }
         isDragging = false;
         lastCollision = null;
-        const currentTime = Date.now();
-        if (currentTime - lastPendulumTime >= 600) {
-          barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          lastPendulumTime = currentTime;
-        }
+const currentTime = Date.now();
+if (currentTime - lastPendulumTime >= 800) {
+  console.log('Wobble triggered on mouseup');
+  barGraphic.classList.add('pendulum-wobble');
+  setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 800);
+  lastPendulumTime = currentTime;
+}
       }
     });
     document.addEventListener('touchend', () => {
@@ -814,12 +817,13 @@ app.get('/', (req, res) => {
         }
         isDragging = false;
         lastCollision = null;
-        const currentTime = Date.now();
-        if (currentTime - lastPendulumTime >= 600) {
-          barGraphic.classList.add('pendulum-wobble');
-          setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-          lastPendulumTime = currentTime;
-        }
+const currentTime = Date.now();
+if (currentTime - lastPendulumTime >= 800) {
+  console.log('Wobble triggered on touchend');
+  barGraphic.classList.add('pendulum-wobble');
+  setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 800);
+  lastPendulumTime = currentTime;
+}
       }
     });
     vibrateButton.addEventListener('mousedown', (e) => {
@@ -896,14 +900,15 @@ app.get('/', (req, res) => {
         }
         if (newHeartPosition !== currentHeartPosition) {
           currentHeartPosition = newHeartPosition;
-          if (newHeartPosition === 'bottom') {
-            const currentTime = Date.now();
-            if (currentTime - lastPendulumTime >= 600) {
-              barGraphic.classList.add('pendulum-wobble');
-              setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 600);
-              lastPendulumTime = currentTime;
-            }
-          }
+if (newHeartPosition === 'bottom') {
+  const currentTime = Date.now();
+  if (currentTime - lastPendulumTime >= 800) {
+    console.log('Wobble triggered at bottom threshold');
+    barGraphic.classList.add('pendulum-wobble');
+    setTimeout(() => { barGraphic.classList.remove('pendulum-wobble'); }, 800);
+    lastPendulumTime = currentTime;
+  }
+}
         }
         if (room) {
           if (relativeY <= 0 || relativeY >= maxPosition) {
