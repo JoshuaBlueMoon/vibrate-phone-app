@@ -1,3 +1,15 @@
+const express = require('express');
+const WebSocket = require('ws');
+const app = express();
+const server = require('http').createServer(app);
+const wss = new WebSocket.Server({ server });
+
+// Serve static files from the public directory
+app.use(express.static('public'));
+
+// Serve the web page
+app.get('/', (req, res) => {
+  res.send(`
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,7 +49,7 @@
         </div>
       </div>
     </div>
-    <div id="modeControls" style="position: absolute; bottom: 10px; left: 15px; display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 3;">
+    <div id="modeControls" style="position: absolute; left: 15px; bottom: 15px; display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
       </div>
@@ -66,7 +78,7 @@
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
         <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
         </div>
-        <div id="intensityHeartSprite" style="display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: url('/images/intensity-heart.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
+        <div id="intensitySprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/intensity-heart.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
@@ -265,8 +277,8 @@
         top: 20%;
       }
       #modeControls {
-        bottom: 5px;
         left: 10px;
+        bottom: 10px;
       }
       #menuToggle {
         width: 48px;
@@ -306,7 +318,7 @@
         height: 100%;
         background-position: center center;
         background-size: 100% 100%;
-        will-change: transform, width, height, top;
+        will-will: transform, width, height, top;
       }
       .fluid-effect {
         width: 18px;
@@ -325,14 +337,14 @@
         max-width: 373px;
         padding: 7px;
       }
-      #intensityHeartSprite {
-        width: 22px;
-        height: 22px;
-      }
       #intensityFill {
         top: 7px;
         bottom: 7px;
         left: 7px;
+      }
+      #intensitySprite {
+        width: 29px;
+        height: 29px;
       }
       #intensityValue {
         font-size: 8px;
@@ -393,7 +405,7 @@
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
-    const intensityHeartSprite = document.getElementById('intensityHeartSprite');
+    const intensitySprite = document.getElementById('intensitySprite');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const fluidEffect = document.querySelector('.fluid-effect');
@@ -528,15 +540,15 @@
       pendulumAngle = Math.max(-maxPendulumAngle, Math.min(maxPendulumAngle, pendulumAngle));
 
       // Apply dimensions to bar-graphic, keeping bottom fixed
-      barGraphic.style.width = `${barWidth}px`;
-      barGraphic.style.height = `${barHeight}%`;
+      barGraphic.style.width = \`\${barWidth}px\`;
+      barGraphic.style.height = \`\${barHeight}%\`;
       const barHeightPx = (barHeight / 100) * trackRect.height;
-      barGraphic.style.top = `${trackRect.height - barHeightPx}px`;
+      barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
       
       // Apply pendulum rotation around the bottom point
       const rotationDegrees = pendulumAngle * (180 / Math.PI);
-      barGraphic.style.transform = `translateX(-50%) rotate(${rotationDegrees}deg)`;
-      barGraphic.style.transformOrigin = `50% 100%`; // Rotate around bottom center
+      barGraphic.style.transform = \`translateX(-50%) rotate(\${rotationDegrees}deg)\`;
+      barGraphic.style.transformOrigin = \`50% 100%\`; // Rotate around bottom center
 
       requestAnimationFrame(updateBar);
     }
@@ -582,10 +594,10 @@
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        intensityHeartSprite.style.display = 'none';
+        intensitySprite.style.display = 'none';
       } else {
-        intensityHeartSprite.style.display = 'block';
         fluidEffect.style.display = 'none';
+        intensitySprite.style.display = 'block';
       }
     }
 
@@ -622,7 +634,7 @@
         rectScoreInterval = null;
       }
       fluidEffect.style.display = 'none';
-      intensityHeartSprite.style.display = 'block';
+      intensitySprite.style.display = 'block';
     }
 
     function triggerSubtlePulse() {
@@ -646,13 +658,13 @@
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        intensityHeartSprite.style.display = 'none';
+        intensitySprite.style.display = 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
         fluidEffect.style.display = 'none';
-        intensityHeartSprite.style.display = 'block';
+        intensitySprite.style.display = 'block';
       }
     }
 
@@ -737,14 +749,14 @@
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(`Sub-menu button ${index + 1} clicked`);
+        console.log(\`Sub-menu button \${index + 1} clicked\`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
+        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
         barGraphic.style.backgroundSize = '100% 100%';
         barGraphic.style.backgroundPosition = 'center center';
       });
@@ -826,7 +838,7 @@
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
-          isPressingBar =igna false;
+          isPressingBar = false;
         }
       }
       handleMovement(e, false);
@@ -1003,15 +1015,8 @@
   </script>
 </body>
 </html>
-<script>
-const express = require('express');
-const WebSocket = require('ws');
-const app = express();
-const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Serve static files from the public directory
-app.use(express.static('public'));
+  `);
+});
 
 let clients = [];
 wss.on('connection', (ws) => {
@@ -1034,4 +1039,3 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(process.env.PORT || 3000, () => console.log('Server running'));
-</script>
