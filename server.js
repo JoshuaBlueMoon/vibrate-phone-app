@@ -48,13 +48,13 @@ app.get('/', (req, res) => {
           <img src="/images/sub-button4.png" alt="Sub Button 4" style="width: 32px; height: 32px;">
         </div>
       </div>
-    </div>
-    <div id="rightControls" style="position: absolute; right: 15px; top: 20%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 3;">
-      <div id="heartToggle" class="toggle-button toggled" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
-        <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
-      </div>
-      <div id="rectToggle" class="toggle-button" style="width: 56px; height: 56px; background: none; border: none; cursor: pointer;">
-        <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      <div id="modeControls" style="position: absolute; bottom: 15px; left: 15px; display: flex; flex-direction: column; gap: 5px;">
+        <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+          <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+        </div>
+        <div id="rectToggle" class="toggle-button" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+          <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+        </div>
       </div>
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
@@ -78,16 +78,17 @@ app.get('/', (req, res) => {
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
         <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
         </div>
+        <div id="heartModeSprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/heart-mode-sprite.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
     </div>
   </div>
   <style>
-   @keyframes fadeOut {
-  0% { opacity: 1; background: url('/images/start-background2.png'), radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); background-size: cover; background-position: center; background-repeat: no-repeat; }
-  100% { opacity: 0; background: #0e1124; }
-}
+    @keyframes fadeOut {
+      0% { opacity: 1; background: url('/images/start-background2.png'), radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); background-size: cover; background-position: center; background-repeat: no-repeat; }
+      100% { opacity: 0; background: #0e1124; }
+    }
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
       pointer-events: none;
@@ -275,17 +276,25 @@ app.get('/', (req, res) => {
         left: 10px;
         top: 20%;
       }
-      #rightControls {
-        right: 10px;
-        top: 20%;
+      #modeControls {
+        bottom: 10px;
+        left: 10px;
       }
-      #menuToggle, #heartToggle, #rectToggle {
+      #menuToggle {
         width: 48px;
         height: 48px;
       }
-      #menuToggle img, #heartToggle img, #rectToggle img {
+      #menuToggle img {
         width: 36px;
         height: 36px;
+      }
+      #heartToggle, #rectToggle {
+        width: 24px;
+        height: 24px;
+      }
+      #heartToggle img, #rectToggle img {
+        width: 18px;
+        height: 18px;
       }
       #subMenu {
         gap: 8px;
@@ -332,6 +341,10 @@ app.get('/', (req, res) => {
         top: 7px;
         bottom: 7px;
         left: 7px;
+      }
+      #heartModeSprite {
+        width: 29px;
+        height: 29px;
       }
       #intensityValue {
         font-size: 8px;
@@ -392,6 +405,7 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
+    const heartModeSprite = document.getElementById('heartModeSprite');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const fluidEffect = document.querySelector('.fluid-effect');
@@ -580,8 +594,10 @@ app.get('/', (req, res) => {
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+        heartModeSprite.style.display = 'none';
       } else {
         fluidEffect.style.display = 'none';
+        heartModeSprite.style.display = 'block';
       }
     }
 
@@ -618,6 +634,7 @@ app.get('/', (req, res) => {
         rectScoreInterval = null;
       }
       fluidEffect.style.display = 'none';
+      heartModeSprite.style.display = 'block';
     }
 
     function triggerSubtlePulse() {
@@ -641,11 +658,13 @@ app.get('/', (req, res) => {
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
+        heartModeSprite.style.display = 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
         fluidEffect.style.display = 'none';
+        heartModeSprite.style.display = 'block';
       }
     }
 
