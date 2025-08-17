@@ -48,14 +48,6 @@ app.get('/', (req, res) => {
           <img src="/images/sub-button4.png" alt="Sub Button 4" style="width: 32px; height: 32px;">
         </div>
       </div>
-      <div id="modeControls" style="position: absolute; bottom: 15px; left: 15px; display: flex; flex-direction: column; gap: 5px;">
-        <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
-          <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
-        </div>
-        <div id="rectToggle" class="toggle-button" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
-          <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
-        </div>
-      </div>
     </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 100% 100%; will-change: transform, width, height, top; z-index: 1;"></div>
@@ -67,21 +59,29 @@ app.get('/', (req, res) => {
       <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 1px; margin: 5px auto;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
+        <div id="waveToggle" class="toggle-button" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
-        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
+        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease; z-index: 1;">
         </div>
-        <div id="heartModeSprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/heart-mode-sprite.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
-        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
+        <div id="heartModeSprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/heart-mode-sprite.png') no-repeat center center; background-size: contain; z-index: 3;"></div>
+        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent; z-index: 2;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
+      <div id="modeControls" style="position: absolute; bottom: 5px; left: 15px; display: flex; flex-direction: row; gap: 5px;">
+        <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+          <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+        </div>
+        <div id="rectToggle" class="toggle-button" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+          <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+        </div>
+      </div>
     </div>
   </div>
   <style>
@@ -277,7 +277,7 @@ app.get('/', (req, res) => {
         top: 20%;
       }
       #modeControls {
-        bottom: 10px;
+        bottom: 5px;
         left: 10px;
       }
       #menuToggle {
@@ -329,8 +329,16 @@ app.get('/', (req, res) => {
       }
       #toggleContainer {
         flex-direction: row;
-        gap: 2px;
+        gap: 1px;
         margin: 5px auto;
+      }
+      #pulseToggle, #waveToggle {
+        width: 24px;
+        height: 24px;
+      }
+      #pulseToggle img, #waveToggle img {
+        width: 18px;
+        height: 18px;
       }
       #intensityContainer {
         width: 53.33%;
@@ -358,12 +366,12 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 53px;
-        height: 53px;
+        width: 24px;
+        height: 24px;
       }
       .toggle-button img {
-        width: 40px;
-        height: 40px;
+        width: 18px;
+        height: 18px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
