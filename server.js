@@ -37,7 +37,7 @@
         </div>
       </div>
     </div>
-    <div id="rightControls" style="position: absolute; left: 15px; bottom: 15px; display: flex; flex-direction: row; align-items: center; gap: 5px; z-index: 3;">
+    <div id="modeControls" style="position: absolute; bottom: 10px; left: 15px; display: flex; flex-direction: column; align-items: center; gap: 5px; z-index: 3;">
       <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
         <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
       </div>
@@ -66,7 +66,7 @@
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
         <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
         </div>
-        <div id="intensitySprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/intensity-heart.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
+        <div id="intensityHeartSprite" style="display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: url('/images/intensity-heart.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
         <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
@@ -186,7 +186,7 @@
       width: 32px;
       height: 32px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
-      background-sizeautomatically generated contain;
+      background-size: contain;
       cursor: pointer;
       margin-top: -8px;
       transition: transform 0.2s ease-out;
@@ -264,9 +264,9 @@
         left: 10px;
         top: 20%;
       }
-      #rightControls {
+      #modeControls {
+        bottom: 5px;
         left: 10px;
-        bottom: 10px;
       }
       #menuToggle {
         width: 48px;
@@ -325,14 +325,14 @@
         max-width: 373px;
         padding: 7px;
       }
+      #intensityHeartSprite {
+        width: 22px;
+        height: 22px;
+      }
       #intensityFill {
         top: 7px;
         bottom: 7px;
         left: 7px;
-      }
-      #intensitySprite {
-        width: 29px;
-        height: 29px;
       }
       #intensityValue {
         font-size: 8px;
@@ -393,7 +393,7 @@
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
-    const intensitySprite = document.getElementById('intensitySprite');
+    const intensityHeartSprite = document.getElementById('intensityHeartSprite');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const fluidEffect = document.querySelector('.fluid-effect');
@@ -582,10 +582,10 @@
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        intensitySprite.style.display = 'none';
+        intensityHeartSprite.style.display = 'none';
       } else {
+        intensityHeartSprite.style.display = 'block';
         fluidEffect.style.display = 'none';
-        intensitySprite.style.display = 'block';
       }
     }
 
@@ -622,7 +622,7 @@
         rectScoreInterval = null;
       }
       fluidEffect.style.display = 'none';
-      intensitySprite.style.display = 'block';
+      intensityHeartSprite.style.display = 'block';
     }
 
     function triggerSubtlePulse() {
@@ -646,13 +646,13 @@
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        intensitySprite.style.display = 'none';
+        intensityHeartSprite.style.display = 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
         fluidEffect.style.display = 'none';
-        intensitySprite.style.display = 'block';
+        intensityHeartSprite.style.display = 'block';
       }
     }
 
@@ -826,7 +826,7 @@
         const clickY = e.clientY - trackRect.top;
         const topThreshold = trackRect.height * 0.1;
         if (clickY > topThreshold) {
-          isPressingBar = false;
+          isPressingBar =igna false;
         }
       }
       handleMovement(e, false);
@@ -1003,3 +1003,35 @@
   </script>
 </body>
 </html>
+<script>
+const express = require('express');
+const WebSocket = require('ws');
+const app = express();
+const server = require('http').createServer(app);
+const wss = new WebSocket.Server({ server });
+
+// Serve static files from the public directory
+app.use(express.static('public'));
+
+let clients = [];
+wss.on('connection', (ws) => {
+  clients.push(ws);
+  ws.on('close', () => {
+    clients = clients.filter(client => client !== ws);
+  });
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      clients.forEach(client => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(data));
+        }
+      });
+    } catch (e) {
+      console.error('Error parsing message:', e);
+    }
+  });
+});
+
+server.listen(process.env.PORT || 3000, () => console.log('Server running'));
+</script>
