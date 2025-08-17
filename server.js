@@ -1,15 +1,3 @@
-const express = require('express');
-const WebSocket = require('ws');
-const app = express();
-const server = require('http').createServer(app);
-const wss = new WebSocket.Server({ server });
-
-// Serve static files from the public directory
-app.use(express.static('public'));
-
-// Serve the web page
-app.get('/', (req, res) => {
-  res.send(`
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,6 +37,14 @@ app.get('/', (req, res) => {
         </div>
       </div>
     </div>
+    <div id="rightControls" style="position: absolute; left: 15px; bottom: 15px; display: flex; flex-direction: row; align-items: center; gap: 5px; z-index: 3;">
+      <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+        <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+      </div>
+      <div id="rectToggle" class="toggle-button" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
+        <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+      </div>
+    </div>
     <div id="sliderTrack" style="width: 150px; height: 60%; max-height: 360px; position: relative; margin: 10px auto 20px auto; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
       <div class="bar-graphic" style="position: absolute; left: 50%; transform: translateX(-50%); width: 150px; height: 100%; background: url('/images/custom-bar.png') no-repeat center center; background-size: 100% 100%; will-change: transform, width, height, top; z-index: 1;"></div>
       <div class="fluid-effect" style="display: none; position: absolute; top: 0; left: 50%; transform: translateX(-50%) scale(0.5, 0.5); width: 20px; height: 10px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4)); border-radius: 50%; opacity: 0.6; box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); z-index: 2;"></div>
@@ -59,36 +55,28 @@ app.get('/', (req, res) => {
       <img id="vibrateImage" src="/images/custom-heart.png" alt="Custom Heart" style="width: 40px; height: 40px;">
     </div>
     <div id="bottomControls" style="margin-top: 28px; width: 100%; display: flex; flex-direction: column; align-items: center;">
-      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 1px; margin: 5px auto;">
-        <div id="pulseToggle" class="toggle-button toggled" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+      <div id="toggleContainer" style="display: flex; justify-content: center; gap: 2px; margin: 5px auto;">
+        <div id="pulseToggle" class="toggle-button toggled" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/pulse-toggle.png" alt="Pulse Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
-        <div id="waveToggle" class="toggle-button" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
-          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
+        <div id="waveToggle" class="toggle-button" style="width: 53px; height: 53px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+          <img src="/images/wave-toggle.png" alt="Wave Toggle" style="width: 40px; height: 40px; transition: transform 0.2s;">
         </div>
       </div>
       <div id="intensityContainer" style="width: 53.33%; max-width: 400px; padding: 8px; background: url('/images/intensity-bar.png') no-repeat center center; background-size: contain; border-radius: 15px; margin: 5px auto; position: relative;">
-        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease; z-index: 1;">
+        <div id="intensityFill" style="position: absolute; top: 8px; bottom: 8px; left: 8px; width: 0%; background: linear-gradient(to right, #60a5fa, #ff3333); border-radius: 8px; transition: width 0.3s ease;">
         </div>
-        <div id="heartModeSprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/heart-mode-sprite.png') no-repeat center center; background-size: contain; z-index: 3;"></div>
-        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent; z-index: 2;">
+        <div id="intensitySprite" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: url('/images/intensity-heart.png') no-repeat center center; background-size: contain; z-index: 2;"></div>
+        <input type="range" id="intensity" min="1" max="5" value="3" style="width: 100%; height: 16px; background: transparent; accent-color: transparent;">
       </div>
       <label for="intensity"><span id="intensityValue" style="font-size: 9px; color: #60a5fa;">3</span></label>
-      <div id="modeControls" style="position: absolute; bottom: 5px; left: 15px; display: flex; flex-direction: row; gap: 5px;">
-        <div id="heartToggle" class="toggle-button toggled" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
-          <img src="/images/heart-toggle.png" alt="Heart Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
-        </div>
-        <div id="rectToggle" class="toggle-button" style="width: 28px; height: 28px; background: none; border: none; cursor: pointer;">
-          <img src="/images/rect-toggle.png" alt="Rectangle Toggle" style="width: 20px; height: 20px; transition: transform 0.2s;">
-        </div>
-      </div>
     </div>
   </div>
   <style>
-    @keyframes fadeOut {
-      0% { opacity: 1; background: url('/images/start-background2.png'), radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); background-size: cover; background-position: center; background-repeat: no-repeat; }
-      100% { opacity: 0; background: #0e1124; }
-    }
+   @keyframes fadeOut {
+  0% { opacity: 1; background: url('/images/start-background2.png'), radial-gradient(circle at 50% 50%, rgba(20, 44, 102, 0.5) 10%, transparent 50%), radial-gradient(circle at 20% 30%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(14, 17, 36, 0.5) 25%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(32, 16, 38, 0.5) 20%, transparent 50%), radial-gradient(circle at 30% 70%, rgba(14, 17, 36, 0.5) 20%, transparent 50%), linear-gradient(to bottom, #201026, #0e1124); background-size: cover; background-position: center; background-repeat: no-repeat; }
+  100% { opacity: 0; background: #0e1124; }
+}
     #startScreen.fade-out {
       animation: fadeOut 1s ease-in-out forwards;
       pointer-events: none;
@@ -198,7 +186,7 @@ app.get('/', (req, res) => {
       width: 32px;
       height: 32px;
       background: url('/images/intensity-thumb.png') no-repeat center center;
-      background-size: contain;
+      background-sizeautomatically generated contain;
       cursor: pointer;
       margin-top: -8px;
       transition: transform 0.2s ease-out;
@@ -276,9 +264,9 @@ app.get('/', (req, res) => {
         left: 10px;
         top: 20%;
       }
-      #modeControls {
-        bottom: 5px;
+      #rightControls {
         left: 10px;
+        bottom: 10px;
       }
       #menuToggle {
         width: 48px;
@@ -329,16 +317,8 @@ app.get('/', (req, res) => {
       }
       #toggleContainer {
         flex-direction: row;
-        gap: 1px;
+        gap: 2px;
         margin: 5px auto;
-      }
-      #pulseToggle, #waveToggle {
-        width: 24px;
-        height: 24px;
-      }
-      #pulseToggle img, #waveToggle img {
-        width: 18px;
-        height: 18px;
       }
       #intensityContainer {
         width: 53.33%;
@@ -350,7 +330,7 @@ app.get('/', (req, res) => {
         bottom: 7px;
         left: 7px;
       }
-      #heartModeSprite {
+      #intensitySprite {
         width: 29px;
         height: 29px;
       }
@@ -366,12 +346,12 @@ app.get('/', (req, res) => {
         height: 5px;
       }
       .toggle-button {
-        width: 24px;
-        height: 24px;
+        width: 53px;
+        height: 53px;
       }
       .toggle-button img {
-        width: 18px;
-        height: 18px;
+        width: 40px;
+        height: 40px;
       }
       .toggle-button.toggled img {
         transform: scale(1.5);
@@ -413,7 +393,7 @@ app.get('/', (req, res) => {
     const intensitySlider = document.getElementById('intensity');
     const intensityContainer = document.getElementById('intensityContainer');
     const intensityFill = document.getElementById('intensityFill');
-    const heartModeSprite = document.getElementById('heartModeSprite');
+    const intensitySprite = document.getElementById('intensitySprite');
     const sliderTrack = document.getElementById('sliderTrack');
     const barGraphic = document.querySelector('.bar-graphic');
     const fluidEffect = document.querySelector('.fluid-effect');
@@ -548,15 +528,15 @@ app.get('/', (req, res) => {
       pendulumAngle = Math.max(-maxPendulumAngle, Math.min(maxPendulumAngle, pendulumAngle));
 
       // Apply dimensions to bar-graphic, keeping bottom fixed
-      barGraphic.style.width = \`\${barWidth}px\`;
-      barGraphic.style.height = \`\${barHeight}%\`;
+      barGraphic.style.width = `${barWidth}px`;
+      barGraphic.style.height = `${barHeight}%`;
       const barHeightPx = (barHeight / 100) * trackRect.height;
-      barGraphic.style.top = \`\${trackRect.height - barHeightPx}px\`;
+      barGraphic.style.top = `${trackRect.height - barHeightPx}px`;
       
       // Apply pendulum rotation around the bottom point
       const rotationDegrees = pendulumAngle * (180 / Math.PI);
-      barGraphic.style.transform = \`translateX(-50%) rotate(\${rotationDegrees}deg)\`;
-      barGraphic.style.transformOrigin = \`50% 100%\`; // Rotate around bottom center
+      barGraphic.style.transform = `translateX(-50%) rotate(${rotationDegrees}deg)`;
+      barGraphic.style.transformOrigin = `50% 100%`; // Rotate around bottom center
 
       requestAnimationFrame(updateBar);
     }
@@ -602,10 +582,10 @@ app.get('/', (req, res) => {
         intensityFill.style.width = fillPercentage + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        heartModeSprite.style.display = 'none';
+        intensitySprite.style.display = 'none';
       } else {
         fluidEffect.style.display = 'none';
-        heartModeSprite.style.display = 'block';
+        intensitySprite.style.display = 'block';
       }
     }
 
@@ -642,7 +622,7 @@ app.get('/', (req, res) => {
         rectScoreInterval = null;
       }
       fluidEffect.style.display = 'none';
-      heartModeSprite.style.display = 'block';
+      intensitySprite.style.display = 'block';
     }
 
     function triggerSubtlePulse() {
@@ -666,13 +646,13 @@ app.get('/', (req, res) => {
         intensityFill.style.width = Math.min(rectScore, 100) + '%';
         intensityDisplay.textContent = Math.ceil(rectScore / 20);
         fluidEffect.style.display = rectScore >= 21 ? 'block' : 'none';
-        heartModeSprite.style.display = 'none';
+        intensitySprite.style.display = 'none';
       } else {
         intensitySlider.classList.remove('disabled');
         intensityFill.style.width = '0%';
         intensityDisplay.textContent = intensitySlider.value;
         fluidEffect.style.display = 'none';
-        heartModeSprite.style.display = 'block';
+        intensitySprite.style.display = 'block';
       }
     }
 
@@ -757,14 +737,14 @@ app.get('/', (req, res) => {
 
     subMenuButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
-        console.log(\`Sub-menu button \${index + 1} clicked\`);
+        console.log(`Sub-menu button ${index + 1} clicked`);
         const barImages = [
           '/images/custom-bar.png',
           '/images/bar-option2.png',
           '/images/bar-option3.png',
           '/images/bar-option4.png'
         ];
-        barGraphic.style.background = \`url('\${barImages[index]}') no-repeat center center\`;
+        barGraphic.style.background = `url('${barImages[index]}') no-repeat center center`;
         barGraphic.style.backgroundSize = '100% 100%';
         barGraphic.style.backgroundPosition = 'center center';
       });
@@ -1023,27 +1003,3 @@ app.get('/', (req, res) => {
   </script>
 </body>
 </html>
-  `);
-});
-
-let clients = [];
-wss.on('connection', (ws) => {
-  clients.push(ws);
-  ws.on('close', () => {
-    clients = clients.filter(client => client !== ws);
-  });
-  ws.on('message', (message) => {
-    try {
-      const data = JSON.parse(message);
-      clients.forEach(client => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(data));
-        }
-      });
-    } catch (e) {
-      console.error('Error parsing message:', e);
-    }
-  });
-});
-
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
